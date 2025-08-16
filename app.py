@@ -19,7 +19,7 @@ def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
         return K.mean(loss, axis=-1)
     return focal_loss_fixed_internal
 
-# Classe MelanomaRecall
+# Classe MelanomaRecall avec from_config
 class MelanomaRecall(tf.keras.metrics.Metric):
     def __init__(self, melanoma_index, name='melanoma_recall', **kwargs):
         super(MelanomaRecall, self).__init__(name=name, **kwargs)
@@ -44,7 +44,11 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         self.true_positives.assign(0.)
         self.possible_positives.assign(0.)
 
-# Classe NevusSpecificity
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+# Classe NevusSpecificity avec from_config
 class NevusSpecificity(tf.keras.metrics.Metric):
     def __init__(self, nevus_index, name='nevus_specificity', **kwargs):
         super(NevusSpecificity, self).__init__(name=name, **kwargs)
@@ -69,7 +73,11 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         self.true_negatives.assign(0.)
         self.possible_negatives.assign(0.)
 
-# Classe CombinedMetric
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+# Classe CombinedMetric avec from_config
 class CombinedMetric(tf.keras.metrics.Metric):
     def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
         super(CombinedMetric, self).__init__(name=name, **kwargs)
@@ -94,7 +102,13 @@ class CombinedMetric(tf.keras.metrics.Metric):
         self.nevus_specificity.reset_states()
         self.combined_value.assign(0.)
 
-# Classe ThresholdOptimizer (utilisée comme callback, mais incluse pour compatibilité)
+    @classmethod
+    def from_config(cls, config):
+        melanoma_recall = MelanomaRecall.from_config(config.get('melanoma_recall_config', {'melanoma_index': 0}))
+        nevus_specificity = NevusSpecificity.from_config(config.get('nevus_specificity_config', {'nevus_index': 1}))
+        return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **config)
+
+# Classe ThresholdOptimizer (inclus pour compatibilité)
 class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def __init__(self, validation_data, class_to_idx, target_recall=0.85, target_specificity=0.70):
         super(ThresholdOptimizer, self).__init__()
@@ -111,6 +125,10 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def on_train_end(self, logs=None):
         pass  # Simplifié, car non utilisé ici
 
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
 # Charger le modèle avec tous les objets personnalisés
 @st.cache_resource
 def load_model():
@@ -118,9 +136,10 @@ def load_model():
     nevus_index = 1     # 'nv' (à ajuster si nécessaire)
     custom_objects = {
         'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
-        'MelanomaRecall': MelanomaRecall(melanoma_index),
-        'NevusSpecificity': NevusSpecificity(nevus_index),
-        'CombinedMetric': CombinedMetric(MelanomaRecall(melanoma_index), NevusSpecificity(nevus_index))
+        'MelanomaRecall': MelanomaRecall,
+        'NevusSpecificity': NevusSpecificity,
+        'CombinedMetric': CombinedMetric,
+        'ThresholdOptimizer': ThresholdOptimizer
     }
     return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
 
@@ -137,12 +156,31 @@ def preprocess_image(image, target_size=(224, 224)):
         st.error(f"Erreur de prétraitement : {e}")
         return None
 
-# Fonction de prédiction
+# Fonction de prédiction avec seuil fixe
 def predict_user_image(image):
     img_array = preprocess_image(image)
     if img_array is None:
         return "Erreur : Impossible de traiter l'image."
     img_array = np.expand_dims(img_array, axis=0)
     prediction = model.predict(img_array)
-    threshold = 0.487  # Ajustez selon votre seuil optimal (par ex. basé sur threshold_optimizer.best_threshold)
-    probability = prediction[0][0] 
+    threshold = 0.487  # Seuil fixe comme demandé
+    probability = prediction[0][0] * 100  # Index 0 pour 'mel' (à vérifier)
+    if probability >= threshold * 100:
+        return f"Malin - Probabilité : {probability:.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+    else:
+        return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+
+# Interface Streamlit
+st.title("Classificateur Naevus-Mélanomes")
+st.write("Téléchargez une image de grain de beauté pour une classification expérimentale.")
+
+uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Image téléchargée", use_column_width=True)
+    st.write("Analyse en cours...")
+    result = predict_user_image(image)
+    st.write(result)
+
+# Avertissement
+st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
