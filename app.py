@@ -19,7 +19,7 @@ def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
         return K.mean(loss, axis=-1)
     return focal_loss_fixed_internal
 
-# Classe MelanomaRecall avec from_config
+# Classe MelanomaRecall avec from_config amélioré
 class MelanomaRecall(tf.keras.metrics.Metric):
     def __init__(self, melanoma_index, name='melanoma_recall', **kwargs):
         super(MelanomaRecall, self).__init__(name=name, **kwargs)
@@ -46,9 +46,11 @@ class MelanomaRecall(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        return cls(**config)
+        # Utiliser une valeur par défaut pour melanoma_index si non spécifié
+        melanoma_index = config.get('melanoma_index', 0)  # 0 par défaut (correspond à 'mel')
+        return cls(melanoma_index=melanoma_index, **config)
 
-# Classe NevusSpecificity avec from_config
+# Classe NevusSpecificity avec from_config amélioré
 class NevusSpecificity(tf.keras.metrics.Metric):
     def __init__(self, nevus_index, name='nevus_specificity', **kwargs):
         super(NevusSpecificity, self).__init__(name=name, **kwargs)
@@ -75,9 +77,11 @@ class NevusSpecificity(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        return cls(**config)
+        # Utiliser une valeur par défaut pour nevus_index si non spécifié
+        nevus_index = config.get('nevus_index', 1)  # 1 par défaut (correspond à 'nv')
+        return cls(nevus_index=nevus_index, **config)
 
-# Classe CombinedMetric avec from_config
+# Classe CombinedMetric avec from_config amélioré
 class CombinedMetric(tf.keras.metrics.Metric):
     def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
         super(CombinedMetric, self).__init__(name=name, **kwargs)
@@ -104,8 +108,11 @@ class CombinedMetric(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        melanoma_recall = MelanomaRecall.from_config(config.get('melanoma_recall_config', {'melanoma_index': 0}))
-        nevus_specificity = NevusSpecificity.from_config(config.get('nevus_specificity_config', {'nevus_index': 1}))
+        # Reconstruire melanoma_recall et nevus_specificity avec des valeurs par défaut
+        melanoma_recall_config = config.get('melanoma_recall_config', {'melanoma_index': 0})
+        nevus_specificity_config = config.get('nevus_specificity_config', {'nevus_index': 1})
+        melanoma_recall = MelanomaRecall.from_config(melanoma_recall_config)
+        nevus_specificity = NevusSpecificity.from_config(nevus_specificity_config)
         return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **config)
 
 # Classe ThresholdOptimizer (inclus pour compatibilité)
@@ -132,8 +139,6 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
 # Charger le modèle avec tous les objets personnalisés
 @st.cache_resource
 def load_model():
-    melanoma_index = 0  # 'mel' (à ajuster si nécessaire)
-    nevus_index = 1     # 'nv' (à ajuster si nécessaire)
     custom_objects = {
         'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
         'MelanomaRecall': MelanomaRecall,
