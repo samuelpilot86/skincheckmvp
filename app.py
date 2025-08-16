@@ -46,9 +46,11 @@ class MelanomaRecall(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Utiliser une valeur par défaut pour melanoma_index si non spécifié
-        melanoma_index = config.get('melanoma_index', 0)  # 0 par défaut (correspond à 'mel')
-        return cls(melanoma_index=melanoma_index, **config)
+        # Extraire melanoma_index de la configuration, avec 0 comme fallback
+        melanoma_index = config.get('melanoma_index', 0)
+        # Filtrer les kwargs pour éviter les doublons
+        filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
+        return cls(melanoma_index=melanoma_index, **filtered_config)
 
 # Classe NevusSpecificity avec from_config amélioré
 class NevusSpecificity(tf.keras.metrics.Metric):
@@ -77,11 +79,13 @@ class NevusSpecificity(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Utiliser une valeur par défaut pour nevus_index si non spécifié
-        nevus_index = config.get('nevus_index', 1)  # 1 par défaut (correspond à 'nv')
-        return cls(nevus_index=nevus_index, **config)
+        # Extraire nevus_index de la configuration, avec 1 comme fallback
+        nevus_index = config.get('nevus_index', 1)
+        # Filtrer les kwargs pour éviter les doublons
+        filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
+        return cls(nevus_index=nevus_index, **filtered_config)
 
-# Classe CombinedMetric avec from_config amélioré
+# Classe CombinedMetric avec from_config corrigé
 class CombinedMetric(tf.keras.metrics.Metric):
     def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
         super(CombinedMetric, self).__init__(name=name, **kwargs)
@@ -108,12 +112,12 @@ class CombinedMetric(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Reconstruire melanoma_recall et nevus_specificity avec des valeurs par défaut
-        melanoma_recall_config = config.get('melanoma_recall_config', {'melanoma_index': 0})
-        nevus_specificity_config = config.get('nevus_specificity_config', {'nevus_index': 1})
-        melanoma_recall = MelanomaRecall.from_config(melanoma_recall_config)
-        nevus_specificity = NevusSpecificity.from_config(nevus_specificity_config)
-        return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **config)
+        # Créer des instances de MelanomaRecall et NevusSpecificity avec des configurations minimales
+        melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
+        nevus_specificity = NevusSpecificity.from_config({'nevus_index': 1, 'name': 'nevus_specificity'})
+        # Extraire alpha et autres kwargs, en ignorant les configurations internes
+        filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
+        return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
 
 # Classe ThresholdOptimizer (inclus pour compatibilité)
 class ThresholdOptimizer(tf.keras.callbacks.Callback):
