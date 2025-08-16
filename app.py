@@ -186,7 +186,7 @@ st.write("Téléchargez une image de grain de beauté pour une classification ex
 uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Image téléchargée", use_column_width=True)
+    st.image(image, caption="Image téléchargée", use_container_width=True)
     st.write("Analyse en cours...")
     result = predict_user_image(image)
     st.write(result)
