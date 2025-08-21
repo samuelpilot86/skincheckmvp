@@ -1,4 +1,3 @@
-```python
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
 
@@ -202,16 +201,3 @@ if image is not None:
 
 # Avertissement
 st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
-```
-
-### Additional Notes
-- **Environment Check**: If the `streamlit-cropper` installation fails, ensure your Python environment is consistent (e.g., use the same `pip` version tied to your Python executable). You can create a clean virtual environment:
-  ```bash
-  python -m venv env
-  source env/bin/activate  # On Windows: env\Scripts\activate
-  pip install streamlit streamlit-cropper tensorflow numpy pillow
-  ```
-- **TensorFlow GPU Issues**: If you later decide to use GPU support, you may need to install specific versions of CUDA and cuDNN compatible with your TensorFlow version. Refer to TensorFlow’s documentation for compatibility tables.
-- **Testing**: Test the app on a device with a camera to ensure `st.camera_input` works as expected. The focus and zoom features depend on the device’s camera capabilities.
-
-If you encounter further errors after installing `streamlit-cropper` or have specific requirements (e.g., additional error handling), please share the details, and I’ll assist further!
