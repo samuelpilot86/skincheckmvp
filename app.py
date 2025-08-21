@@ -5,6 +5,7 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageOps
+from streamlit_cropper import st_cropper
 import keras.backend as K
 
 # Fonction focal_loss_fixed
@@ -158,19 +159,6 @@ def predict_user_image(image):
     else:
         return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
 
-# Fonction pour recadrer l'image avec des coordonnées
-def crop_image(image, left, top, right, bottom):
-    try:
-        width, height = image.size
-        left = max(0, min(left, width))
-        top = max(0, min(top, height))
-        right = max(left + 1, min(right, width))
-        bottom = max(top + 1, min(bottom, height))
-        return image.crop((left, top, right, bottom))
-    except Exception as e:
-        st.error(f"Erreur lors du recadrage : {e}")
-        return image
-
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
 
@@ -195,7 +183,6 @@ if st.session_state.mode == 'initial':
         if st.button("Charger une photo existante"):
             st.session_state.mode = 'upload'
             st.rerun()
-
 elif st.session_state.mode == 'camera':
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
@@ -203,7 +190,6 @@ elif st.session_state.mode == 'camera':
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
         st.session_state.mode = 'process'
         st.rerun()
-
 elif st.session_state.mode == 'upload':
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
@@ -211,27 +197,17 @@ elif st.session_state.mode == 'upload':
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
         st.session_state.mode = 'process'
         st.rerun()
-
 if st.session_state.mode == 'process' and st.session_state.image is not None:
     st.image(st.session_state.image, caption="Image chargée", use_container_width=True)
     if not st.session_state.cropped:
         st.write("Recadrez l'image si nécessaire :")
-        width, height = st.session_state.image.size
-        col1, col2 = st.columns(2)
-        with col1:
-            left = st.slider("X gauche", 0, width, 0)
-            top = st.slider("Y haut", 0, height, 0)
-        with col2:
-            right = st.slider("X droite", 0, width, width)
-            bottom = st.slider("Y bas", 0, height, height)
-        
+        cropped_image = st_cropper(st.session_state.image, realtime_update=True, box_color='blue', aspect_ratio=None)
         if st.button("Appliquer le recadrage"):
-            st.session_state.image = crop_image(st.session_state.image, left, top, right, bottom)
+            st.session_state.image = cropped_image
             st.session_state.cropped = True
             st.rerun()
     else:
         st.image(st.session_state.image, caption="Image recadrée", use_container_width=True)
-
     if st.button("Analyser l'image"):
         with status_container:
             st.write("Analyse en cours...")
@@ -240,4 +216,4 @@ if st.session_state.mode == 'process' and st.session_state.image is not None:
         st.write(result)
 
 # Avertissement
-st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
+st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**
