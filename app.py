@@ -177,54 +177,61 @@ st.title("Classificateur Naevus-Mélanomes")
 # Initialiser l'état de session
 if 'image' not in st.session_state:
     st.session_state.image = None
+if 'has_photo' not in st.session_state:
+    st.session_state.has_photo = False
 if 'cropped' not in st.session_state:
     st.session_state.cropped = False
 
 # Conteneur pour le message d'analyse
 status_container = st.empty()
 
-# Boutons pour choisir la méthode
-col1, col2 = st.columns(2)
-with col1:
-    take_photo = st.button("Prendre une photo")
-with col2:
-    upload_photo = st.button("Charger une photo existante")
+# Boutons pour choisir la méthode (affichés uniquement si aucune image n'est présente)
+if not st.session_state.has_photo:
+    col1, col2 = st.columns(2)
+    with col1:
+        take_photo = st.button("Prendre une photo")
+    with col2:
+        upload_photo = st.button("Charger une photo existante")
 
 # Gérer la prise de photo
-if take_photo and st.session_state.image is None:
+if take_photo:
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
         st.session_state.image = Image.open(captured_image)
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.image(st.session_state.image, caption="Photo capturée", use_container_width=True)
+        st.session_state.has_photo = True
+        st.rerun()
 
 # Gérer le chargement d'une photo
-if upload_photo and st.session_state.image is None:
+if upload_photo:
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
         st.session_state.image = Image.open(uploaded_file)
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.image(st.session_state.image, caption="Image téléchargée", use_container_width=True)
+        st.session_state.has_photo = True
+        st.rerun()
 
 # Afficher les options de recadrage et d'analyse si une image est présente
-if st.session_state.image is not None and not st.session_state.cropped:
-    st.write("Recadrez l'image si nécessaire :")
-    width, height = st.session_state.image.size
-    col1, col2 = st.columns(2)
-    with col1:
-        left = st.slider("X gauche", 0, width, 0)
-        top = st.slider("Y haut", 0, height, 0)
-    with col2:
-        right = st.slider("X droite", 0, width, width)
-        bottom = st.slider("Y bas", 0, height, height)
-    
-    if st.button("Appliquer le recadrage"):
-        st.session_state.image = crop_image(st.session_state.image, left, top, right, bottom)
-        st.session_state.cropped = True
+if st.session_state.image is not None and st.session_state.has_photo:
+    st.image(st.session_state.image, caption="Image chargée", use_container_width=True)
+    if not st.session_state.cropped:
+        st.write("Recadrez l'image si nécessaire :")
+        width, height = st.session_state.image.size
+        col1, col2 = st.columns(2)
+        with col1:
+            left = st.slider("X gauche", 0, width, 0)
+            top = st.slider("Y haut", 0, height, 0)
+        with col2:
+            right = st.slider("X droite", 0, width, width)
+            bottom = st.slider("Y bas", 0, height, height)
+        
+        if st.button("Appliquer le recadrage"):
+            st.session_state.image = crop_image(st.session_state.image, left, top, right, bottom)
+            st.session_state.cropped = True
+            st.rerun()
+    else:
         st.image(st.session_state.image, caption="Image recadrée", use_container_width=True)
 
-# Bouton pour analyser l'image
-if st.session_state.image is not None:
     if st.button("Analyser l'image"):
         with status_container:
             st.write("Analyse en cours...")
