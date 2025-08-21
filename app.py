@@ -175,44 +175,44 @@ def crop_image(image, left, top, right, bottom):
 st.title("Classificateur Naevus-Mélanomes")
 
 # Initialiser l'état de session
+if 'mode' not in st.session_state:
+    st.session_state.mode = 'initial'
 if 'image' not in st.session_state:
     st.session_state.image = None
-if 'has_photo' not in st.session_state:
-    st.session_state.has_photo = False
 if 'cropped' not in st.session_state:
     st.session_state.cropped = False
 
 # Conteneur pour le message d'analyse
 status_container = st.empty()
 
-# Boutons pour choisir la méthode (affichés uniquement si aucune image n'est présente)
-if not st.session_state.has_photo:
+if st.session_state.mode == 'initial':
     col1, col2 = st.columns(2)
     with col1:
-        take_photo = st.button("Prendre une photo")
+        if st.button("Prendre une photo"):
+            st.session_state.mode = 'camera'
+            st.rerun()
     with col2:
-        upload_photo = st.button("Charger une photo existante")
+        if st.button("Charger une photo existante"):
+            st.session_state.mode = 'upload'
+            st.rerun()
 
-# Gérer la prise de photo
-if take_photo:
+elif st.session_state.mode == 'camera':
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
         st.session_state.image = Image.open(captured_image)
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.session_state.has_photo = True
+        st.session_state.mode = 'process'
         st.rerun()
 
-# Gérer le chargement d'une photo
-if upload_photo:
+elif st.session_state.mode == 'upload':
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
         st.session_state.image = Image.open(uploaded_file)
         st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.session_state.has_photo = True
+        st.session_state.mode = 'process'
         st.rerun()
 
-# Afficher les options de recadrage et d'analyse si une image est présente
-if st.session_state.image is not None and st.session_state.has_photo:
+if st.session_state.mode == 'process' and st.session_state.image is not None:
     st.image(st.session_state.image, caption="Image chargée", use_container_width=True)
     if not st.session_state.cropped:
         st.write("Recadrez l'image si nécessaire :")
