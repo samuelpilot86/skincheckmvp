@@ -5,7 +5,6 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageOps
-from streamlit_cropper import st_cropper
 import keras.backend as K
 
 # Fonction focal_loss_fixed
@@ -159,8 +158,27 @@ def predict_user_image(image):
     else:
         return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
 
+# Fonction pour recadrer l'image avec des coordonnées
+def crop_image(image, left, top, right, bottom):
+    try:
+        width, height = image.size
+        left = max(0, min(left, width))
+        top = max(0, min(top, height))
+        right = max(left + 1, min(right, width))
+        bottom = max(top + 1, min(bottom, height))
+        return image.crop((left, top, right, bottom))
+    except Exception as e:
+        st.error(f"Erreur lors du recadrage : {e}")
+        return image
+
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
+
+# Initialiser l'état de session
+if 'image' not in st.session_state:
+    st.session_state.image = None
+if 'cropped' not in st.session_state:
+    st.session_state.cropped = False
 
 # Conteneur pour le message d'analyse
 status_container = st.empty()
@@ -172,39 +190,47 @@ with col1:
 with col2:
     upload_photo = st.button("Charger une photo existante")
 
-image = None
-if take_photo:
+# Gérer la prise de photo
+if take_photo and st.session_state.image is None:
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
-        image = Image.open(captured_image)
-        # Corriger l'orientation automatiquement avec EXIF
-        image = ImageOps.exif_transpose(image)
-        st.image(image, caption="Photo capturée", use_container_width=True)
-        # Option de recadrage manuel
-        st.write("Recadrez l'image si nécessaire :")
-        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
-        image = cropped_image
-        st.image(image, caption="Image recadrée", use_container_width=True)
-elif upload_photo:
+        st.session_state.image = Image.open(captured_image)
+        st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
+        st.image(st.session_state.image, caption="Photo capturée", use_container_width=True)
+
+# Gérer le chargement d'une photo
+if upload_photo and st.session_state.image is None:
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        # Corriger l'orientation automatiquement avec EXIF
-        image = ImageOps.exif_transpose(image)
-        st.image(image, caption="Image téléchargée", use_container_width=True)
-        # Option de recadrage manuel
-        st.write("Recadrez l'image si nécessaire :")
-        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
-        image = cropped_image
-        st.image(image, caption="Image recadrée", use_container_width=True)
+        st.session_state.image = Image.open(uploaded_file)
+        st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
+        st.image(st.session_state.image, caption="Image téléchargée", use_container_width=True)
 
-# Analyse de l'image si disponible
-if image is not None:
-    with status_container:
-        st.write("Analyse en cours...")
-    result = predict_user_image(image)
-    status_container.empty()  # Supprime le message "Analyse en cours"
-    st.write(result)
+# Afficher les options de recadrage et d'analyse si une image est présente
+if st.session_state.image is not None and not st.session_state.cropped:
+    st.write("Recadrez l'image si nécessaire :")
+    width, height = st.session_state.image.size
+    col1, col2 = st.columns(2)
+    with col1:
+        left = st.slider("X gauche", 0, width, 0)
+        top = st.slider("Y haut", 0, height, 0)
+    with col2:
+        right = st.slider("X droite", 0, width, width)
+        bottom = st.slider("Y bas", 0, height, height)
+    
+    if st.button("Appliquer le recadrage"):
+        st.session_state.image = crop_image(st.session_state.image, left, top, right, bottom)
+        st.session_state.cropped = True
+        st.image(st.session_state.image, caption="Image recadrée", use_container_width=True)
+
+# Bouton pour analyser l'image
+if st.session_state.image is not None:
+    if st.button("Analyser l'image"):
+        with status_container:
+            st.write("Analyse en cours...")
+        result = predict_user_image(st.session_state.image)
+        status_container.empty()  # Supprime le message "Analyse en cours"
+        st.write(result)
 
 # Avertissement
 st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
