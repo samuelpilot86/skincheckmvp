@@ -1,3 +1,4 @@
+```python
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
 
@@ -161,60 +162,58 @@ def predict_user_image(image):
 
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
+st.write("Prenez une photo ou téléchargez une image de grain de beauté pour une classification expérimentale.")
 
-# Initialiser l'état de session
-if 'mode' not in st.session_state:
-    st.session_state.mode = 'initial'
-if 'image' not in st.session_state:
-    st.session_state.image = None
-if 'cropped' not in st.session_state:
-    st.session_state.cropped = False
+# Option pour choisir entre prendre une photo ou uploader
+option = st.radio("Choisissez une méthode :", ("Prendre une photo", "Télécharger une image"))
 
-# Conteneur pour le message d'analyse
-status_container = st.empty()
-
-if st.session_state.mode == 'initial':
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Prendre une photo"):
-            st.session_state.mode = 'camera'
-            st.rerun()
-    with col2:
-        if st.button("Charger une photo existante"):
-            st.session_state.mode = 'upload'
-            st.rerun()
-elif st.session_state.mode == 'camera':
+image = None
+if option == "Prendre une photo":
+    # Camera input avec instructions pour focus et zoom
+    st.info("Utilisez le tap-to-focus et le pinch-to-zoom de votre appareil pour ajuster la photo.")
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
-        st.session_state.image = Image.open(captured_image)
-        st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.session_state.mode = 'process'
-        st.rerun()
-elif st.session_state.mode == 'upload':
+        image = Image.open(captured_image)
+        # Corriger l'orientation automatiquement avec EXIF
+        image = ImageOps.exif_transpose(image)
+        st.image(image, caption="Photo capturée", use_container_width=True)
+        # Option de recadrage manuel
+        st.write("Recadrez l'image si nécessaire :")
+        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
+        image = cropped_image
+        st.image(image, caption="Image recadrée", use_container_width=True)
+else:
+    # File uploader pour images
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
-        st.session_state.image = Image.open(uploaded_file)
-        st.session_state.image = ImageOps.exif_transpose(st.session_state.image)
-        st.session_state.mode = 'process'
-        st.rerun()
-if st.session_state.mode == 'process' and st.session_state.image is not None:
-    st.image(st.session_state.image, caption="Image chargée", use_container_width=True)
-    if not st.session_state.cropped:
+        image = Image.open(uploaded_file)
+        # Corriger l'orientation automatiquement avec EXIF
+        image = ImageOps.exif_transpose(image)
+        st.image(image, caption="Image téléchargée", use_container_width=True)
+        # Option de recadrage manuel
         st.write("Recadrez l'image si nécessaire :")
-        cropped_image = st_cropper(st.session_state.image, realtime_update=True, box_color='blue', aspect_ratio=None)
-        if st.button("Appliquer le recadrage"):
-            st.session_state.image = cropped_image
-            st.session_state.cropped = True
-            st.rerun()
-    else:
-        st.image(st.session_state.image, caption="Image recadrée", use_container_width=True)
-    if st.button("Analyser l'image"):
-        with status_container:
-            st.write("Analyse en cours...")
-        result = predict_user_image(st.session_state.image)
-        status_container.empty()  # Supprime le message "Analyse en cours"
-        st.write(result)
+        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
+        image = cropped_image
+        st.image(image, caption="Image recadrée", use_container_width=True)
+
+# Analyse de l'image si disponible
+if image is not None:
+    st.write("Analyse en cours...")
+    result = predict_user_image(image)
+    st.write(result)
 
 # Avertissement
-st.write("""**Avertissement : Cet outil est un prototype. 
-Consultez toujours un dermatologue pour un diagnostic officiel.**""")
+st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
+```
+
+### Additional Notes
+- **Environment Check**: If the `streamlit-cropper` installation fails, ensure your Python environment is consistent (e.g., use the same `pip` version tied to your Python executable). You can create a clean virtual environment:
+  ```bash
+  python -m venv env
+  source env/bin/activate  # On Windows: env\Scripts\activate
+  pip install streamlit streamlit-cropper tensorflow numpy pillow
+  ```
+- **TensorFlow GPU Issues**: If you later decide to use GPU support, you may need to install specific versions of CUDA and cuDNN compatible with your TensorFlow version. Refer to TensorFlow’s documentation for compatibility tables.
+- **Testing**: Test the app on a device with a camera to ensure `st.camera_input` works as expected. The focus and zoom features depend on the device’s camera capabilities.
+
+If you encounter further errors after installing `streamlit-cropper` or have specific requirements (e.g., additional error handling), please share the details, and I’ll assist further!
