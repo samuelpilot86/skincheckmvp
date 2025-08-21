@@ -162,7 +162,6 @@ def predict_user_image(image):
 
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
-st.write("Prenez une photo ou téléchargez une image de grain de beauté pour une classification expérimentale.")
 
 # Option pour choisir entre prendre une photo ou uploader
 option = st.radio("Choisissez une méthode :", ("Prendre une photo", "Télécharger une image"))
@@ -170,7 +169,6 @@ option = st.radio("Choisissez une méthode :", ("Prendre une photo", "Téléchar
 image = None
 if option == "Prendre une photo":
     # Camera input avec instructions pour focus et zoom
-    st.info("Utilisez le tap-to-focus et le pinch-to-zoom de votre appareil pour ajuster la photo.")
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
         image = Image.open(captured_image)
