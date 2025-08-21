@@ -216,4 +216,5 @@ if st.session_state.mode == 'process' and st.session_state.image is not None:
         st.write(result)
 
 # Avertissement
-st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**
+st.write("""**Avertissement : Cet outil est un prototype. 
+Consultez toujours un dermatologue pour un diagnostic officiel.**""")
