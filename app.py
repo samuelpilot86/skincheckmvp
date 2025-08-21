@@ -1,9 +1,11 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
+
 import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageOps
 from streamlit_cropper import st_cropper
-import os
 import keras.backend as K
 
 # Fonction focal_loss_fixed
@@ -38,7 +40,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         return self.true_positives / (self.possible_positives + K.epsilon())
     def reset_states(self):
         self.true_positives.assign(0.)
-        self.possible_negatives.assign(0.)
+        self.possible_positives.assign(0.)
     @classmethod
     def from_config(cls, config):
         melanoma_index = config.get('melanoma_index', 0)
@@ -159,15 +161,19 @@ def predict_user_image(image):
 
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
-st.write("Prenez une photo ou téléchargez une image de grain de beauté pour une classification expérimentale.")
 
-# Option pour choisir entre prendre une photo ou uploader
-option = st.radio("Choisissez une méthode :", ("Prendre une photo", "Télécharger une image"))
+# Conteneur pour le message d'analyse
+status_container = st.empty()
+
+# Boutons pour choisir la méthode
+col1, col2 = st.columns(2)
+with col1:
+    take_photo = st.button("Prendre une photo")
+with col2:
+    upload_photo = st.button("Charger une photo existante")
 
 image = None
-if option == "Prendre une photo":
-    # Camera input avec instructions pour focus et zoom
-    st.info("Utilisez le tap-to-focus et le pinch-to-zoom de votre appareil pour ajuster la photo.")
+if take_photo:
     captured_image = st.camera_input("Prendre une photo")
     if captured_image is not None:
         image = Image.open(captured_image)
@@ -179,8 +185,7 @@ if option == "Prendre une photo":
         cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
         image = cropped_image
         st.image(image, caption="Image recadrée", use_container_width=True)
-else:
-    # File uploader pour images
+elif upload_photo:
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
@@ -195,8 +200,10 @@ else:
 
 # Analyse de l'image si disponible
 if image is not None:
-    st.write("Analyse en cours...")
+    with status_container:
+        st.write("Analyse en cours...")
     result = predict_user_image(image)
+    status_container.empty()  # Supprime le message "Analyse en cours"
     st.write(result)
 
 # Avertissement
