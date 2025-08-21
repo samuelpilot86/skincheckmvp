@@ -2,3 +2,4 @@ streamlit
 tensorflow
 numpy
 pillow  # Remplace opencv-python par pillow
+streamlit-cropper
