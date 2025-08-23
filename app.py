@@ -7,19 +7,21 @@ from PIL import Image, ImageOps
 import os
 import keras.backend as K
 
-# Liste des exemples de photos (chemin relatif au sous-répertoire images)
-exemples_melanomes = [
-    "images/ISIC_0024310.jpg", "images/ISIC_0024313.jpg", "images/ISIC_0024315.jpg", "images/ISIC_0024323.jpg", "images/ISIC_0024333.jpg",
-    "images/ISIC_0024351.jpg", "images/ISIC_0024367.jpg", "images/ISIC_0024400.jpg", "images/ISIC_0024410.jpg", "images/ISIC_0024449.jpg"
-]
+# Fonction pour explorer dynamiquement le répertoire Examples
+def load_examples(dynamic_dir="Examples"):
+    exemples = []
+    if os.path.exists(dynamic_dir):
+        for subdir in os.listdir(dynamic_dir):
+            subdir_path = os.path.join(dynamic_dir, subdir)
+            if os.path.isdir(subdir_path) and subdir.lower() != "old":
+                for file in os.listdir(subdir_path):
+                    if file.lower().endswith((".jpg", ".jpeg", ".png")):
+                        file_path = os.path.join(subdir_path, file)
+                        exemples.append((f"{subdir} - {file}", file_path))
+    return exemples
 
-exemples_naevus = [
-    "images/ISIC_0024306.jpg", "images/ISIC_0024307.jpg", "images/ISIC_0024308.jpg", "images/ISIC_0024309.jpg", "images/ISIC_0024311.jpg",
-    "images/ISIC_0024314.jpg", "images/ISIC_0024316.jpg", "images/ISIC_0024317.jpg", "images/ISIC_0024693.jpg", "images/ISIC_0024698.jpg"
-]
-
-# Combiner les exemples avec des labels pour affichage
-exemples_complets = [("Mélanome - " + os.path.basename(f), f) for f in exemples_melanomes] + [("Naevus - " + os.path.basename(f), f) for f in exemples_naevus]
+# Charger les exemples dynamiquement
+exemples_complets = load_examples()
 
 # Fonction focal_loss_fixed
 def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
@@ -195,38 +197,12 @@ def predict_user_image(image):
 
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
-st.write("Choisissez une méthode pour fournir une image de grain de beauté pour une classification expérimentale.")
+st.write("Téléchargez une image de grain de beauté pour une classification expérimentale.")
 
-mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Tester un exemple"))
-
-image = None
-
-if mode == "Prendre une photo":
-    captured_file = st.camera_input("Prendre une photo")
-    if captured_file is not None:
-        image = Image.open(captured_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
-
-elif mode == "Charger une photo":
-    uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
-
-elif mode == "Tester un exemple":
-    # Afficher les exemples avec leurs catégories
-    st.write("### Sélectionnez un exemple :")
-    selected_option = st.selectbox("Choisissez une image :", [label for label, _ in exemples_complets])
-    if selected_option:
-        # Trouver le chemin correspondant à l'option sélectionnée
-        selected_path = next(path for label, path in exemples_complets if label == selected_option)
-        try:
-            image = Image.open(selected_path)
-        except FileNotFoundError:
-            st.error(f"Fichier non trouvé : {selected_path}")
-
-if image is not None:
-    st.image(image, caption="Image sélectionnée", use_container_width=True)
+uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Image téléchargée", use_container_width=True)
     st.write("Analyse en cours...")
     result = predict_user_image(image)
     st.write(result)
