@@ -1,10 +1,11 @@
-# Si jamais ce code devait être modifié, le faire sans la bibliothèque cv2, que Streamlit a régulièrement du mal à importer
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
 
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-from PIL import Image
-import os
+from PIL import Image, ImageOps
+from streamlit_cropper import st_cropper
 import keras.backend as K
 
 # Fonction focal_loss_fixed
@@ -26,7 +27,6 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         self.melanoma_index = melanoma_index
         self.true_positives = self.add_weight(name='tp', initializer='zeros')
         self.possible_positives = self.add_weight(name='pp', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -36,19 +36,14 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         possible_pos = tf.reduce_sum(tf.cast(true_melanoma, tf.float32))
         self.true_positives.assign_add(true_pos)
         self.possible_positives.assign_add(possible_pos)
-
     def result(self):
         return self.true_positives / (self.possible_positives + K.epsilon())
-
     def reset_states(self):
         self.true_positives.assign(0.)
         self.possible_positives.assign(0.)
-
     @classmethod
     def from_config(cls, config):
-        # Extraire melanoma_index de la configuration, avec 0 comme fallback
         melanoma_index = config.get('melanoma_index', 0)
-        # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
         return cls(melanoma_index=melanoma_index, **filtered_config)
 
@@ -59,7 +54,6 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         self.nevus_index = nevus_index
         self.true_negatives = self.add_weight(name='tn', initializer='zeros')
         self.possible_negatives = self.add_weight(name='pn', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -69,19 +63,14 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         possible_neg = tf.reduce_sum(tf.cast(true_nevus, tf.float32))
         self.true_negatives.assign_add(true_neg)
         self.possible_negatives.assign_add(possible_neg)
-
     def result(self):
         return self.true_negatives / (self.possible_negatives + K.epsilon())
-
     def reset_states(self):
         self.true_negatives.assign(0.)
         self.possible_negatives.assign(0.)
-
     @classmethod
     def from_config(cls, config):
-        # Extraire nevus_index de la configuration, avec 1 comme fallback
         nevus_index = config.get('nevus_index', 1)
-        # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
         return cls(nevus_index=nevus_index, **filtered_config)
 
@@ -93,7 +82,6 @@ class CombinedMetric(tf.keras.metrics.Metric):
         self.nevus_specificity = nevus_specificity
         self.alpha = alpha
         self.combined_value = self.add_weight(name='combined_value', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         self.melanoma_recall.update_state(y_true, y_pred, sample_weight)
         self.nevus_specificity.update_state(y_true, y_pred, sample_weight)
@@ -101,21 +89,16 @@ class CombinedMetric(tf.keras.metrics.Metric):
         specificity_value = self.nevus_specificity.result()
         combined = self.alpha * recall_value + (1 - self.alpha) * specificity_value
         self.combined_value.assign(combined)
-
     def result(self):
         return self.combined_value
-
     def reset_states(self):
         self.melanoma_recall.reset_states()
         self.nevus_specificity.reset_states()
         self.combined_value.assign(0.)
-
     @classmethod
     def from_config(cls, config):
-        # Créer des instances de MelanomaRecall et NevusSpecificity avec des configurations minimales
         melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
         nevus_specificity = NevusSpecificity.from_config({'nevus_index': 1, 'name': 'nevus_specificity'})
-        # Extraire alpha et autres kwargs, en ignorant les configurations internes
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
         return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
 
@@ -129,13 +112,10 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
         self.target_specificity = target_specificity
         self.best_threshold = 0.5
         self.best_loss = float('inf')
-
     def on_epoch_end(self, epoch, logs=None):
-        pass  # Simplifié, car non utilisé ici
-
+        pass
     def on_train_end(self, logs=None):
-        pass  # Simplifié, car non utilisé ici
-
+        pass
     @classmethod
     def from_config(cls, config):
         return cls(**config)
@@ -172,8 +152,8 @@ def predict_user_image(image):
         return "Erreur : Impossible de traiter l'image."
     img_array = np.expand_dims(img_array, axis=0)
     prediction = model.predict(img_array)
-    threshold = 0.487  # Seuil fixe comme demandé
-    probability = prediction[0][0] * 100  # Index 0 pour 'mel' (à vérifier)
+    threshold = 0.487
+    probability = prediction[0][0] * 100
     if probability >= threshold * 100:
         return f"Malin - Probabilité : {probability:.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
     else:
@@ -181,12 +161,40 @@ def predict_user_image(image):
 
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
-st.write("Téléchargez une image de grain de beauté pour une classification expérimentale.")
 
-uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Image téléchargée", use_container_width=True)
+# Option pour choisir entre prendre une photo ou uploader
+option = st.radio("Choisissez une méthode :", ("Prendre une photo", "Télécharger une image"))
+
+image = None
+if option == "Prendre une photo":
+    # Camera input avec instructions pour focus et zoom
+    captured_image = st.camera_input("Prendre une photo")
+    if captured_image is not None:
+        image = Image.open(captured_image)
+        # Corriger l'orientation automatiquement avec EXIF
+        image = ImageOps.exif_transpose(image)
+        st.image(image, caption="Photo capturée", use_container_width=True)
+        # Option de recadrage manuel
+        st.write("Recadrez l'image si nécessaire :")
+        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
+        image = cropped_image
+        st.image(image, caption="Image recadrée", use_container_width=True)
+else:
+    # File uploader pour images
+    uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        # Corriger l'orientation automatiquement avec EXIF
+        image = ImageOps.exif_transpose(image)
+        st.image(image, caption="Image téléchargée", use_container_width=True)
+        # Option de recadrage manuel
+        st.write("Recadrez l'image si nécessaire :")
+        cropped_image = st_cropper(image, realtime_update=True, box_color='blue', aspect_ratio=None)
+        image = cropped_image
+        st.image(image, caption="Image recadrée", use_container_width=True)
+
+# Analyse de l'image si disponible
+if image is not None:
     st.write("Analyse en cours...")
     result = predict_user_image(image)
     st.write(result)
