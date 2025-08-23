@@ -18,7 +18,8 @@ exemples_naevus = [
     "images/ISIC_0024314.jpg", "images/ISIC_0024316.jpg", "images/ISIC_0024317.jpg", "images/ISIC_0024693.jpg", "images/ISIC_0024698.jpg"
 ]
 
-exemples = exemples_melanomes + exemples_naevus  # Liste complète pour le selectbox
+# Combiner les exemples avec des labels pour affichage
+exemples_complets = [("Mélanome - " + os.path.basename(f), f) for f in exemples_melanomes] + [("Naevus - " + os.path.basename(f), f) for f in exemples_naevus]
 
 # Fonction focal_loss_fixed
 def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
@@ -196,7 +197,7 @@ def predict_user_image(image):
 st.title("Classificateur Naevus-Mélanomes")
 st.write("Choisissez une méthode pour fournir une image de grain de beauté pour une classification expérimentale.")
 
-mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Sélectionner un exemple"))
+mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Tester un exemple"))
 
 image = None
 
@@ -212,13 +213,17 @@ elif mode == "Charger une photo":
         image = Image.open(uploaded_file)
         image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
 
-elif mode == "Sélectionner un exemple":
-    selected_file = st.selectbox("Choisissez une image exemple :", exemples)
-    if selected_file:
+elif mode == "Tester un exemple":
+    # Afficher les exemples avec leurs catégories
+    st.write("### Sélectionnez un exemple :")
+    selected_option = st.selectbox("Choisissez une image :", [label for label, _ in exemples_complets])
+    if selected_option:
+        # Trouver le chemin correspondant à l'option sélectionnée
+        selected_path = next(path for label, path in exemples_complets if label == selected_option)
         try:
-            image = Image.open(selected_file)  # Assumer que les fichiers sont dans le répertoire courant
+            image = Image.open(selected_path)
         except FileNotFoundError:
-            st.error(f"Fichier non trouvé : {selected_file}")
+            st.error(f"Fichier non trouvé : {selected_path}")
 
 if image is not None:
     st.image(image, caption="Image sélectionnée", use_container_width=True)
