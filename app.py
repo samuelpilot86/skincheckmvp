@@ -7,15 +7,15 @@ from PIL import Image, ImageOps
 import os
 import keras.backend as K
 
-# Liste des exemples de photos (assumer qu'elles sont dans le répertoire courant ou un sous-répertoire)
+# Liste des exemples de photos (chemin relatif au sous-répertoire images)
 exemples_melanomes = [
-    "ISIC_0024310.jpg", "ISIC_0024313.jpg", "ISIC_0024315.jpg", "ISIC_0024323.jpg", "ISIC_0024333.jpg",
-    "ISIC_0024351.jpg", "ISIC_0024367.jpg", "ISIC_0024400.jpg", "ISIC_0024410.jpg", "ISIC_0024449.jpg"
+    "images/ISIC_0024310.jpg", "images/ISIC_0024313.jpg", "images/ISIC_0024315.jpg", "images/ISIC_0024323.jpg", "images/ISIC_0024333.jpg",
+    "images/ISIC_0024351.jpg", "images/ISIC_0024367.jpg", "images/ISIC_0024400.jpg", "images/ISIC_0024410.jpg", "images/ISIC_0024449.jpg"
 ]
 
 exemples_naevus = [
-    "ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024311.jpg",
-    "ISIC_0024314.jpg", "ISIC_0024316.jpg", "ISIC_0024317.jpg", "ISIC_0024693.jpg", "ISIC_0024698.jpg"
+    "images/ISIC_0024306.jpg", "images/ISIC_0024307.jpg", "images/ISIC_0024308.jpg", "images/ISIC_0024309.jpg", "images/ISIC_0024311.jpg",
+    "images/ISIC_0024314.jpg", "images/ISIC_0024316.jpg", "images/ISIC_0024317.jpg", "images/ISIC_0024693.jpg", "images/ISIC_0024698.jpg"
 ]
 
 exemples = exemples_melanomes + exemples_naevus  # Liste complète pour le selectbox
