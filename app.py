@@ -10,22 +10,17 @@ import keras.backend as K
 def load_examples(dynamic_dir="examples"):
     exemples_complets = []
     base_dir = os.path.join(os.getcwd(), dynamic_dir)
-    st.write(f"Recherche des exemples dans : {base_dir}")  # Log pour débogage
     if os.path.exists(base_dir):
         for root, dirs, files in os.walk(base_dir):
-            st.write(f"Exploration du répertoire : {root}")  # Log pour débogage
             for file in files:
-                st.write(f"Fichier trouvé : {file}")  # Log pour débogage
                 if file.lower().endswith((".jpg", ".jpeg", ".png")):
                     file_path = os.path.join(root, file)
                     if os.path.exists(file_path):  # Vérification supplémentaire
                         relative_path = os.path.relpath(file_path, os.getcwd())
                         label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
                         exemples_complets.append((label, relative_path))
-                    else:
-                        st.warning(f"Chemin invalide : {file_path}")
     else:
-        st.error(f"Le répertoire {base_dir} n'existe pas.")
+        st.write(f"Le répertoire {base_dir} n'existe pas.")
     return exemples_complets
 
 # Charger les exemples dynamiquement
