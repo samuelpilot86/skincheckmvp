@@ -6,20 +6,26 @@ from PIL import Image, ImageOps
 import os
 import keras.backend as K
 
-# Fonction pour charger dynamiquement les images depuis le répertoire "examples" et ses sous-répertoires de rang 1
+# Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
 def load_examples(dynamic_dir="examples"):
     exemples_complets = []
-    if os.path.exists(dynamic_dir):
-        # Explorer les sous-répertoires de rang 1
-        for subdir in os.listdir(dynamic_dir):
-            subdir_path = os.path.join(dynamic_dir, subdir)
-            if os.path.isdir(subdir_path):
-                # Explorer uniquement ce niveau (rang 1)
-                for file in os.listdir(subdir_path):
-                    if file.lower().endswith((".jpg", ".jpeg", ".png")):
-                        file_path = os.path.join(subdir_path, file)
-                        label = f"{subdir} - {file}"
-                        exemples_complets.append((label, file_path))
+    base_dir = os.path.join(os.getcwd(), dynamic_dir)
+    st.write(f"Recherche des exemples dans : {base_dir}")  # Log pour débogage
+    if os.path.exists(base_dir):
+        for root, dirs, files in os.walk(base_dir):
+            st.write(f"Exploration du répertoire : {root}")  # Log pour débogage
+            for file in files:
+                st.write(f"Fichier trouvé : {file}")  # Log pour débogage
+                if file.lower().endswith((".jpg", ".jpeg", ".png")):
+                    file_path = os.path.join(root, file)
+                    if os.path.exists(file_path):  # Vérification supplémentaire
+                        relative_path = os.path.relpath(file_path, os.getcwd())
+                        label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
+                        exemples_complets.append((label, relative_path))
+                    else:
+                        st.warning(f"Chemin invalide : {file_path}")
+    else:
+        st.error(f"Le répertoire {base_dir} n'existe pas.")
     return exemples_complets
 
 # Charger les exemples dynamiquement
@@ -36,6 +42,7 @@ def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
             loss = loss * weight_mask
         return K.mean(loss, axis=-1)
     return focal_loss_fixed_internal
+
 # Classe MelanomaRecall avec from_config amélioré
 class MelanomaRecall(tf.keras.metrics.Metric):
     def __init__(self, melanoma_index, name='melanoma_recall', **kwargs):
@@ -43,6 +50,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         self.melanoma_index = melanoma_index
         self.true_positives = self.add_weight(name='tp', initializer='zeros')
         self.possible_positives = self.add_weight(name='pp', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -52,11 +60,14 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         possible_pos = tf.reduce_sum(tf.cast(true_melanoma, tf.float32))
         self.true_positives.assign_add(true_pos)
         self.possible_positives.assign_add(possible_pos)
+
     def result(self):
         return self.true_positives / (self.possible_positives + K.epsilon())
+
     def reset_states(self):
         self.true_positives.assign(0.)
         self.possible_positives.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         # Extraire melanoma_index de la configuration, avec 0 comme fallback
@@ -64,6 +75,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
         return cls(melanoma_index=melanoma_index, **filtered_config)
+
 # Classe NevusSpecificity avec from_config amélioré
 class NevusSpecificity(tf.keras.metrics.Metric):
     def __init__(self, nevus_index, name='nevus_specificity', **kwargs):
@@ -71,6 +83,7 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         self.nevus_index = nevus_index
         self.true_negatives = self.add_weight(name='tn', initializer='zeros')
         self.possible_negatives = self.add_weight(name='pn', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -80,11 +93,14 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         possible_neg = tf.reduce_sum(tf.cast(true_nevus, tf.float32))
         self.true_negatives.assign_add(true_neg)
         self.possible_negatives.assign_add(possible_neg)
+
     def result(self):
         return self.true_negatives / (self.possible_negatives + K.epsilon())
+
     def reset_states(self):
         self.true_negatives.assign(0.)
         self.possible_negatives.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         # Extraire nevus_index de la configuration, avec 1 comme fallback
@@ -92,6 +108,7 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
         return cls(nevus_index=nevus_index, **filtered_config)
+
 # Classe CombinedMetric avec from_config corrigé
 class CombinedMetric(tf.keras.metrics.Metric):
     def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
@@ -100,6 +117,7 @@ class CombinedMetric(tf.keras.metrics.Metric):
         self.nevus_specificity = nevus_specificity
         self.alpha = alpha
         self.combined_value = self.add_weight(name='combined_value', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         self.melanoma_recall.update_state(y_true, y_pred, sample_weight)
         self.nevus_specificity.update_state(y_true, y_pred, sample_weight)
@@ -107,12 +125,15 @@ class CombinedMetric(tf.keras.metrics.Metric):
         specificity_value = self.nevus_specificity.result()
         combined = self.alpha * recall_value + (1 - self.alpha) * specificity_value
         self.combined_value.assign(combined)
+
     def result(self):
         return self.combined_value
+
     def reset_states(self):
         self.melanoma_recall.reset_states()
         self.nevus_specificity.reset_states()
         self.combined_value.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         # Créer des instances de MelanomaRecall et NevusSpecificity avec des configurations minimales
@@ -121,6 +142,7 @@ class CombinedMetric(tf.keras.metrics.Metric):
         # Extraire alpha et autres kwargs, en ignorant les configurations internes
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
         return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
+
 # Classe ThresholdOptimizer (inclus pour compatibilité)
 class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def __init__(self, validation_data, class_to_idx, target_recall=0.85, target_specificity=0.70):
@@ -131,13 +153,17 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
         self.target_specificity = target_specificity
         self.best_threshold = 0.5
         self.best_loss = float('inf')
+
     def on_epoch_end(self, epoch, logs=None):
-        pass # Simplifié, car non utilisé ici
+        pass  # Simplifié, car non utilisé ici
+
     def on_train_end(self, logs=None):
-        pass # Simplifié, car non utilisé ici
+        pass  # Simplifié, car non utilisé ici
+
     @classmethod
     def from_config(cls, config):
         return cls(**config)
+
 # Charger le modèle avec tous les objets personnalisés
 @st.cache_resource
 def load_model():
@@ -149,7 +175,9 @@ def load_model():
         'ThresholdOptimizer': ThresholdOptimizer
     }
     return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+
 model = load_model()
+
 # Fonction de prétraitement de l'image sans cv2
 def preprocess_image(image, target_size=(224, 224)):
     try:
@@ -160,6 +188,7 @@ def preprocess_image(image, target_size=(224, 224)):
     except Exception as e:
         st.error(f"Erreur de prétraitement : {e}")
         return None
+
 # Fonction de prédiction avec seuil fixe
 def predict_user_image(image):
     img_array = preprocess_image(image)
@@ -167,42 +196,51 @@ def predict_user_image(image):
         return "Erreur : Impossible de traiter l'image."
     img_array = np.expand_dims(img_array, axis=0)
     prediction = model.predict(img_array)
-    threshold = 0.487 # Seuil fixe comme demandé
-    probability = prediction[0][0] * 100 # Index 0 pour 'mel' (à vérifier)
+    threshold = 0.487  # Seuil fixe comme demandé
+    probability = prediction[0][0] * 100  # Index 0 pour 'mel' (à vérifier)
     if probability >= threshold * 100:
         return f"Malin - Probabilité : {probability:.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
     else:
         return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+
 # Interface Streamlit
 st.title("Classificateur Naevus-Mélanomes")
 st.write("Choisissez une méthode pour fournir une image de grain de beauté pour une classification expérimentale.")
 mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Tester un exemple"))
 image = None
+
 if mode == "Prendre une photo":
     captured_file = st.camera_input("Prendre une photo")
     if captured_file is not None:
         image = Image.open(captured_file)
-        image = ImageOps.exif_transpose(image) # Corriger l'orientation si nécessaire
+        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
+
 elif mode == "Charger une photo":
     uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image) # Corriger l'orientation si nécessaire
+        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
+
 elif mode == "Tester un exemple":
     # Afficher les exemples avec leurs catégories
     st.write("### Sélectionnez un exemple :")
-    selected_option = st.selectbox("Choisissez une image :", [label for label, _ in exemples_complets])
-    if selected_option:
-        # Trouver le chemin correspondant à l'option sélectionnée
-        selected_path = next(path for label, path in exemples_complets if label == selected_option)
-        try:
-            image = Image.open(selected_path)
-        except FileNotFoundError:
-            st.error(f"Fichier non trouvé : {selected_path}")
+    if exemples_complets:
+        selected_option = st.selectbox("Choisissez une image :", [label for label, _ in exemples_complets])
+        if selected_option:
+            # Trouver le chemin correspondant à l'option sélectionnée
+            selected_path = next(path for label, path in exemples_complets if label == selected_option)
+            try:
+                image = Image.open(selected_path)
+            except FileNotFoundError:
+                st.error(f"Fichier non trouvé : {selected_path}")
+    else:
+        st.write("Aucun exemple trouvé dans le répertoire examples ou ses sous-répertoires.")
+
 if image is not None:
     st.image(image, caption="Image sélectionnée", use_container_width=True)
     st.write("Analyse en cours...")
     result = predict_user_image(image)
     st.write(result)
+
 # Avertissement
 st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
