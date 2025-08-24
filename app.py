@@ -1,241 +1,204 @@
-# Si jamais ce code devait être modifié, le faire sans la bibliothèque cv2, que Streamlit a régulièrement du mal à importer
-import streamlit as st
-import tensorflow as tf
-import numpy as np
-from PIL import Image, ImageOps
-import os
-import keras.backend as K
+[10:47:58] 🐙 Pulling code changes from Github...
 
-# Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
-def load_examples(dynamic_dir="examples"):
-    exemples_complets = []
-    base_dir = os.path.join(os.getcwd(), dynamic_dir)
-    if os.path.exists(base_dir):
-        for root, dirs, files in os.walk(base_dir):
-            for file in files:
-                if file.lower().endswith((".jpg", ".jpeg", ".png")):
-                    file_path = os.path.join(root, file)
-                    if os.path.exists(file_path):  # Vérification supplémentaire
-                        relative_path = os.path.relpath(file_path, os.getcwd())
-                        label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
-                        exemples_complets.append((label, relative_path))
-    else:
-        st.write(f"Le répertoire {base_dir} n'existe pas.")
-    return exemples_complets
+[10:47:59] 📦 Processing dependencies...
 
-# Charger les exemples dynamiquement
-exemples_complets = load_examples()
+[10:47:59] 📦 Processed dependencies!
 
-# Fonction focal_loss_fixed
-def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
-    def focal_loss_fixed_internal(y_true, y_pred):
-        pt = y_pred * y_true + (1 - y_pred) * (1 - y_true)
-        pt = K.clip(pt, K.epsilon(), 1 - K.epsilon())
-        loss = -alpha * K.pow(1. - pt, gamma) * K.log(pt)
-        if class_weights is not None:
-            weight_mask = tf.stack([y_true[:, idx] * class_weights[idx] for idx in range(2)], axis=1)
-            loss = loss * weight_mask
-        return K.mean(loss, axis=-1)
-    return focal_loss_fixed_internal
+[10:48:01] 🔄 Updated app!
 
-# Classe MelanomaRecall avec from_config amélioré
-class MelanomaRecall(tf.keras.metrics.Metric):
-    def __init__(self, melanoma_index, name='melanoma_recall', **kwargs):
-        super(MelanomaRecall, self).__init__(name=name, **kwargs)
-        self.melanoma_index = melanoma_index
-        self.true_positives = self.add_weight(name='tp', initializer='zeros')
-        self.possible_positives = self.add_weight(name='pp', initializer='zeros')
+[10:48:11] 🔌 Disconnecting...
 
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
-        y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
-        true_melanoma = tf.equal(y_true, self.melanoma_index)
-        pred_melanoma = tf.equal(y_pred, self.melanoma_index)
-        true_pos = tf.reduce_sum(tf.cast(true_melanoma & pred_melanoma, tf.float32))
-        possible_pos = tf.reduce_sum(tf.cast(true_melanoma, tf.float32))
-        self.true_positives.assign_add(true_pos)
-        self.possible_positives.assign_add(possible_pos)
+[10:48:17] 🖥 Provisioning machine...
 
-    def result(self):
-        return self.true_positives / (self.possible_positives + K.epsilon())
+[10:48:22] 🎛 Preparing system...
 
-    def reset_states(self):
-        self.true_positives.assign(0.)
-        self.possible_positives.assign(0.)
+[10:48:27] ⛓ Spinning up manager process...
 
-    @classmethod
-    def from_config(cls, config):
-        # Extraire melanoma_index de la configuration, avec 0 comme fallback
-        melanoma_index = config.get('melanoma_index', 0)
-        # Filtrer les kwargs pour éviter les doublons
-        filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
-        return cls(melanoma_index=melanoma_index, **filtered_config)
+[10:48:34] 🎈 Inflating balloons...
 
-# Classe NevusSpecificity avec from_config amélioré
-class NevusSpecificity(tf.keras.metrics.Metric):
-    def __init__(self, nevus_index, name='nevus_specificity', **kwargs):
-        super(NevusSpecificity, self).__init__(name=name, **kwargs)
-        self.nevus_index = nevus_index
-        self.true_negatives = self.add_weight(name='tn', initializer='zeros')
-        self.possible_negatives = self.add_weight(name='pn', initializer='zeros')
+[10:48:39] 📖 Unpacking Comic Sans RAR files...
 
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
-        y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
-        true_nevus = tf.equal(y_true, self.nevus_index)
-        pred_nevus = tf.equal(y_pred, self.nevus_index)
-        true_neg = tf.reduce_sum(tf.cast(true_nevus & pred_nevus, tf.float32))
-        possible_neg = tf.reduce_sum(tf.cast(true_nevus, tf.float32))
-        self.true_negatives.assign_add(true_neg)
-        self.possible_negatives.assign_add(possible_neg)
+[10:48:46] 🚧 Loading "Under construction" GIF...
 
-    def result(self):
-        return self.true_negatives / (self.possible_negatives + K.epsilon())
+[10:48:13] 🚀 Starting up repository: 'skincheckmvp', branch: 'main', main module: 'app.py'
 
-    def reset_states(self):
-        self.true_negatives.assign(0.)
-        self.possible_negatives.assign(0.)
+[10:48:13] 🐙 Cloning repository...
 
-    @classmethod
-    def from_config(cls, config):
-        # Extraire nevus_index de la configuration, avec 1 comme fallback
-        nevus_index = config.get('nevus_index', 1)
-        # Filtrer les kwargs pour éviter les doublons
-        filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
-        return cls(nevus_index=nevus_index, **filtered_config)
+[10:48:16] 🐙 Cloning into '/mount/src/skincheckmvp'...
+Warning: Permanently added the ED25519 host key for IP address '140.82.116.4' to the list of known hosts.
 
-# Classe CombinedMetric avec from_config corrigé
-class CombinedMetric(tf.keras.metrics.Metric):
-    def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
-        super(CombinedMetric, self).__init__(name=name, **kwargs)
-        self.melanoma_recall = melanoma_recall
-        self.nevus_specificity = nevus_specificity
-        self.alpha = alpha
-        self.combined_value = self.add_weight(name='combined_value', initializer='zeros')
+[10:48:16] 🐙 Cloned repository!
 
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        self.melanoma_recall.update_state(y_true, y_pred, sample_weight)
-        self.nevus_specificity.update_state(y_true, y_pred, sample_weight)
-        recall_value = self.melanoma_recall.result()
-        specificity_value = self.nevus_specificity.result()
-        combined = self.alpha * recall_value + (1 - self.alpha) * specificity_value
-        self.combined_value.assign(combined)
+[10:48:16] 🐙 Pulling code changes from Github...
 
-    def result(self):
-        return self.combined_value
+[10:48:17] 📦 Processing dependencies...
 
-    def reset_states(self):
-        self.melanoma_recall.reset_states()
-        self.nevus_specificity.reset_states()
-        self.combined_value.assign(0.)
+──────────────────────────────────────── uv ───────────────────────────────────────────
 
-    @classmethod
-    def from_config(cls, config):
-        # Créer des instances de MelanomaRecall et NevusSpecificity avec des configurations minimales
-        melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
-        nevus_specificity = NevusSpecificity.from_config({'nevus_index': 1, 'name': 'nevus_specificity'})
-        # Extraire alpha et autres kwargs, en ignorant les configurations internes
-        filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
-        return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
+Using uv pip install.
 
-# Classe ThresholdOptimizer (inclus pour compatibilité)
-class ThresholdOptimizer(tf.keras.callbacks.Callback):
-    def __init__(self, validation_data, class_to_idx, target_recall=0.85, target_specificity=0.70):
-        super(ThresholdOptimizer, self).__init__()
-        self.val_data = validation_data
-        self.class_to_idx = class_to_idx
-        self.target_recall = target_recall
-        self.target_specificity = target_specificity
-        self.best_threshold = 0.5
-        self.best_loss = float('inf')
+Using Python 3.13.5 environment at /home/adminuser/venv
 
-    def on_epoch_end(self, epoch, logs=None):
-        pass  # Simplifié, car non utilisé ici
+Resolved 63 packages in 848ms
 
-    def on_train_end(self, logs=None):
-        pass  # Simplifié, car non utilisé ici
+Prepared 63 packages in 17.16s
 
-    @classmethod
-    def from_config(cls, config):
-        return cls(**config)
+Installed 63 packages in 1.16s
 
-# Charger le modèle avec tous les objets personnalisés
-@st.cache_resource
-def load_model():
-    custom_objects = {
-        'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
-        'MelanomaRecall': MelanomaRecall,
-        'NevusSpecificity': NevusSpecificity,
-        'CombinedMetric': CombinedMetric,
-        'ThresholdOptimizer': ThresholdOptimizer
-    }
-    return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+ + absl-py==2.3.1
 
-model = load_model()
+ + altair==5.5.0
 
-# Fonction de prétraitement de l'image sans cv2
-def preprocess_image(image, target_size=(224, 224)):
-    try:
-        img = image.convert('RGB')
-        img = img.resize(target_size, Image.Resampling.LANCZOS)
-        img_array = np.array(img) / 255.0
-        return img_array
-    except Exception as e:
-        st.error(f"Erreur de prétraitement : {e}")
-        return None
+ + astunparse==1.6.3
 
-# Fonction de prédiction avec seuil fixe
-def predict_user_image(image):
-    img_array = preprocess_image(image)
-    if img_array is None:
-        return "Erreur : Impossible de traiter l'image."
-    img_array = np.expand_dims(img_array, axis=0)
-    prediction = model.predict(img_array)
-    threshold = 0.487  # Seuil fixe comme demandé
-    probability = prediction[0][0] * 100  # Index 0 pour 'mel' (à vérifier)
-    if probability >= threshold * 100:
-        return f"Malin - Probabilité : {probability:.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
-    else:
-        return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+ + attrs==25.3.0
 
-# Interface Streamlit
-st.title("Classificateur Naevus-Mélanomes")
-st.write("Choisissez une méthode pour fournir une image de grain de beauté pour une classification expérimentale.")
-mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Tester un exemple"))
-image = None
+ + blinker==1.9.0
 
-if mode == "Prendre une photo":
-    captured_file = st.camera_input("Prendre une photo")
-    if captured_file is not None:
-        image = Image.open(captured_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
+ + cachetools==6.1.0
 
-elif mode == "Charger une photo":
-    uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
+ + certifi==2025.8.3
 
-elif mode == "Tester un exemple":
-    # Afficher les exemples avec leurs catégories
-    st.write("### Sélectionnez un exemple :")
-    if exemples_complets:
-        selected_option = st.selectbox("Choisissez une image :", [label for label, _ in exemples_complets])
-        if selected_option:
-            # Trouver le chemin correspondant à l'option sélectionnée
-            selected_path = next(path for label, path in exemples_complets if label == selected_option)
-            try:
-                image = Image.open(selected_path)
-            except FileNotFoundError:
-                st.error(f"Fichier non trouvé : {selected_path}")
-    else:
-        st.write("Aucun exemple trouvé dans le répertoire examples ou ses sous-répertoires.")
+ + charset-normalizer==3.4.3
 
-if image is not None:
-    st.image(image, caption="Image sélectionnée", use_container_width=True)
-    st.write("Analyse en cours...")
-    result = predict_user_image(image)
-    st.write(result)
+ + click==8.2.1
 
-# Avertissement
-st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
+ + flatbuffers==25.2.10
+
+ + gast==[2025-08-24 10:48:37.409696] 0.6.0
+
+ + gitdb==4.0.12
+
+ + gitpython==3.1.45
+
+ + google-pasta==0.2.0
+
+ + grpcio==1.74.0
+
+ + h5py==3.14.0
+
+ +[2025-08-24 10:48:37.410089]  idna==3.10
+
+ + jinja2==3.1.6
+
+ + jsonschema==4.25.1
+
+ + jsonschema-specifications==2025.4.1
+
+ + keras==3.11.3
+
+ + libclang==18.1.1
+
+ + markdown==3.8.2
+
+ + markdown-it-py==4.0.0
+
+ + markupsafe==3.0.2[2025-08-24 10:48:37.410535] 
+
+ + mdurl==0.1.2
+
+ + ml-dtypes==0.5.3
+
+ + namex==0.1.0
+
+ + narwhals==2.1.2
+
+ + [2025-08-24 10:48:37.410679] numpy==2.3.2
+
+ + opt-einsum==3.4.0
+
+ + optree==0.17.0
+
+ + [2025-08-24 10:48:37.410863] packaging==25.0
+
+ + pandas==2.3.2
+
+ + pillow==11.3.0
+
+ + protobuf==6.32.0
+
+ + pyarrow==21.0.0
+
+ + pydeck==0.9.1
+
+ + pygments==2.19.2
+
+ + python-dateutil==2.9.0.post0
+
+ + pytz==2025.2
+
+ + referencing[2025-08-24 10:48:37.411162] ==0.36.2
+
+ + requests==2.32.5
+
+ + rich==14.1.0
+
+ + rpds-py==0.27.0
+
+ [2025-08-24 10:48:37.411289] + setuptools==80.9.0
+
+ + six==1.17.0
+
+ + smmap==5.0.2
+
+ + streamlit==1.48.1
+
+ + tenacity[2025-08-24 10:48:37.411416] ==9.1.2
+
+ + tensorboard==2.20.0
+
+ + tensorboard-data-server==0.7.2
+
+ + tensorflow==2.20.0
+
+ + termcolor==3.1.0
+
+ + toml==0.10.2
+
+ + tornado==6.5.2
+
+ + typing-extensions==4.14.1
+
+ +[2025-08-24 10:48:37.411652]  tzdata==2025.2
+
+ + urllib3==2.5.0
+
+ + watchdog==6.0.0
+
+ + werkzeug==3.1.3
+
+ + wheel==0.45.1
+
+ + wrapt==1.17.3
+
+Checking if Streamlit is installed
+
+Found Streamlit version 1.48.1 in the environment
+
+Installing rich for an improved exception logging
+
+Using uv pip install.
+
+Using Python 3.13.5 environment at /home/adminuser/venv
+
+Audited 1 package in 11ms
+
+────────────────────────────────────────────────────────────────────────────────────────
+
+[10:48:40] 🐍 Python dependencies were installed from /mount/src/skincheckmvp/requirements.txt using uv.
+
+Check if streamlit is installed
+
+Streamlit is already installed
+
+[10:48:41] 📦 Processed dependencies!
+
+2025-08-24 10:48:51.550601: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+
+2025-08-24 10:48:51.630063: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+
+2025-08-24 10:48:57.820848: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+
+2025-08-24 10:49:01.543274: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
