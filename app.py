@@ -72,6 +72,13 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+# Ajout du logo en haut à gauche
+logo_path = os.path.join("images", "Logo_SkinCheck.jpg")
+if os.path.exists(logo_path):
+    st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
+else:
+    st.warning("Logo non trouvé à l'emplacement images/Logo_SkinCheck.jpg. Vérifiez le chemin ou le fichier.")
+
 # Titre et sous-titre avec charte graphique
 st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
@@ -92,14 +99,20 @@ if st.button("←", key="back"):
 
 if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">### Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 3, 1])  # Ajusté pour centrer avec plus d'espace
     with col2:
-        if st.button("Take a photo", key="take_photo"):
-            st.session_state.screen = "Photo"
-        if st.button("Browse phone photos", key="browse"):
-            st.session_state.screen = "Browse"
-        if st.button("Select demo example", key="demo"):
-            st.session_state.screen = "Examples"
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
+        col_btn = st.columns([1, 1, 1])  # Trois colonnes égales
+        with col_btn[0]:
+            if st.button("Take a photo", key="take_photo"):
+                st.session_state.screen = "Photo"
+        with col_btn[1]:
+            if st.button("Browse phone photos", key="browse"):
+                st.session_state.screen = "Browse"
+        with col_btn[2]:
+            if st.button("Select demo example", key="demo"):
+                st.session_state.screen = "Examples"
+        st.markdown('</div>', unsafe_allow_html=True)
 elif st.session_state.screen == "Photo":
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
@@ -117,6 +130,9 @@ elif st.session_state.screen == "Browse":
         st.session_state.image = image
         st.session_state.screen = "Reframe"
 elif st.session_state.screen == "Examples":
+    # Ajout du logo sur cet écran
+    if os.path.exists(logo_path):
+        st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">### Choose one of the following examples:</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
@@ -144,17 +160,26 @@ elif st.session_state.screen == "Reframe":
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
 elif st.session_state.screen == "Result":
+    # Ajout du logo sur cet écran
+    if os.path.exists(logo_path):
+        st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.image, caption="Analysis result:", use_column_width=True)
         st.markdown(f'<div class="normal-text">This should be a {result} mole. Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 3, 1])  # Ajusté pour centrer avec plus d'espace
         with col2:
-            if st.button("Take a photo"):
-                st.session_state.screen = "Photo"
-            if st.button("Browse phone photos"):
-                st.session_state.screen = "Browse"
-            if st.button("Select demo example"):
-                st.session_state.screen = "Examples"
+            st.markdown('<div class="button-container">', unsafe_allow_html=True)
+            col_btn = st.columns([1, 1, 1])  # Trois colonnes égales
+            with col_btn[0]:
+                if st.button("Take a photo"):
+                    st.session_state.screen = "Photo"
+            with col_btn[1]:
+                if st.button("Browse phone photos"):
+                    st.session_state.screen = "Browse"
+            with col_btn[2]:
+                if st.button("Select demo example"):
+                    st.session_state.screen = "Examples"
+            st.markdown('</div>', unsafe_allow_html=True)
