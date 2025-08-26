@@ -81,3 +81,20 @@ body {
 .stApp {
     background-color: #F5F5F5;
 }
+
+/* Styles pour le logo */
+.logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px; /* Ajustable selon la taille réelle du logo */
+    height: auto;
+    z-index: 1000; /* Pour s'assurer qu'il reste au-dessus du contenu */
+}
+
+/* Ajustement pour les conteneurs de boutons */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espacement entre les boutons */
+}
