@@ -23,10 +23,11 @@ jobs:
           uv --version
           uv lock --help
       - name: Generate lockfile from pyproject.toml
-        run: uv lock --from pyproject.toml --output uv.lock
+        run: uv lock --output uv.lock
       - name: Commit lockfile
         run: |
           git config --global user.name 'Your Name'
           git config --global user.email 'your.email@example.com'
           git add uv.lock
-          git commit -m "Add generated uv.lock" || echo "No changes to commit
+          git commit -m "Add generated uv.lock" || echo "No changes to commit"
+          git push
