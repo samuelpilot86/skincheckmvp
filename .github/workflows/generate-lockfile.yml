@@ -22,8 +22,11 @@ jobs:
         run: |
           uv --version
           uv lock --help
-      - name: Generate lockfile
-        run: uv lock || echo "uv lock failed"
+      - name: Generate requirements.lock
+        run: |
+          echo "streamlit==1.48.1\ntensorflow-cpu==2.20.0\nnumpy==2.3.2\npillow==11.3.0" > requirements.txt
+          pip install -r requirements.txt || echo "pip install failed"
+          pip freeze > requirements.lock || echo "pip freeze failed"
       - name: List files
         run: ls -la
       - name: Check git config and secret
@@ -38,8 +41,8 @@ jobs:
         run: |
           git config user.name 'samuelpilot86'
           git config user.email 'samuel.pilot@mines-paris.org'
-          git add uv.lock
-          git commit -m "Add generated uv.lock" || echo "No changes to commit"
+          git add requirements.lock
+          git commit -m "Add generated requirements.lock" || echo "No changes to commit"
           echo "Attempting push with token: ***"
           git push https://${PAT_TOKEN}@github.com/samuelpilot86/skincheckmvp.git HEAD:main || echo "Push failed: $?"
         env:
