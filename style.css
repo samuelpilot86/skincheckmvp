@@ -27,32 +27,55 @@ body {
     box-sizing: border-box; /* Inclut padding dans les dimensions */
 }
 
+/* Conteneur pour logo, titre et sous-titre */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centre horizontalement */
+    margin-bottom: 20px;
+    width: 100%;
+    position: relative; /* Pour le positionnement du logo */
+}
+
+/* Wrapper pour le logo */
+.logo-wrapper {
+    position: absolute;
+    left: 10px; /* Ajustez selon vos besoins */
+    top: 50%;
+    transform: translateY(-50%); /* Centre verticalement le logo */
+}
+
+.logo-wrapper img {
+    width: 46px;
+    height: auto;
+    vertical-align: middle;
+}
+
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 600; /* SemiBold */
+    font-weight: 600;
     font-size: 28px;
-    display: inline-flex; /* Alignement strict à gauche avec le logo */
-    align-items: center; /* Centre verticalement */
+    text-align: center; /* Centre le texte du titre */
     margin: 0; /* Supprime les marges par défaut */
 }
 
 .app-title span.skin {
-    color: #4A90E2; /* Bleu clair pour "Skin" */
+    color: #4A90E2;
 }
 
 .app-title span.check {
-    color: #7ED321; /* Vert doux pour "Check" */
+    color: #7ED321;
 }
 
 /* Sous-titre */
 .subtitle {
     font-family: 'Roboto', sans-serif;
-    font-weight: 600; /* SemiBold */
+    font-weight: 600;
     font-size: 14px;
     color: #333333;
-    margin-left: 10px; /* Espacement après le logo */
-    display: inline; /* Aligne avec le titre */
+    text-align: center; /* Centre le sous-titre */
+    margin-top: 5px; /* Espacement au-dessus du sous-titre */
 }
 
 /* Texte normal */
