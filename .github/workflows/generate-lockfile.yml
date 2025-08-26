@@ -31,3 +31,5 @@ jobs:
           git add uv.lock
           git commit -m "Add generated uv.lock" || echo "No changes to commit"
           git push
+      - name: List files
+        run: ls -la
