@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh; /* Pour garantir la responsivité sur toute la hauteur */
-    background-color: #FFFFFF; /* Fond blanc pur par défaut pour toute la page */
+    /* Pas de background-color explicite pour laisser le blanc pur par défaut */
 }
 .stApp {
     max-width: 390px; /* Largeur maximale comme un iPhone 13 */
@@ -18,7 +18,7 @@ body {
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
-        /* Pas de background-color explicite ici, laissant le fond blanc pur par défaut */
+        background-color: #FFFFFF; /* Fond blanc pur en dehors */
     }
 }
 /* Conteneur principal pour responsivité */
@@ -28,7 +28,7 @@ body {
     box-sizing: border-box; /* Inclut padding dans les dimensions */
     margin-top: 0; /* Réinitialise la marge en haut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
-    padding-top: 30px; /* Ajuste pour compenser l'en-tête Streamlit (modifiez selon la hauteur) */
+    padding-top: 10px; /* Réduit pour éviter les problèmes, ajustez si nécessaire */
     background-color: #F5F5F5; /* Assure un fond cohérent */
     position: relative; /* Pour le positionnement */
     z-index: 1; /* Place le contenu au-dessus de l'en-tête */
