@@ -85,7 +85,7 @@ if os.path.exists(logo_path):
     st.image(logo_path, width=46, use_container_width=False)
 
 html = f'''
-    <table style="width: 100%; border: 0; margin-bottom: 20px;">
+    <table style="width: 100%; border: none; margin-bottom: 20px;">
       <tr>
         <td style="width: 46px; vertical-align: middle; padding-right: 10px;"></td>
         <td style="vertical-align: middle; text-align: center;">
