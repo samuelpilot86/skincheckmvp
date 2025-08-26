@@ -80,13 +80,20 @@ with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Logo, titre et sous-titre sur l'écran Accueil
-st.markdown('<div class="header-container">', unsafe_allow_html=True)
-logo_path = os.path.join("images", "logo_skincheck_transparent.png")
-if os.path.exists(logo_path):
-    st.markdown('<div class="logo-wrapper"><img src="file/{}" width="46" alt="Logo"></div>'.format(logo_path), unsafe_allow_html=True)
-st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="width: 46px; vertical-align: middle; padding-right: 10px;">
+              <img src="images/logo_skincheck_transparent.png" alt="Logo" width="46" height="auto">
+            </td>
+            <td style="vertical-align: middle; text-align: center;">
+              <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
+              <div class="subtitle">Should I show this mole to my dermatologist?</div>
+            </td>
+            <td style="width: 46px; vertical-align: middle;"></td>
+          </tr>
+        </table>
+    ', unsafe_allow_html=True)
 
 # Avertissement
 st.markdown(
