@@ -43,7 +43,8 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Debug PAT_TOKEN
-        run: echo "PAT_TOKEN length: ${#PAT_TOKEN}"
+        run: |
+          if [ -n "$PAT_TOKEN" ]; then echo "PAT_TOKEN is set"; else echo "PAT_TOKEN is not set"; fi
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Commit and push lockfile
