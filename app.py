@@ -1,18 +1,21 @@
 import numpy as np
 from PIL import Image, ImageOps
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["OMP_NUM_THREADS"] = "8"
-os.environ["TF_FORCE_CPU_ONLY"] = "1"
-print("CUDA_VISIBLE_DEVICES:", os.environ.get("CUDA_VISIBLE_DEVICES"))
-print("TF_CPP_MIN_LOG_LEVEL:", os.environ.get("TF_CPP_MIN_LOG_LEVEL"))
-print("OMP_NUM_THREADS:", os.environ.get("OMP_NUM_THREADS"))
-print("TF_FORCE_CPU_ONLY:", os.environ.get("TF_FORCE_CPU_ONLY"))
-import tensorflow as tf
-print("TensorFlow version:", tf.__version__)
-import streamlit as st
-from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
+try:
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    os.environ["OMP_NUM_THREADS"] = "8"
+    os.environ["TF_FORCE_CPU_ONLY"] = "1"
+    print("CUDA_VISIBLE_DEVICES:", os.environ.get("CUDA_VISIBLE_DEVICES"))
+    print("TF_CPP_MIN_LOG_LEVEL:", os.environ.get("TF_CPP_MIN_LOG_LEVEL"))
+    print("OMP_NUM_THREADS:", os.environ.get("OMP_NUM_THREADS"))
+    print("TF_FORCE_CPU_ONLY:", os.environ.get("TF_FORCE_CPU_ONLY"))
+    import tensorflow as tf
+    print("TensorFlow version:", tf.__version__)
+    from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
+    print("model_utils imported successfully")
+except Exception as e:
+    print("Error during setup:", str(e))
 
 # Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
 def load_examples(dynamic_dir="examples"):
