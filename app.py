@@ -44,7 +44,6 @@ def load_model():
         'ThresholdOptimizer': ThresholdOptimizer
     }
     return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
-
 model = load_model()
 
 # Fonction de prétraitement
@@ -83,20 +82,18 @@ with open("style.css") as f:
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
     st.image(logo_path, width=46, use_container_width=False)
-
 html = f'''
-    <table style="width: 100%; border: none; margin-bottom: 20px;">
+    <table class="no-border">
       <tr>
-        <td style="width: 46px; vertical-align: middle; padding-right: 10px;"></td>
-        <td style="vertical-align: middle; text-align: center;">
-          <div class="app-title"><span class="skin">SSSSkin</span><span class="check">Check</span></div>
+        <td class="logo-cell"></td>
+        <td class="title-cell">
+          <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
           <div class="subtitle">Should I show this mole to my dermatologist?</div>
         </td>
-        <td style="width: 46px; vertical-align: middle;"></td>
+        <td class="empty-cell"></td>
       </tr>
     </table>
 '''
-
 st.markdown(html, unsafe_allow_html=True)
 
 # Avertissement
@@ -111,7 +108,6 @@ if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
 if st.button("←", key="back"):
     st.session_state.screen = "Accueil"
-
 if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">### Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 3, 1])
@@ -128,7 +124,6 @@ if st.session_state.screen == "Accueil":
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
         st.markdown('</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Photo":
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
@@ -137,7 +132,6 @@ elif st.session_state.screen == "Photo":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
-
 elif st.session_state.screen == "Browse":
     st.markdown('<div class="photo-section">Choose an image (JPG/PNG)</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["jpg", "png"])
@@ -146,7 +140,6 @@ elif st.session_state.screen == "Browse":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
-
 elif st.session_state.screen == "Examples":
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
@@ -168,7 +161,6 @@ elif st.session_state.screen == "Examples":
             if st.button(label, key=f"melanoma_{label}"):
                 st.session_state.image = Image.open(path)
                 st.session_state.screen = "Reframe"
-
 elif st.session_state.screen == "Reframe":
     if 'image' in st.session_state:
         image = st.session_state.image
@@ -181,7 +173,6 @@ elif st.session_state.screen == "Reframe":
                 result, prob, color = predict_user_image(image)
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
-
 elif st.session_state.screen == "Result":
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
