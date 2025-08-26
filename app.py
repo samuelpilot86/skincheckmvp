@@ -75,7 +75,7 @@ with open("style.css") as f:
 # Ajout du logo en haut à gauche
 logo_path = os.path.join("images", "Logo_SkinCheck.jpg")
 if os.path.exists(logo_path):
-    st.image(logo_path, use_column_width=False, width=100, output_format="JPEG", channels="RGB")
+    st.image(logo_path, use_container_width=False, width=46, output_format="JPEG", channels="RGB")
 else:
     st.warning("Logo non trouvé à l'emplacement images/Logo_SkinCheck.jpg. Vérifiez le chemin ou le fichier.")
     
