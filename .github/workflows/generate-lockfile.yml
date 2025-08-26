@@ -53,7 +53,8 @@ jobs:
           git config user.email 'samuel.pilot@mines-paris.org'
           git add requirements.lock
           git commit -m "Add generated requirements.lock" || echo "No changes to commit"
-          echo "Push URL: https://${PAT_TOKEN}@github.com/samuelpilot86/skincheckmvp.git"
-          git push https://${PAT_TOKEN}@github.com/samuelpilot86/skincheckmvp.git HEAD:main || echo "Push failed: $?"
+          export PUSH_URL="https://${PAT_TOKEN}@github.com/samuelpilot86/skincheckmvp.git"
+          echo "Push URL (masked for log): https://<masked>@github.com/samuelpilot86/skincheckmvp.git"
+          git push "$PUSH_URL" HEAD:main || echo "Push failed: $?"
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
