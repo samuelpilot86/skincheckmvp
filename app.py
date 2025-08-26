@@ -83,9 +83,9 @@ with open("style.css") as f:
 st.markdown('<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">', unsafe_allow_html=True)
 st.markdown('<tr>', unsafe_allow_html=True)
 st.markdown('<td style="width: 46px; vertical-align: middle; padding-right: 10px;">', unsafe_allow_html=True)
-logo_path = os.path.join("images", "logo_skincheck_transparent.png")
+logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
-    st.image(logo_path, width=46, use_column_width=False)
+    st.image(logo_path, width=46, use_container_width=False)
 st.markdown('</td>', unsafe_allow_html=True)
 st.markdown('<td style="vertical-align: middle; text-align: center;">', unsafe_allow_html=True)
 st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
@@ -168,7 +168,7 @@ elif st.session_state.screen == "Examples":
 elif st.session_state.screen == "Reframe":
     if 'image' in st.session_state:
         image = st.session_state.image
-        st.image(image, caption="Frame the picture so that the mole takes half the space", use_column_width=True)
+        st.image(image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
         st.markdown(f'<div class="normal-text">Current size: {image.size[0]} x {image.size[1]}</div>', unsafe_allow_html=True)
         if st.button("Reframe", key="reframe"):
             st.warning("Veuillez recadrer manuellement l'image pour que la lésion occupe environ la moitié de l'espace.")
@@ -187,7 +187,7 @@ elif st.session_state.screen == "Result":
     st.markdown('</div>', unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
-        st.image(st.session_state.image, caption="Analysis result:", use_column_width=True)
+        st.image(st.session_state.image, caption="Analysis result:", use_container_width=True)
         st.markdown(f'<div class="normal-text">This should be a {result} mole. Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
