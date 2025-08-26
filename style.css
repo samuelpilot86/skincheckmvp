@@ -87,7 +87,7 @@ body {
     position: absolute;
     top: 10px;
     left: 10px;
-    width: 100px; /* Ajustable selon la taille réelle du logo */
+    width: auto; /* Ajustable selon la taille réelle du logo */
     height: auto;
     z-index: 1000; /* Pour s'assurer qu'il reste au-dessus du contenu */
 }
