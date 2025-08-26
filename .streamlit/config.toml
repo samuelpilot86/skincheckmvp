@@ -1,2 +1,2 @@
 [runner]
-installCommand = "uv sync --frozen --lockfile uv.lock"
+installCommand = "pip install -r requirements.lock"
