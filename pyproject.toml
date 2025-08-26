@@ -11,6 +11,9 @@ dependencies = [
     "pillow>=10.4.0"
 ]
 
+[tool.poetry]
+package-mode = false  # Désactive le mode package pour éviter l'installation du projet
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
