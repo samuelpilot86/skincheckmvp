@@ -1,24 +1,18 @@
 import numpy as np
 from PIL import Image, ImageOps
 import os
-try:
-    os.environ["CUDA_VISIBLE_DEVICES"] = ""
-    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    os.environ["OMP_NUM_THREADS"] = "8"
-    os.environ["TF_FORCE_CPU_ONLY"] = "1"
-    print("CUDA_VISIBLE_DEVICES:", os.environ.get("CUDA_VISIBLE_DEVICES"))
-    print("TF_CPP_MIN_LOG_LEVEL:", os.environ.get("TF_CPP_MIN_LOG_LEVEL"))
-    print("OMP_NUM_THREADS:", os.environ.get("OMP_NUM_THREADS"))
-    print("TF_FORCE_CPU_ONLY:", os.environ.get("TF_FORCE_CPU_ONLY"))
-    import tensorflow as tf
-    print("TensorFlow version:", tf.__version__)
-    from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
-    print("model_utils imported successfully")
-except Exception as e:
-    print("Error during setup:", str(e))
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
+import tensorflow as tf
+from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
 import streamlit as st
 
-# Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
+# Envelopper le contenu dans un conteneur principal pour la responsivité
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+
+# Fonction pour charger dynamiquement les images
 def load_examples(dynamic_dir="examples"):
     exemples_complets = {"benign": [], "melanoma": []}
     base_dir = os.path.join(os.getcwd(), dynamic_dir)
@@ -39,7 +33,7 @@ def load_examples(dynamic_dir="examples"):
 # Charger les exemples dynamiquement
 exemples_complets = load_examples()
 
-# Charger le modèle avec tous les objets personnalisés
+# Charger le modèle
 @st.cache_resource
 def load_model():
     custom_objects = {
@@ -53,7 +47,7 @@ def load_model():
 
 model = load_model()
 
-# Fonction de prétraitement de l'image sans cv2
+# Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
     try:
         img = image.convert('RGB')
@@ -64,7 +58,7 @@ def preprocess_image(image, target_size=(224, 224)):
         st.error(f"Erreur de prétraitement : {e}")
         return None
 
-# Fonction de prédiction avec seuil fixe
+# Fonction de prédiction
 def predict_user_image(image):
     img_array = preprocess_image(image)
     if img_array is None:
@@ -81,20 +75,18 @@ def predict_user_image(image):
 # Interface Streamlit
 st.set_page_config(page_title="SkinCheck", layout="centered")
 
-# Charger le CSS depuis le fichier
+# Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Ajout du logo en haut à gauche
+# Logo, titre et sous-titre dans un conteneur
 logo_path = os.path.join("images", "logo_skincheck_transparent.png")
+st.markdown('<div class="header-container">', unsafe_allow_html=True)
 if os.path.exists(logo_path):
-    st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB")
-else:
-    st.warning("Logo non trouvé à l'emplacement images/logo_skincheck_transparent.png. Vérifiez le chemin ou le fichier.")
-    
-# Titre et sous-titre avec charte graphique
+    st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
 st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Avertissement
 st.markdown(
@@ -106,16 +98,15 @@ st.markdown(
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
-
 if st.button("←", key="back"):
     st.session_state.screen = "Accueil"
 
 if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">### Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 3, 1])  # Ajusté pour centrer avec plus d'espace
+    col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
-        col_btn = st.columns([1, 1, 1])  # Trois colonnes égales
+        col_btn = st.columns([1, 1, 1])
         with col_btn[0]:
             if st.button("Take a photo", key="take_photo"):
                 st.session_state.screen = "Photo"
@@ -126,6 +117,7 @@ if st.session_state.screen == "Accueil":
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
         st.markdown('</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Photo":
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
@@ -134,6 +126,7 @@ elif st.session_state.screen == "Photo":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
+
 elif st.session_state.screen == "Browse":
     st.markdown('<div class="photo-section">Choose an image (JPG/PNG)</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["jpg", "png"])
@@ -142,10 +135,14 @@ elif st.session_state.screen == "Browse":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
+
 elif st.session_state.screen == "Examples":
-    # Ajout du logo sur cet écran
+    st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
-        st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
+        st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
+    st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">### Choose one of the following examples:</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
@@ -160,6 +157,7 @@ elif st.session_state.screen == "Examples":
             if st.button(label, key=f"melanoma_{label}"):
                 st.session_state.image = Image.open(path)
                 st.session_state.screen = "Reframe"
+
 elif st.session_state.screen == "Reframe":
     if 'image' in st.session_state:
         image = st.session_state.image
@@ -172,20 +170,24 @@ elif st.session_state.screen == "Reframe":
                 result, prob, color = predict_user_image(image)
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
+
 elif st.session_state.screen == "Result":
-    # Ajout du logo sur cet écran
+    st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
-        st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
+        st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
+    st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.image, caption="Analysis result:", use_column_width=True)
         st.markdown(f'<div class="normal-text">This should be a {result} mole. Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 3, 1])  # Ajusté pour centrer avec plus d'espace
+        col1, col2, col3 = st.columns([1, 3, 1])
         with col2:
             st.markdown('<div class="button-container">', unsafe_allow_html=True)
-            col_btn = st.columns([1, 1, 1])  # Trois colonnes égales
+            col_btn = st.columns([1, 1, 1])
             with col_btn[0]:
                 if st.button("Take a photo"):
                     st.session_state.screen = "Photo"
@@ -196,3 +198,4 @@ elif st.session_state.screen == "Result":
                 if st.button("Select demo example"):
                     st.session_state.screen = "Examples"
             st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True) # Ferme le conteneur principal
