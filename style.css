@@ -27,17 +27,15 @@ body {
 .header-container {
     display: flex;
     align-items: center;
-    justify-content: center; /* Centre horizontalement */
     margin-bottom: 20px;
-    width: 100%;
-    position: relative; /* Pour le positionnement du logo */
+    width: 100%; /* Occupe toute la largeur disponible */
 }
-/* Wrapper pour le logo */
+/* Wrapper pour le logo (si utilisé ailleurs) */
 .logo-wrapper {
     position: absolute;
-    left: 10px; /* Ajustez selon vos besoins */
+    left: 10px;
     top: 50%;
-    transform: translateY(-50%); /* Centre verticalement le logo */
+    transform: translateY(-50%);
 }
 .logo-wrapper img {
     width: 46px;
@@ -115,26 +113,19 @@ body {
 }
 /* Styles pour le logo */
 .logo {
-    width: 46px; /* Taille cohérente avec ton app.py */
+    width: 46px;
     height: auto;
-    margin-right: 10px; /* Espacement avant le titre */
-    vertical-align: middle; /* Alignement vertical avec le texte */
+    margin-right: 10px;
+    vertical-align: middle;
 }
-/* Conteneur pour logo, titre et sous-titre */
-.header-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 100%; /* Occupe toute la largeur disponible */
-}
-/* Supprimer les bordures du tableau */
-.no-border {
+/* Styles pour le tableau d'en-tête */
+.header-table {
     width: 100%;
     border: none;
     border-collapse: collapse;
     margin-bottom: 20px;
 }
-.no-border td {
+.header-table td {
     border: none;
     padding: 0;
 }
@@ -146,6 +137,7 @@ body {
 .title-cell {
     vertical-align: middle;
     text-align: center;
+    flex-grow: 1; /* Permet à la cellule du titre de prendre l'espace restant */
 }
 .empty-cell {
     width: 46px;
