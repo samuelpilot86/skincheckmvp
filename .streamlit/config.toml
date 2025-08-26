@@ -1,2 +1,2 @@
 [runner]
-installCommand = "pip install -r requirements.lock"
+# SUPPRIME installCommand = "pip install -r requirements.lock"
