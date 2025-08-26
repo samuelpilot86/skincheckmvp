@@ -1,4 +1,4 @@
 streamlit==1.48.1
-tensorflow==2.20.0  # Ou teste 2.16.0 si 2.20.0 pose problème
+tensorflow-cpu==2.20.0
 numpy==2.3.2
 pillow==11.3.0
