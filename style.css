@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh; /* Pour garantir la responsivité sur toute la hauteur */
+    background-color: #FFFFFF; /* Fond blanc pur par défaut pour toute la page */
 }
 .stApp {
     max-width: 390px; /* Largeur maximale comme un iPhone 13 */
@@ -13,10 +14,11 @@ body {
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
     padding-top: 0; /* Supprime le padding en haut par défaut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
+    position: relative; /* Pour le positionnement */
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
-        background-color: #FFFFFF; /* Fond blanc pur en dehors */
+        /* Pas de background-color explicite ici, laissant le fond blanc pur par défaut */
     }
 }
 /* Conteneur principal pour responsivité */
@@ -26,9 +28,10 @@ body {
     box-sizing: border-box; /* Inclut padding dans les dimensions */
     margin-top: 0; /* Réinitialise la marge en haut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
-    /* Ajustement léger pour compenser l'en-tête */
-    padding-top: 5px; /* Petite compensation pour l'en-tête sans décalage excessif */
+    padding-top: 30px; /* Ajuste pour compenser l'en-tête Streamlit (modifiez selon la hauteur) */
     background-color: #F5F5F5; /* Assure un fond cohérent */
+    position: relative; /* Pour le positionnement */
+    z-index: 1; /* Place le contenu au-dessus de l'en-tête */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
