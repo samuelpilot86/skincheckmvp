@@ -13,6 +13,9 @@ body {
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
     padding-top: 0; /* Supprime le padding en haut par défaut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
+    /* Tente de masquer l'en-tête Streamlit */
+    height: 100%; /* Occupe toute la hauteur */
+    position: relative; /* Pour le positionnement */
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
@@ -26,6 +29,9 @@ body {
     box-sizing: border-box; /* Inclut padding dans les dimensions */
     margin-top: 0; /* Supprime toute marge en haut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
+    /* Déplace le contenu juste sous l'en-tête si elle persiste */
+    position: relative;
+    top: 0; /* Ajuste si nécessaire */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
@@ -147,4 +153,8 @@ body {
 .empty-cell {
     width: 46px;
     vertical-align: middle;
+}
+/* Tentative de masquer l'en-tête Streamlit */
+.stApp > header {
+    display: none; /* Masque l'en-tête par défaut de Streamlit */
 }
