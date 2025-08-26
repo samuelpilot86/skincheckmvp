@@ -28,9 +28,10 @@ jobs:
         run: ls -la
       - name: Check git config and secret
         run: |
-          echo "PAT_TOKEN: $PAT_TOKEN"
-          git config --get user.name
-          git config --get user.email
+          echo "PAT_TOKEN: $PAT_TOKEN" || echo "Failed to echo PAT_TOKEN"
+          git config --get user.name || echo "user.name not set"
+          git config --get user.email || echo "user.email not set"
+        continue-on-error: true  # Ignore les erreurs et continue
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Commit and push lockfile
