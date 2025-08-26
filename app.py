@@ -75,10 +75,10 @@ with open("style.css") as f:
 # Ajout du logo en haut à gauche
 logo_path = os.path.join("images", "Logo_SkinCheck.jpg")
 if os.path.exists(logo_path):
-    st.markdown(f'<img src="file://{logo_path}" class="logo">', unsafe_allow_html=True)
+    st.image(logo_path, use_column_width=False, width=100, output_format="JPEG", channels="RGB")
 else:
     st.warning("Logo non trouvé à l'emplacement images/Logo_SkinCheck.jpg. Vérifiez le chemin ou le fichier.")
-
+    
 # Titre et sous-titre avec charte graphique
 st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
