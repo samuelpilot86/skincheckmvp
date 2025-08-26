@@ -8,17 +8,18 @@ import keras.backend as K
 
 # Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
 def load_examples(dynamic_dir="examples"):
-    exemples_complets = []
+    exemples_complets = {"benign": [], "melanoma": []}
     base_dir = os.path.join(os.getcwd(), dynamic_dir)
     if os.path.exists(base_dir):
         for root, dirs, files in os.walk(base_dir):
             for file in files:
                 if file.lower().endswith((".jpg", ".jpeg", ".png")):
                     file_path = os.path.join(root, file)
-                    if os.path.exists(file_path):  # Vérification supplémentaire
+                    if os.path.exists(file_path):
                         relative_path = os.path.relpath(file_path, os.getcwd())
                         label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
-                        exemples_complets.append((label, relative_path))
+                        category = "benign" if "benign" in root.lower() else "melanoma"
+                        exemples_complets[category].append((label, relative_path))
     else:
         st.write(f"Le répertoire {base_dir} n'existe pas.")
     return exemples_complets
@@ -65,9 +66,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Extraire melanoma_index de la configuration, avec 0 comme fallback
         melanoma_index = config.get('melanoma_index', 0)
-        # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
         return cls(melanoma_index=melanoma_index, **filtered_config)
 
@@ -98,9 +97,7 @@ class NevusSpecificity(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Extraire nevus_index de la configuration, avec 1 comme fallback
         nevus_index = config.get('nevus_index', 1)
-        # Filtrer les kwargs pour éviter les doublons
         filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
         return cls(nevus_index=nevus_index, **filtered_config)
 
@@ -131,10 +128,8 @@ class CombinedMetric(tf.keras.metrics.Metric):
 
     @classmethod
     def from_config(cls, config):
-        # Créer des instances de MelanomaRecall et NevusSpecificity avec des configurations minimales
         melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
         nevus_specificity = NevusSpecificity.from_config({'nevus_index': 1, 'name': 'nevus_specificity'})
-        # Extraire alpha et autres kwargs, en ignorant les configurations internes
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
         return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
 
@@ -150,10 +145,10 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
         self.best_loss = float('inf')
 
     def on_epoch_end(self, epoch, logs=None):
-        pass  # Simplifié, car non utilisé ici
+        pass
 
     def on_train_end(self, logs=None):
-        pass  # Simplifié, car non utilisé ici
+        pass
 
     @classmethod
     def from_config(cls, config):
@@ -188,56 +183,115 @@ def preprocess_image(image, target_size=(224, 224)):
 def predict_user_image(image):
     img_array = preprocess_image(image)
     if img_array is None:
-        return "Erreur : Impossible de traiter l'image."
+        return "Erreur : Impossible de traiter l'image.", None, None
     img_array = np.expand_dims(img_array, axis=0)
     prediction = model.predict(img_array)
-    threshold = 0.487  # Seuil fixe comme demandé
-    probability = prediction[0][0] * 100  # Index 0 pour 'mel' (à vérifier)
+    threshold = 0.487
+    probability = prediction[0][0] * 100
     if probability >= threshold * 100:
-        return f"Malin - Probabilité : {probability:.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+        return "Melanoma", probability, "red"
     else:
-        return f"Bénin - Probabilité : {(100 - probability):.2f}%. Consultez un dermatologue. (Prototype, pas garanti)"
+        return "Benign", (100 - probability), "green"
 
 # Interface Streamlit
-st.title("Classificateur Naevus-Mélanomes")
-st.write("Choisissez une méthode pour fournir une image de grain de beauté pour une classification expérimentale.")
-mode = st.radio("Méthode :", ("Prendre une photo", "Charger une photo", "Tester un exemple"))
-image = None
+st.set_page_config(page_title="SkinCheck", layout="centered")
 
-if mode == "Prendre une photo":
-    captured_file = st.camera_input("Prendre une photo")
-    if captured_file is not None:
-        image = Image.open(captured_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
-
-elif mode == "Charger une photo":
-    uploaded_file = st.file_uploader("Choisissez une image (JPG/PNG)", type=["jpg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image)  # Corriger l'orientation si nécessaire
-
-elif mode == "Tester un exemple":
-    # Afficher les exemples avec leurs catégories
-    st.write("### Sélectionnez un exemple :")
-    if exemples_complets:
-        selected_option = st.selectbox("Choisissez une image :", sorted([label for label, _ in exemples_complets]))
-        if selected_option:
-            # Trouver le chemin correspondant à l'option sélectionnée
-            selected_path = next(path for label, path in exemples_complets if label == selected_option)
-            try:
-                image = Image.open(selected_path)
-            except FileNotFoundError:
-                st.error(f"Fichier non trouvé : {selected_path}")
-    else:
-        st.write("Aucun exemple trouvé dans le répertoire examples ou ses sous-répertoires.")
-
-if image is not None:
-    status_container = st.empty()  # Conteneur temporaire pour le message
-    with status_container:
-        st.write("Analyse en cours...")
-    result = predict_user_image(image)
-    status_container.empty()  # Supprime le message après l'analyse
-    st.write(result)
+st.markdown("<h1 style='text-align: center; color: #00aaff;'>SkinCheck</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Should I show this mole to my dermatologist?</h3>", unsafe_allow_html=True)
 
 # Avertissement
-st.write("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
+st.markdown("<div style='background-color: #ff4500; color: white; padding: 10px; border-radius: 5px; text-align: center;'>"
+            "<strong>Warning:</strong> This app is a prototype and has not been validated by any medical authority. Its results should not be trusted. If you have any doubts, consult your dermatologist.</div>", 
+            unsafe_allow_html=True)
+
+# Navigation et mode
+if 'screen' not in st.session_state:
+    st.session_state.screen = "Accueil"
+
+if st.button("←", key="back"):
+    st.session_state.screen = "Accueil"
+
+if st.session_state.screen == "Accueil":
+    st.write("### Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Take a photo", key="take_photo"):
+            st.session_state.screen = "Photo"
+        if st.button("Browse phone photos", key="browse"):
+            st.session_state.screen = "Browse"
+        if st.button("Select demo example", key="demo"):
+            st.session_state.screen = "Examples"
+
+elif st.session_state.screen == "Photo":
+    captured_file = st.camera_input("Take a sharp photo as close as possible")
+    if captured_file is not None:
+        image = Image.open(captured_file)
+        image = ImageOps.exif_transpose(image)
+        st.session_state.image = image
+        st.session_state.screen = "Reframe"
+
+elif st.session_state.screen == "Browse":
+    uploaded_file = st.file_uploader("Choose an image (JPG/PNG)", type=["jpg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        image = ImageOps.exif_transpose(image)
+        st.session_state.image = image
+        st.session_state.screen = "Reframe"
+
+elif st.session_state.screen == "Examples":
+    st.write("### Choose one of the following examples:")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("**Benign moles:**")
+        for label, path in exemples_complets.get("benign", []):
+            if st.button(label, key=f"benign_{label}"):
+                st.session_state.image = Image.open(path)
+                st.session_state.screen = "Reframe"
+    with col2:
+        st.write("**Melanomas:**")
+        for label, path in exemples_complets.get("melanoma", []):
+            if st.button(label, key=f"melanoma_{label}"):
+                st.session_state.image = Image.open(path)
+                st.session_state.screen = "Reframe"
+
+elif st.session_state.screen == "Reframe":
+    if 'image' in st.session_state:
+        image = st.session_state.image
+        st.image(image, caption="Frame the picture so that the mole takes half the space", use_column_width=True)
+        st.write(f"Current size: {image.size[0]} x {image.size[1]}")
+        if st.button("Reframe", key="reframe"):
+            # Simuler un ajustement (limitation sans cv2)
+            st.warning("Veuillez recadrer manuellement l'image pour que la lésion occupe environ la moitié de l'espace.")
+        if st.button("Analyze", key="analyze"):
+            with st.spinner("Analysis in progress..."):
+                result, prob, color = predict_user_image(image)
+            st.session_state.screen = "Result"
+            st.session_state.result = (result, prob, color)
+
+elif st.session_state.screen == "Result":
+    if 'result' in st.session_state:
+        result, prob, color = st.session_state.result
+        st.image(st.session_state.image, caption="Analysis result:", use_column_width=True)
+        st.write(f"This should be a {result} mole. Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.")
+        st.markdown(f"<div style='background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;'>{result}</div>", unsafe_allow_html=True)
+        st.write("New analysis:")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("Take a photo"):
+                st.session_state.screen = "Photo"
+            if st.button("Browse phone photos"):
+                st.session_state.screen = "Browse"
+            if st.button("Select demo example"):
+                st.session_state.screen = "Examples"
+
+# Instructions
+st.markdown("### Instructions")
+st.write("""
+- **Accueil**: Take a photo, browse phone photos, or select a demo example.
+- **Reframe**: Frame the mole to take half the space.
+- **Result**: View the analysis and decide next steps.
+""")
+
+# Avertissement final
+st.markdown("---")
+st.error("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
