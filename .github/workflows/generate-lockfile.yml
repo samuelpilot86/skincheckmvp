@@ -1,0 +1,29 @@
+name: Generate Lockfile
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permet de lancer manuellement
+
+jobs:
+  generate-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13' # Compatible avec tes logs
+      - name: Install uv
+        run: pip install uv
+      - name: Generate lockfile
+        run: uv lock --requirement requirements.txt --output uv.lock
+      - name: Commit lockfile
+        run: |
+          git config --global user.name 'samuelpilot86'
+          git config --global user.email 'samuel.pilot@mines-paris.org'
+          git add uv.lock
+          git commit -m "Add generated uv.lock" || echo "No changes to commit"
+          git push
