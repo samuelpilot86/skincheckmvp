@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "skincheckmvp"
+version = "0.1.0"
+description = "Skin lesion classification app"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+streamlit = "1.48.1"
+tensorflow = "2.20.0"
+numpy = "2.3.2"
+pillow = "11.3.0"
+# Ajoute les autres dépendances listées dans tes logs si nécessaire
