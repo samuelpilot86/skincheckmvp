@@ -89,7 +89,7 @@ html = f'''
       <tr>
         <td style="width: 46px; vertical-align: middle; padding-right: 10px;"></td>
         <td style="vertical-align: middle; text-align: center;">
-          <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
+          <div class="app-title"><span class="skin">SSSSkin</span><span class="check">Check</span></div>
           <div class="subtitle">Should I show this mole to my dermatologist?</div>
         </td>
         <td style="width: 46px; vertical-align: middle;"></td>
