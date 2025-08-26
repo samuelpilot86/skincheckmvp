@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image, ImageOps
 import os
+import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
@@ -78,14 +79,18 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Logo et titre
+# Logo et titre dans un tableau HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
-    st.image(logo_path, width=46, use_container_width=False)
+    logo_data = base64.b64encode(open(logo_path, "rb").read()).decode()
+    logo_html = f'<img src="data:image/png;base64,{logo_data}" alt="Logo" width="46" height="auto">'
+else:
+    logo_html = ""  # Pas de fallback texte pour éviter le désalignement
+
 html = f'''
-    <table class="no-border">
+    <table class="header-table">
       <tr>
-        <td class="logo-cell"></td>
+        <td class="logo-cell">{logo_html}</td>
         <td class="title-cell">
           <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
           <div class="subtitle">Should I show this mole to my dermatologist?</div>
