@@ -79,21 +79,24 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Logo, titre et sous-titre sur l'écran Accueil
-st.markdown('<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">', unsafe_allow_html=True)
-st.markdown('<tr>', unsafe_allow_html=True)
-st.markdown('<td style="width: 46px; vertical-align: middle; padding-right: 10px;">', unsafe_allow_html=True)
+# Rendu du tableau en un seul bloc HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
-if os.path.exists(logo_path):
-    st.image(logo_path, width=46, use_container_width=False)
-st.markdown('</td>', unsafe_allow_html=True)
-st.markdown('<td style="vertical-align: middle; text-align: center;">', unsafe_allow_html=True)
-st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
-st.markdown('</td>', unsafe_allow_html=True)
-st.markdown('<td style="width: 46px; vertical-align: middle;"></td>', unsafe_allow_html=True)
-st.markdown('</tr>', unsafe_allow_html=True)
-st.markdown('</table>', unsafe_allow_html=True)
+logo_html = f'<img src="file://{os.path.abspath(logo_path)}" alt="Logo" width="46" height="auto">' if os.path.exists(logo_path) else "Logo"
+html = f'''
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="width: 46px; vertical-align: middle; padding-right: 10px;">
+          {logo_html}
+        </td>
+        <td style="vertical-align: middle; text-align: center;">
+          <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
+          <div class="subtitle">Should I show this mole to my dermatologist?</div>
+        </td>
+        <td style="width: 46px; vertical-align: middle;"></td>
+      </tr>
+    </table>
+'''
+st.markdown(html, unsafe_allow_html=True)
 
 # Avertissement
 st.markdown(
