@@ -19,11 +19,11 @@ jobs:
       - name: Install uv
         run: pip install uv
       - name: Generate lockfile
-        run: uv lock --requirement requirements.txt --output uv.lock
+        run: uv lock --with requirements.txt --output uv.lock
       - name: Commit lockfile
         run: |
-          git config --global user.name 'samuelpilot86'
-          git config --global user.email 'samuel.pilot@mines-paris.org'
+          git config --global user.name 'Your Name'
+          git config --global user.email 'your.email@example.com'
           git add uv.lock
           git commit -m "Add generated uv.lock" || echo "No changes to commit"
           git push
