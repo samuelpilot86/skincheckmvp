@@ -11,6 +11,8 @@ body {
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
+    padding-top: 0; /* Supprime le padding en haut par défaut */
+    border-top: none; /* Supprime une éventuelle bordure en haut */
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
@@ -22,6 +24,8 @@ body {
     width: 100%;
     padding: 10px;
     box-sizing: border-box; /* Inclut padding dans les dimensions */
+    margin-top: 0; /* Supprime toute marge en haut */
+    border-top: none; /* Supprime une éventuelle bordure en haut */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
@@ -124,6 +128,7 @@ body {
     border: none;
     border-collapse: collapse;
     margin-bottom: 20px;
+    margin-top: 0; /* Supprime toute marge en haut */
 }
 .header-table td {
     border: none;
