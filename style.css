@@ -9,14 +9,14 @@ body {
     max-width: 390px; /* Largeur maximale comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
     margin: 0 auto; /* Centre l'app horizontalement */
-    background-color: #F5F5F5; /* Fond par défaut */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
+    background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
 }
 
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
-        background-color: #FFFFFF; /* Fond blanc pour résolutions supérieures */
+        background-color: #FFFFFF; /* Fond blanc pur en dehors */
     }
 }
 
@@ -32,8 +32,9 @@ body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600; /* SemiBold */
     font-size: 28px;
-    display: flex; /* Pour aligner le logo et le texte */
+    display: inline-flex; /* Alignement strict à gauche avec le logo */
     align-items: center; /* Centre verticalement */
+    margin: 0; /* Supprime les marges par défaut */
 }
 
 .app-title span.skin {
@@ -51,6 +52,7 @@ body {
     font-size: 14px;
     color: #333333;
     margin-left: 10px; /* Espacement après le logo */
+    display: inline; /* Aligne avec le titre */
 }
 
 /* Texte normal */
@@ -110,6 +112,7 @@ body {
     width: 46px; /* Taille cohérente avec ton app.py */
     height: auto;
     margin-right: 10px; /* Espacement avant le titre */
+    vertical-align: middle; /* Alignement vertical avec le texte */
 }
 
 /* Conteneur pour logo, titre et sous-titre */
@@ -117,4 +120,5 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    width: 100%; /* Occupe toute la largeur disponible */
 }
