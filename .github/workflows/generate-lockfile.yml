@@ -22,9 +22,14 @@ jobs:
         run: |
           uv --version
           uv lock --help
-      - name: Generate requirements.lock
+      - name: Generate requirements.txt and lockfile
         run: |
-          echo "streamlit==1.48.1\ntensorflow-cpu==2.20.0\nnumpy==2.3.2\npillow==11.3.0" > requirements.txt
+          cat <<EOF > requirements.txt
+          streamlit==1.48.1
+          tensorflow-cpu==2.20.0
+          numpy==2.3.2
+          pillow==11.3.0
+          EOF
           pip install -r requirements.txt || echo "pip install failed"
           pip freeze > requirements.lock || echo "pip freeze failed"
       - name: List files
