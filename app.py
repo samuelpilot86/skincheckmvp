@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageOps
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer  # Import des objets du modèle
 
 # Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
