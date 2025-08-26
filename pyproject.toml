@@ -1,15 +1,15 @@
-[tool.poetry]
+[project]
 name = "skincheckmvp"
 version = "0.1.0"
 description = "Skin lesion classification app"
-authors = ["Your Name <your.email@example.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.13"
-streamlit = ">=1.38.0"
-tensorflow = ">=2.17.0"
-numpy = ">=1.26.4"
-pillow = ">=10.4.0"
+authors = [{ name = "Your Name", email = "your.email@example.com" }]
+requires-python = ">=3.13"
+dependencies = [
+    "streamlit>=1.38.0",
+    "tensorflow>=2.17.0",
+    "numpy>=1.26.4",
+    "pillow>=10.4.0"
+]
 
 [build-system]
 requires = ["poetry-core"]
