@@ -23,7 +23,7 @@ jobs:
           uv --version
           uv lock --help
       - name: Generate lockfile
-        run: uv lock --output uv.lock
+        run: uv lock
       - name: Commit lockfile
         run: |
           git config --global user.name 'Your Name'
