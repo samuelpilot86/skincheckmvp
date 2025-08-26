@@ -9,7 +9,7 @@ import tensorflow as tf
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
 import streamlit as st
 
-# Envelopper le contenu dans un conteneur principal pour la responsivité
+# Envelopper le contenu dans un conteneur principal
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Fonction pour charger dynamiquement les images
@@ -79,9 +79,9 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Logo, titre et sous-titre dans un conteneur
-logo_path = os.path.join("images", "logo_skincheck_transparent.png")
+# Logo, titre et sous-titre sur l'écran Accueil
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
+logo_path = os.path.join("images", "logo_skincheck_transparent.png")
 if os.path.exists(logo_path):
     st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
 st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
