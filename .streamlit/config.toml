@@ -1,2 +1,0 @@
-[runner]
-installCommand = "uv sync --frozen --lockfile uv.lock"
