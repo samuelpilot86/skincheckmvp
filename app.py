@@ -16,6 +16,7 @@ try:
     print("model_utils imported successfully")
 except Exception as e:
     print("Error during setup:", str(e))
+import streamlit as st
 
 # Fonction pour charger dynamiquement les images depuis le répertoire "examples" et tous ses sous-répertoires
 def load_examples(dynamic_dir="examples"):
