@@ -31,15 +31,16 @@ jobs:
           echo "PAT_TOKEN: $PAT_TOKEN" || echo "Failed to echo PAT_TOKEN"
           git config --get user.name || echo "user.name not set"
           git config --get user.email || echo "user.email not set"
-        continue-on-error: true  # Ignore les erreurs et continue
+        continue-on-error: true
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Commit and push lockfile
         run: |
-          git config user.name 'Your Name'
-          git config user.email 'your.email@example.com'
+          git config user.name 'samuelpilot86'
+          git config user.email 'samuel.pilot@mines-paris.org'
           git add uv.lock
           git commit -m "Add generated uv.lock" || echo "No changes to commit"
-          git push https://${{ secrets.PAT_TOKEN }}@github.com/samuelpilot86/skincheckmvp.git HEAD:main
+          echo "Attempting push with token: ***"
+          git push https://${PAT_TOKEN}@github.com/samuelpilot86/skincheckmvp.git HEAD:main || echo "Push failed: $?"
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
