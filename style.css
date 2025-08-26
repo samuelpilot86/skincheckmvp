@@ -13,7 +13,6 @@ body {
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
     padding-top: 0; /* Supprime le padding en haut par défaut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
-    position: relative; /* Pour le positionnement */
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
@@ -25,12 +24,11 @@ body {
     width: 100%;
     padding: 10px;
     box-sizing: border-box; /* Inclut padding dans les dimensions */
-    margin-top: -20px; /* Compense la hauteur de l'en-tête Streamlit (ajustez si nécessaire) */
+    margin-top: 0; /* Réinitialise la marge en haut */
     border-top: none; /* Supprime une éventuelle bordure en haut */
-    position: relative;
-    top: 0; /* Réinitialise le top */
-    background-color: #F5F5F5; /* Assure que le fond recouvre la barre */
-    z-index: 1; /* Place le contenu au-dessus de l'en-tête */
+    /* Ajustement léger pour compenser l'en-tête */
+    padding-top: 5px; /* Petite compensation pour l'en-tête sans décalage excessif */
+    background-color: #F5F5F5; /* Assure un fond cohérent */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
