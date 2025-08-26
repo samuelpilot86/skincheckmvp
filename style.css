@@ -1,9 +1,30 @@
 /* Styles globaux */
 body {
-    background-color: #F5F5F5;
-    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    min-height: 100vh; /* Pour garantir la responsivité sur toute la hauteur */
+}
+
+.stApp {
+    max-width: 390px; /* Largeur maximale comme un iPhone 13 */
+    max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
+    margin: 0 auto; /* Centre l'app horizontalement */
+    background-color: #F5F5F5; /* Fond par défaut */
+    overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
+    font-family: 'Roboto', sans-serif;
+}
+
+@media (min-width: 391px) or (min-height: 845px) {
+    .stApp {
+        background-color: #FFFFFF; /* Fond blanc pour résolutions supérieures */
+    }
+}
+
+/* Conteneur principal pour responsivité */
+.main-container {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* Inclut padding dans les dimensions */
 }
 
 /* Titre de l'app "SkinCheck" */
@@ -11,7 +32,8 @@ body {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600; /* SemiBold */
     font-size: 28px;
-    text-align: center;
+    display: flex; /* Pour aligner le logo et le texte */
+    align-items: center; /* Centre verticalement */
 }
 
 .app-title span.skin {
@@ -28,8 +50,7 @@ body {
     font-weight: 600; /* SemiBold */
     font-size: 14px;
     color: #333333;
-    text-align: center;
-    margin-bottom: 20px;
+    margin-left: 10px; /* Espacement après le logo */
 }
 
 /* Texte normal */
@@ -77,24 +98,23 @@ body {
     text-align: center;
 }
 
-/* Assurer que Streamlit applique les styles correctement */
-.stApp {
-    background-color: #F5F5F5;
-}
-
-/* Styles pour le logo */
-.logo {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: auto; /* Ajustable selon la taille réelle du logo */
-    height: auto;
-    z-index: 1000; /* Pour s'assurer qu'il reste au-dessus du contenu */
-}
-
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
     display: flex;
     justify-content: center;
     gap: 10px; /* Espacement entre les boutons */
+}
+
+/* Styles pour le logo */
+.logo {
+    width: 46px; /* Taille cohérente avec ton app.py */
+    height: auto;
+    margin-right: 10px; /* Espacement avant le titre */
+}
+
+/* Conteneur pour logo, titre et sous-titre */
+.header-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
 }
