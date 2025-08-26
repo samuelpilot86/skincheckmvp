@@ -10,6 +10,13 @@ jobs:
   generate-lockfile:
     runs-on: ubuntu-latest
     steps:
+      - name: Check git config and secret
+        run: |
+          echo "PAT_TOKEN: $PAT_TOKEN"
+          git config --get user.name
+          git config --get user.email
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Python
@@ -33,10 +40,4 @@ jobs:
           git push https://${{ secrets.PAT_TOKEN }}@github.com/samuelpilot86/skincheckmvp.git HEAD:main
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-      - name: Check git config and secret
-        run: |
-          echo "PAT_TOKEN: $PAT_TOKEN"
-          git config --get user.name
-          git config --get user.email
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
