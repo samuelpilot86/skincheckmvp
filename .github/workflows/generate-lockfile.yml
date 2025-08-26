@@ -22,7 +22,7 @@ jobs:
         run: |
           uv --version
           uv lock --help
-      - name: Generate lockfile from pyproject.toml
+      - name: Generate lockfile
         run: uv lock --output uv.lock
       - name: Commit lockfile
         run: |
