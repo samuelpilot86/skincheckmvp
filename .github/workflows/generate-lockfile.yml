@@ -18,8 +18,8 @@ jobs:
           python-version: '3.13' # Compatible avec tes logs
       - name: Install uv
         run: pip install uv
-      - name: Generate lockfile
-        run: uv lock requirements.txt --output uv.lock
+      - name: Generate lockfile from pyproject.toml
+        run: uv lock --with pyproject.toml --output uv.lock
       - name: Commit lockfile
         run: |
           git config --global user.name 'Your Name'
