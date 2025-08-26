@@ -1,0 +1,83 @@
+/* Styles globaux */
+body {
+    background-color: #F5F5F5;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Titre de l'app "SkinCheck" */
+.app-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; /* SemiBold */
+    font-size: 28px;
+    text-align: center;
+}
+
+.app-title span.skin {
+    color: #4A90E2; /* Bleu clair pour "Skin" */
+}
+
+.app-title span.check {
+    color: #7ED321; /* Vert doux pour "Check" */
+}
+
+/* Sous-titre */
+.subtitle {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600; /* SemiBold */
+    font-size: 14px;
+    color: #333333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Texte normal */
+.normal-text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 18px;
+    color: #333333;
+}
+
+/* Boutons */
+.stButton > button {
+    background-color: #4A90E2; /* Bleu clair */
+    color: #F5F5F5; /* Blanc cassé */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+}
+
+.stButton > button:hover {
+    background-color: #3A7AC2; /* Bleu légèrement plus foncé au hover */
+}
+
+/* Icônes dans les boutons (simulées avec texte pour l'instant) */
+.button-icon {
+    color: #F5F5F5; /* Blanc cassé */
+    margin-right: 5px;
+}
+
+/* Fond pour la prise et le recadrage de photos */
+.photo-section {
+    background-color: #333333;
+    color: #F5F5F5;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 24px;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Assurer que Streamlit applique les styles correctement */
+.stApp {
+    background-color: #F5F5F5;
+}
