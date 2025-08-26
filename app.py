@@ -158,17 +158,3 @@ elif st.session_state.screen == "Result":
                 st.session_state.screen = "Browse"
             if st.button("Select demo example"):
                 st.session_state.screen = "Examples"
-
-# Instructions
-st.markdown('<div class="normal-text">### Instructions</div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="normal-text">
-- <strong>Accueil</strong>: Take a photo, browse phone photos, or select a demo example.<br>
-- <strong>Reframe</strong>: Frame the mole to take half the space.<br>
-- <strong>Result</strong>: View the analysis and decide next steps.
-</div>
-""", unsafe_allow_html=True)
-
-# Avertissement final
-st.markdown("---")
-st.error("**Avertissement : Cet outil est un prototype. Consultez toujours un dermatologue pour un diagnostic officiel.**")
