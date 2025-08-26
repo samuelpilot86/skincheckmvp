@@ -4,7 +4,6 @@ body {
     padding: 0;
     min-height: 100vh; /* Pour garantir la responsivité sur toute la hauteur */
 }
-
 .stApp {
     max-width: 390px; /* Largeur maximale comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
@@ -13,20 +12,17 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
 }
-
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
         background-color: #FFFFFF; /* Fond blanc pur en dehors */
     }
 }
-
 /* Conteneur principal pour responsivité */
 .main-container {
     width: 100%;
     padding: 10px;
     box-sizing: border-box; /* Inclut padding dans les dimensions */
 }
-
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
     display: flex;
@@ -36,7 +32,6 @@ body {
     width: 100%;
     position: relative; /* Pour le positionnement du logo */
 }
-
 /* Wrapper pour le logo */
 .logo-wrapper {
     position: absolute;
@@ -44,13 +39,11 @@ body {
     top: 50%;
     transform: translateY(-50%); /* Centre verticalement le logo */
 }
-
 .logo-wrapper img {
     width: 46px;
     height: auto;
     vertical-align: middle;
 }
-
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
@@ -59,15 +52,12 @@ body {
     text-align: center;
     margin: 0;
 }
-
 .app-title span.skin {
     color: #4A90E2;
 }
-
 .app-title span.check {
     color: #7ED321;
 }
-
 /* Sous-titre */
 .subtitle {
     font-family: 'Roboto', sans-serif;
@@ -77,7 +67,6 @@ body {
     text-align: center;
     margin-top: 5px;
 }
-
 /* Texte normal */
 .normal-text {
     font-family: 'Roboto', sans-serif;
@@ -85,7 +74,6 @@ body {
     font-size: 18px;
     color: #333333;
 }
-
 /* Boutons */
 .stButton > button {
     background-color: #4A90E2; /* Bleu clair */
@@ -100,17 +88,14 @@ body {
     display: inline-block;
     margin: 5px;
 }
-
 .stButton > button:hover {
     background-color: #3A7AC2; /* Bleu légèrement plus foncé au hover */
 }
-
 /* Icônes dans les boutons (simulées avec texte pour l'instant) */
 .button-icon {
     color: #F5F5F5; /* Blanc cassé */
     margin-right: 5px;
 }
-
 /* Fond pour la prise et le recadrage de photos */
 .photo-section {
     background-color: #333333;
@@ -122,14 +107,12 @@ body {
     border-radius: 5px;
     text-align: center;
 }
-
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
     display: flex;
     justify-content: center;
     gap: 10px; /* Espacement entre les boutons */
 }
-
 /* Styles pour le logo */
 .logo {
     width: 46px; /* Taille cohérente avec ton app.py */
@@ -137,11 +120,34 @@ body {
     margin-right: 10px; /* Espacement avant le titre */
     vertical-align: middle; /* Alignement vertical avec le texte */
 }
-
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
     width: 100%; /* Occupe toute la largeur disponible */
+}
+/* Supprimer les bordures du tableau */
+.no-border {
+    width: 100%;
+    border: none;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.no-border td {
+    border: none;
+    padding: 0;
+}
+.logo-cell {
+    width: 46px;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+.title-cell {
+    vertical-align: middle;
+    text-align: center;
+}
+.empty-cell {
+    width: 46px;
+    vertical-align: middle;
 }
