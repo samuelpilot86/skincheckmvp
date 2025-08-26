@@ -42,6 +42,10 @@ jobs:
         continue-on-error: true
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      - name: Debug PAT_TOKEN
+        run: echo "PAT_TOKEN length: ${#PAT_TOKEN}"
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Commit and push lockfile
         run: |
           git config user.name 'samuelpilot86'
