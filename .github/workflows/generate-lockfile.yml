@@ -10,13 +10,6 @@ jobs:
   generate-lockfile:
     runs-on: ubuntu-latest
     steps:
-      - name: Check git config and secret
-        run: |
-          echo "PAT_TOKEN: $PAT_TOKEN"
-          git config --get user.name
-          git config --get user.email
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Python
@@ -30,14 +23,22 @@ jobs:
           uv --version
           uv lock --help
       - name: Generate lockfile
-        run: uv lock
+        run: uv lock || echo "uv lock failed"
+      - name: List files
+        run: ls -la
+      - name: Check git config and secret
+        run: |
+          echo "PAT_TOKEN: $PAT_TOKEN"
+          git config --get user.name
+          git config --get user.email
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
       - name: Commit and push lockfile
         run: |
-          git config --global user.name 'Your Name'
-          git config --global user.email 'your.email@example.com'
+          git config user.name 'Your Name'
+          git config user.email 'your.email@example.com'
           git add uv.lock
           git commit -m "Add generated uv.lock" || echo "No changes to commit"
           git push https://${{ secrets.PAT_TOKEN }}@github.com/samuelpilot86/skincheckmvp.git HEAD:main
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
