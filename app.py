@@ -115,24 +115,14 @@ elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="photo-section">Take a sharp photo as close as possible or choose an existing file</div>', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        captured_file = st.camera_input("Take a photo", key="camera_input")
-        if captured_file is not None:
-            image = Image.open(captured_file)
-            image = ImageOps.exif_transpose(image)
-            st.session_state.image = image
-            st.session_state.screen = "Reframe"
-            st.rerun()
-    with col2:
-        uploaded_file = st.file_uploader("Choose file", type=["jpg", "png"], key="file_uploader")
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-            image = ImageOps.exif_transpose(image)
-            st.session_state.image = image
-            st.session_state.screen = "Reframe"
-            st.rerun()
+    st.markdown('<div class="photo-section">Choose a file or take a photo</div>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Choose a file", type=["jpg", "png"], key="file_uploader")
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        image = ImageOps.exif_transpose(image)
+        st.session_state.image = image
+        st.session_state.screen = "Reframe"
+        st.rerun()
 elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
