@@ -10,6 +10,7 @@ import tensorflow as tf
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
 import streamlit as st
 from st_clickable_images import clickable_images
+from streamlit_cropper import st_cropper
 
 # Charger le modèle
 @st.cache_resource
@@ -107,6 +108,7 @@ elif st.session_state.screen == "Photo":
         st.session_state.image = image
         st.session_state.screen = "Reframe"
         st.rerun()
+
 elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
@@ -188,43 +190,22 @@ elif st.session_state.screen == "Examples":
                 st.session_state.result = (result, prob, color)
                 st.rerun()
                
-elif st.session_state.screen == "Reframe":
+elif st.session_state.screen = "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
         st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
-        # Initialisation des coordonnées de recadrage
-        if 'crop_coords' not in st.session_state:
-            width, height = image.size
-            st.session_state.crop_coords = {'left': 0, 'top': 0, 'right': width, 'bottom': height}
-
-        # Sliders pour ajuster le recadrage
-        col1, col2 = st.columns(2)
-        with col1:
-            left = st.slider("Left", 0, image.size[0], st.session_state.crop_coords['left'], key="left_slider")
-            top = st.slider("Top", 0, image.size[1], st.session_state.crop_coords['top'], key="top_slider")
-        with col2:
-            right = st.slider("Right", 0, image.size[0], st.session_state.crop_coords['right'], key="right_slider")
-            bottom = st.slider("Bottom", 0, image.size[1], st.session_state.crop_coords['bottom'], key="bottom_slider")
-
-        # Mettre à jour les coordonnées dans l'état
-        st.session_state.crop_coords = {'left': left, 'top': top, 'right': right, 'bottom': bottom}
-
-        # Recadrer l'image
-        cropped_image = image.crop((left, top, right, bottom))
+        from streamlit_cropper import st_cropper
+        cropped_image = st_cropper(image, realtime_update=True, box_color='#4A90E2', aspect_ratio=None)  # Rectangle déplaçable
         st.image(cropped_image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
         st.markdown(f'<div class="normal-text">Current size: {cropped_image.size[0]} x {cropped_image.size[1]}</div>', unsafe_allow_html=True)
-
-        # Boutons de validation
-        if st.button("Adjust", key="adjust"):
-            pass  # Pas d'action spécifique, juste pour indiquer que l'utilisateur peut ajuster
         if st.button("Analyze", key="analyze"):
             with st.spinner("Analysis in progress..."):
                 result, prob, color = predict_user_image(cropped_image)
             st.session_state.screen = "Result"
+            st.session_state.image = cropped_image
             st.session_state.result = (result, prob, color)
-            st.session_state.image = cropped_image  # Mettre à jour l'image recadrée
             st.rerun()
 
 elif st.session_state.screen == "Result":
