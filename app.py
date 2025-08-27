@@ -177,9 +177,9 @@ elif st.session_state.screen == "Examples":
     # Affichage des en-têtes
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="normal-text">Benign moles</div>', unsafe_allow_html=True)
+        st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
     with col2:
-        st.markdown('<div class="normal-text">Melanomas</div>', unsafe_allow_html=True)
+        st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
 
     # Affichage des images avec boutons cliquables sans noms de fichiers
     with col1:
