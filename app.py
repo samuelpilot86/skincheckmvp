@@ -161,20 +161,23 @@ elif st.session_state.screen == "Examples":
     st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Définition des chemins des images fixes (ajustement du chemin)
+    # Définition du répertoire des images
     base_dir = os.path.join(os.getcwd(), "examples")
     st.write(f"Répertoire de travail : {os.getcwd()}")  # Débogage
     st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")  # Débogage
-    benign_images = [
-        os.path.join(base_dir, "Grain de beauté 1.jpg"),
-        os.path.join(base_dir, "Grain de beauté 2.jpg"),
-        os.path.join(base_dir, "Grain de beauté 3.jpg")
-    ]
-    melanoma_images = [
-        os.path.join(base_dir, "Mélanome 1.jpg"),
-        os.path.join(base_dir, "Mélanome 2.jpg"),
-        os.path.join(base_dir, "Mélanome 3.jpg")
-    ]
+
+    # Lister les fichiers réels dans le répertoire
+    available_files = os.listdir(base_dir)
+    benign_images = [os.path.join(base_dir, f) for f in available_files if "Grain de beaute" in f]
+    melanoma_images = [os.path.join(base_dir, f) for f in available_files if "Mélanome" in f]
+
+    # Trier pour correspondre à l'ordre attendu
+    benign_images.sort()  # Trie pour obtenir un ordre naturel (1, 2, 3)
+    melanoma_images.sort()  # Trie pour obtenir un ordre naturel (1, 2, 3)
+
+    # Vérification des images trouvées
+    st.write(f"Images bénignes trouvées : {benign_images}")
+    st.write(f"Images mélanomes trouvées : {melanoma_images}")
 
     # HTML pour le tableau avec images cliquables (placeholders numérotés)
     table_html = """
