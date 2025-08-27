@@ -7,23 +7,6 @@
     /* Pas de background-color pour laisser le fond par défaut (#FFFFFF) */
 }
 
-.stAppHeader {
-    heigth: 0 !important;
-    max-heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
-}
-
-.st-emotion-cache-1ffuo7c {
-    heigth: 0 !important;
-    max-heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
-}
-
-.e3g0k5y1 {
-    heigth: 0 !important;
-    max-heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
-}
-
-<header class="stAppHeader st-emotion-cache-1ffuo7c e3g0k5y1" data-testid="stHeader"><div class="stAppToolbar st-emotion-cache-14vh5up e3g0k5y2" data-testid="stToolbar"><div class="st-emotion-cache-1j22a0y e3g0k5y4"><div class="st-emotion-cache-70qvj9 e3g0k5y5"></div><div class="st-emotion-cache-scp8yw e3g0k5y6"><div class="stToolbarActions st-emotion-cache-1p1m4ay ekuhni82" data-testid="stToolbarActions"><div class="stToolbarActionButton" data-testid="stToolbarActionButton"><button kind="header" data-testid="stBaseButton-header" aria-label="" class="st-emotion-cache-egm30d e7nj0r414"><div class="st-emotion-cache-1wbqy5l ekuhni80"><span data-testid="stToolbarActionButtonLabel">Share</span></div></button></div><div class="stToolbarActionButton" data-testid="stToolbarActionButton"><button kind="header" data-testid="stBaseButton-header" aria-label="" class="st-emotion-cache-egm30d e7nj0r414"><div class="st-emotion-cache-1wbqy5l ekuhni80"><div data-testid="stToolbarActionButtonIcon" class="st-emotion-cache-1lb4qcp ekuhni81"></div></div></button></div><div class="stToolbarActionButton" data-testid="stToolbarActionButton"><button kind="header" data-testid="stBaseButton-header" aria-label="" class="st-emotion-cache-egm30d e7nj0r414"><div class="st-emotion-cache-1wbqy5l ekuhni80"><div data-testid="stToolbarActionButtonIcon" class="st-emotion-cache-b9qwbc ekuhni81"></div></div></button></div><div class="stToolbarActionButton" data-testid="stToolbarActionButton"><button kind="header" data-testid="stBaseButton-header" aria-label="" class="st-emotion-cache-egm30d e7nj0r414"><div class="st-emotion-cache-1wbqy5l ekuhni80"><div data-testid="stToolbarActionButtonIcon" class="st-emotion-cache-30do4w ekuhni81"></div></div></button></div></div><span id="MainMenu" class="stMainMenu st-emotion-cache-czk5ss e8lvnlb8" data-testid="stMainMenu" aria-haspopup="true" aria-expanded="false"><button kind="headerNoPadding" data-testid="stBaseButton-headerNoPadding" aria-label="" class="st-emotion-cache-1aplgmp e7nj0r415"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="e1t4gh341 st-emotion-cache-1pbsqtx ex0cdmw0"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></span></div></div></div></header>
-
 .appview-container {
     margin: 0 !important; /* Supprime toute marge supérieure par défaut */
     padding: 0 !important;
