@@ -8,7 +8,7 @@
 }
 
 .appview-container {
-    margin: 0 !important; /* Supprime toute marge supérieure par défaut */
+    margin: 0 !important; /* Supprime toute marge supérieure par défaut */ 
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
