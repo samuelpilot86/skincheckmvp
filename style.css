@@ -124,6 +124,10 @@
 }
 
 .normal-text > column-title {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 18px;
+    color: #333333;
     text-align: center;
 }
 
