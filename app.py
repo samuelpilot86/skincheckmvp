@@ -76,7 +76,7 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+ 
 # Logo et titre dans un tableau HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
