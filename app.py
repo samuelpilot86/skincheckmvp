@@ -76,7 +76,7 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Envelopper tout le contenu dans un conteneur principal
+# Envelopper tout le contenu dans un conteneur principal 
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Logo et titre dans un tableau HTML
