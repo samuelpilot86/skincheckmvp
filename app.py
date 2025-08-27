@@ -105,8 +105,6 @@ title_html = f'''
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
-if st.button("←", key="back"):
-    st.session_state.screen = "Accueil"
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
@@ -125,6 +123,8 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     
 elif st.session_state.screen == "Photo":
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
     if captured_file is not None:
