@@ -19,17 +19,6 @@
     box-shadow: none !important;
 }
 
-.main {
-    border: none !important;
-    box-shadow: none !important;
-    padding-top: 0 !important; /* Supprime tout padding supérieur */
-}
-
-.main-container {
-    border: none !important;
-    box-shadow: none !important;
-}
-
 /* Nouvelles règles pour supprimer la barre d'outils ou l'en-tête */
 .stToolbar {
     display: none !important; /* Cache la barre d'outils si elle est présente */
@@ -40,12 +29,6 @@
     box-shadow: none !important;
     display: none !important; /* Cache l'en-tête si présent */
 }
-
-body {
-    margin: 0;
-    padding: 0;
-}
-
 
 
 /* Conteneur principal pour responsivité */
