@@ -24,7 +24,7 @@
     position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
-    /*background-color: #F5F5F5 !important;*/
+    background-color: #F5F5F5 !important;
     font-family: 'Roboto', sans-serif;
     padding: 0;
     border: none; /* Supprime toutes les bordures */
