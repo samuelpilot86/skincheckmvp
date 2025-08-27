@@ -255,7 +255,7 @@ elif st.session_state.screen == "Examples":
 
     # Gestion de la réponse du message (simulée ici, à adapter selon votre backend)
     def handle_message(event):
-        if event.data.type === 'updateSession':
+        if event.data.type == 'updateSession':
             st.session_state.screen = event.data.screen
             st.session_state.image = event.data.image
             st.session_state.result = [event.data.result, event.data.probability, event.data.color]
