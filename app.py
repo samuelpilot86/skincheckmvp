@@ -179,7 +179,7 @@ elif st.session_state.screen == "Examples":
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
-        clicked_benign = st_clickable_images(
+        clicked_benign = clickable_images(
             benign_images,
             titles=["", "", ""],  # Vides pour éviter les légendes
             div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
