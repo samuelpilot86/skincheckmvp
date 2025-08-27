@@ -152,10 +152,10 @@ elif st.session_state.screen == "Browse":
         st.rerun()
 
 elif st.session_state.screen == "Examples":
+    st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown(title_html, unsafe_allow_html=True)
 
     # Définition des chemins des images fixes
     base_dir = os.path.join(os.getcwd(), "examples")
