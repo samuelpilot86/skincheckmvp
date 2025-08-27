@@ -117,7 +117,7 @@ elif st.session_state.screen == "Photo":
         st.rerun()
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click \'Browse\' to select a photo (or take one with your phone). Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Choose a file", type=["jpg", "png"], key="file_uploader")
+    uploaded_file = st.file_uploader(type=["jpg", "png"], key="file_uploader")
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
         image = ImageOps.exif_transpose(image)
