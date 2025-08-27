@@ -2,55 +2,29 @@
 body {
     margin: 0;
     padding: 0;
-    min-height: 100vh; /* Pour garantir la responsivité sur toute la hauteur */
-    /* Pas de background-color explicite pour laisser le blanc pur par défaut */
 }
 .stApp {
-    margin: 0 auto; /* Centre l'app horizontalement */
-    overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
-    font-family: 'Roboto', sans-serif;
-    /* Supprime les contraintes de largeur et hauteur, laissées à .main-container */
-    padding: 0;
-    border: none;
-    position: relative;
-}
-@media (min-width: 391px) or (min-height: 845px) {
-    .stApp {
-        background-color: #FFFFFF; /* Fond blanc pur en dehors */
+    /* Rien, parce que je n'ai pas tout le contrôle sur .stApp */
     }
-}
+
 /* Conteneur principal pour responsivité */
 .main-container {
     width: 390px; /* Largeur fixe comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
+    position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
     background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur */
-    padding: 10px; /* Padding interne */
-    box-sizing: border-box; /* Inclut padding dans les dimensions */
+    padding: 0;
     border: none; /* Supprime toutes les bordures */
-    position: relative; /* Pour le positionnement */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
-    display: flex;
     align-items: center;
-    margin-bottom: 20px;
     width: 100%; /* Occupe toute la largeur disponible */
 }
-/* Wrapper pour le logo (si utilisé ailleurs) */
-.logo-wrapper {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.logo-wrapper img {
-    width: 46px;
-    height: auto;
-    vertical-align: middle;
-}
+
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
@@ -101,7 +75,6 @@ body {
 /* Icônes dans les boutons (simulées avec texte pour l'instant) */
 .button-icon {
     color: #F5F5F5; /* Blanc cassé */
-    margin-right: 5px;
 }
 /* Fond pour la prise et le recadrage de photos */
 .photo-section {
@@ -111,8 +84,6 @@ body {
     font-weight: 400; /* Regular */
     font-size: 24px;
     padding: 20px;
-    border-radius: 5px;
-    text-align: center;
 }
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
@@ -120,13 +91,7 @@ body {
     justify-content: center;
     gap: 10px; /* Espacement entre les boutons */
 }
-/* Styles pour le logo */
-.logo {
-    width: 46px;
-    height: auto;
-    margin-right: 10px;
-    vertical-align: middle;
-}
+
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
@@ -152,4 +117,5 @@ body {
 .empty-cell {
     width: 46px;
     vertical-align: middle;
+    padding-left: 10px;
 }
