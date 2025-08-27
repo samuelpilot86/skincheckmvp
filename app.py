@@ -113,12 +113,15 @@ if st.session_state.screen == "Accueil":
     with col_btn[0]:
         if st.button("Take a photo", key="take_photo"):
             st.session_state.screen = "Photo"
+            st.experimental_rerun()
     with col_btn[1]:
         if st.button("Browse phone photos", key="browse"):
             st.session_state.screen = "Browse"
+            st.experimental_rerun()
     with col_btn[2]:
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
+            st.experimental_rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     
