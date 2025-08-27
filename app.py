@@ -179,12 +179,20 @@ elif st.session_state.screen == "Examples":
     st.write(f"Répertoire de travail : {os.getcwd()}")
     st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
 
+    # Conversion des chemins en URLs ou vérification
+    import urllib.parse
+    base_url = "https://skincheckmvp.streamlit.app/~/+/media/"  # URL de base générée par Streamlit Cloud
+    benign_urls = [urllib.parse.quote(os.path.join("examples", os.path.basename(img))) for img in benign_images]
+    melanoma_urls = [urllib.parse.quote(os.path.join("examples", os.path.basename(img))) for img in melanoma_images]
+    st.write(f"URLs générées (benign): {benign_urls}")
+    st.write(f"URLs générées (melanoma): {melanoma_urls}")
+
     # Affichage des en-têtes et images cliquables
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
         clicked_benign = clickable_images(
-            benign_images,
+            benign_urls,
             titles=["", "", ""],  # Vides pour éviter les légendes
             div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
             img_style={"margin": "5px", "cursor": "pointer"}
@@ -202,7 +210,7 @@ elif st.session_state.screen == "Examples":
     with col2:
         st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
         clicked_melanoma = clickable_images(
-            melanoma_images,
+            melanoma_urls,
             titles=["", "", ""],  # Vides pour éviter les légendes
             div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
             img_style={"margin": "5px", "cursor": "pointer"}
