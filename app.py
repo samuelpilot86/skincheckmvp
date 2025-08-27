@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 import os 
 import base64  
 os.environ["CUDA_VISIBLE_DEVICES"] = "" 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   
 os.environ["OMP_NUM_THREADS"] = "8"  
 os.environ["TF_FORCE_CPU_ONLY"] = "1"  
 import tensorflow as tf   
@@ -185,9 +185,9 @@ elif st.session_state.screen == "Examples":
     with col1:
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, use_container_width=True, output_format="JPEG")  # Retire 'key'
-                if st.button("Click to analyze", key=f"benign_click_{i}", help="Click the image to analyze", style={"display": "none"}):
-                    pass  # Bouton caché, utilisé uniquement pour détecter le clic
+                st.image(img_path, use_container_width=True, output_format="JPEG")
+                if st.button("Click to analyze", key=f"benign_click_{i}", help="Click the image to analyze"):
+                    pass  # Bouton masqué via CSS, détecte le clic
                 if st.session_state.get(f"benign_click_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
@@ -203,9 +203,9 @@ elif st.session_state.screen == "Examples":
     with col2:
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, use_container_width=True, output_format="JPEG")  # Retire 'key'
-                if st.button("Click to analyze", key=f"melanoma_click_{i}", help="Click the image to analyze", style={"display": "none"}):
-                    pass  # Bouton caché, utilisé uniquement pour détecter le clic
+                st.image(img_path, use_container_width=True, output_format="JPEG")
+                if st.button("Click to analyze", key=f"melanoma_click_{i}", help="Click the image to analyze"):
+                    pass  # Bouton masqué via CSS, détecte le clic
                 if st.session_state.get(f"melanoma_click_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
