@@ -132,9 +132,9 @@
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
+    heighth: 200px;
     border: none !important;
-    border-collapse: collapse;
-    margin-top: 400px !important; 
+    border-collapse: collapse; 
     margin-bottom: 20px;
 }
 
