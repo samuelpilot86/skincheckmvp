@@ -1,14 +1,8 @@
 /* Styles globaux */ 
 .stApp {
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
 }
 
 .appview-container {
-    border: none !important;
-    box-shadow: none !important;
 }
 
 .block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
@@ -25,9 +19,6 @@
 }
 
 .stHeader {
-    border: none !important;
-    box-shadow: none !important;
-    display: none !important; /* Cache l'en-tête si présent */
 }
 
 
