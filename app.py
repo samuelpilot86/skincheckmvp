@@ -197,7 +197,7 @@ elif st.session_state.screen == "Examples":
         # Affichage des en-têtes et images cliquables avec fond blanc cassé
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Benign moles:</div>', unsafe_allow_html=True)
             clicked_benign = clickable_images(
                 [f"data:image/jpeg;base64,{b}" for b in benign_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
@@ -215,7 +215,7 @@ elif st.session_state.screen == "Examples":
                 st.rerun()
         
         with col2:
-            st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Melanomas:</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images(
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
