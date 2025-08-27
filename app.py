@@ -181,12 +181,12 @@ elif st.session_state.screen == "Examples":
     with col2:
         st.markdown("<h3 style='text-align: center; background-color: #f0f0f0; padding: 10px;'>Melanomas</h3>", unsafe_allow_html=True)
 
-    # Affichage des images avec boutons cliquables
+    # Affichage des images avec boutons cliquables sans noms de fichiers
     with col1:
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption=f"Benign {i}", use_container_width=True, output_format="JPEG")
-                if st.button(f"Analyze Benign {i}", key=f"benign_{i}"):
+                st.image(img_path, caption="", use_column_width=True, output_format="JPEG")  # Retire la légende
+                if st.button(f"Analyze {i}", key=f"benign_analyze_{i}"):  # Utilise uniquement le numéro
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
@@ -195,13 +195,13 @@ elif st.session_state.screen == "Examples":
                     st.session_state.result = (result, prob, color)
                     st.rerun()
             else:
-                st.write(f"Image {img_path} non trouvée.")
+                st.write(f"Image {i} non trouvée.")
     
     with col2:
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption=f"Melanoma {i}", use_container_width=True, output_format="JPEG")
-                if st.button(f"Analyze Melanoma {i}", key=f"melanoma_{i}"):
+                st.image(img_path, caption="", use_column_width=True, output_format="JPEG")  # Retire la légende
+                if st.button(f"Analyze {i}", key=f"melanoma_analyze_{i}"):  # Utilise uniquement le numéro
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
@@ -210,7 +210,7 @@ elif st.session_state.screen == "Examples":
                     st.session_state.result = (result, prob, color)
                     st.rerun()
             else:
-                st.write(f"Image {img_path} non trouvée.")
+                st.write(f"Image {i} non trouvée.")
 
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
