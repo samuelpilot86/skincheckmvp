@@ -1,6 +1,6 @@
 /* Styles globaux */
 .stApp {
-    background-color: #F5F5F5 !important;
+    /*background-color: #F5F5F5 !important;*/
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -27,7 +27,7 @@ body {
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
-    background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur */
+    background-color: #F5F5F5 !important; /* Fond blanc cassé à l'intérieur */
     padding: 0;
     border: none; /* Supprime toutes les bordures */
 }
