@@ -77,7 +77,7 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
  
-# Logo et titre dans un tableau HTML
+# Logo et titre dans un tableau HTML - définition en amont pour pouvoir la réutiliser dans plusieurs pages
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
     try:
@@ -88,7 +88,7 @@ if os.path.exists(logo_path):
         logo_html = ""
 else:
     logo_html = ""
-html = f'''
+title_html = f'''
     <table class="header-table">
       <tr>
         <td class="logo-cell">{logo_html}</td>
@@ -100,7 +100,7 @@ html = f'''
       </tr>
     </table>
 '''
-st.markdown(html, unsafe_allow_html=True)
+
 
 # Navigation et mode
 if 'screen' not in st.session_state:
@@ -108,21 +108,20 @@ if 'screen' not in st.session_state:
 if st.button("←", key="back"):
     st.session_state.screen = "Accueil"
 if st.session_state.screen == "Accueil":
-    st.markdown('<div class="normal-text">### Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 3, 1])
-    with col2:
-        st.markdown('<div class="button-container">', unsafe_allow_html=True)
-        col_btn = st.columns([1, 1, 1])
-        with col_btn[0]:
-            if st.button("Take a photo", key="take_photo"):
-                st.session_state.screen = "Photo"
-        with col_btn[1]:
-            if st.button("Browse phone photos", key="browse"):
-                st.session_state.screen = "Browse"
-        with col_btn[2]:
-            if st.button("Select demo example", key="demo"):
-                st.session_state.screen = "Examples"
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(title_html, unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="button-container">', unsafe_allow_html=True)
+    col_btn = st.columns([1, 1, 1])
+    with col_btn[0]:
+        if st.button("Take a photo", key="take_photo"):
+            st.session_state.screen = "Photo"
+    with col_btn[1]:
+        if st.button("Browse phone photos", key="browse"):
+            st.session_state.screen = "Browse"
+    with col_btn[2]:
+        if st.button("Select demo example", key="demo"):
+            st.session_state.screen = "Examples"
+    st.markdown('</div>', unsafe_allow_html=True)
 elif st.session_state.screen == "Photo":
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
