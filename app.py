@@ -208,32 +208,45 @@ elif st.session_state.screen == "Examples":
             document.querySelectorAll('.clickable-image').forEach(img => {
                 img.addEventListener('click', function() {
                     const path = this.getAttribute('data-path');
-                    fetch('/analyze', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image_path: path })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
+                    // Simuler une analyse locale au lieu de fetch
+                    const imgElement = new Image();
+                    imgElement.src = this.src;
+                    imgElement.onload = function() {
+                        const result = { result: "Simulated", probability: 50, color: "yellow" }; // Remplacez par predict_user_image si possible
                         window.parent.postMessage({
                             type: 'updateSession',
                             screen: 'Result',
                             image: path,
-                            result: data.result,
-                            probability: data.probability,
-                            color: data.color
+                            result: result.result,
+                            probability: result.probability,
+                            color: result.color
                         }, '*');
-                    });
+                    };
                 });
+            });
+            window.addEventListener('message', function(event) {
+                if (event.data.type == 'updateSession') {
+                    window.parent.postMessage({
+                        type: 'updateSession',
+                        screen: event.data.screen,
+                        image: event.data.image,
+                        result: event.data.result,
+                        probability: event.data.probability,
+                        color: event.data.color
+                    }, '*');
+                }
             });
         </script>
     """
 
-    # Conversion des images en base64
+    # Conversion des images en base64 avec vérification
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode()
+        except FileNotFoundError:
+            st.write(f"Erreur : Fichier {image_path} non trouvé.")
+            return ""
         except Exception as e:
             st.write(f"Erreur lors du chargement de {image_path} : {e}")
             return ""
@@ -241,27 +254,20 @@ elif st.session_state.screen == "Examples":
     benign_base64 = [image_to_base64(img) for img in benign_images]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images]
 
-    # Remplissage du HTML avec les images encodées
-    filled_table_html = table_html.format(
-        benign_base64[0], benign_images[0],
-        melanoma_base64[0], melanoma_images[0],
-        benign_base64[1], benign_images[1],
-        melanoma_base64[1], melanoma_images[1],
-        benign_base64[2], benign_images[2],
-        melanoma_base64[2], melanoma_images[2]
-    )
-
-    st.markdown(filled_table_html, unsafe_allow_html=True)
-
-    # Gestion de la réponse du message (simulée ici, à adapter selon votre backend)
-    def handle_message(event):
-        if event.data.type == 'updateSession':
-            st.session_state.screen = event.data.screen
-            st.session_state.image = event.data.image
-            st.session_state.result = [event.data.result, event.data.probability, event.data.color]
-            st.rerun()
-
-    st.markdown('<script>window.addEventListener("message", handle_message);</script>', unsafe_allow_html=True)
+    # Vérification des données avant formatage
+    if len(benign_base64) != 3 or len(melanoma_base64) != 3 or any(b == "" for b in benign_base64) or any(m == "" for m in melanoma_base64):
+        st.write("Erreur : Certaines images n'ont pas pu être chargées. Vérifiez les chemins.")
+    else:
+        # Remplissage du HTML avec les images encodées
+        filled_table_html = table_html.format(
+            benign_base64[0], benign_images[0],
+            melanoma_base64[0], melanoma_images[0],
+            benign_base64[1], benign_images[1],
+            melanoma_base64[1], melanoma_images[1],
+            benign_base64[2], benign_images[2],
+            melanoma_base64[2], melanoma_images[2]
+        )
+        st.markdown(filled_table_html, unsafe_allow_html=True)
 
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
