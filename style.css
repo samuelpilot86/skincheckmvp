@@ -21,7 +21,7 @@
     background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande de 390px */
     border: none !important;
     box-shadow: none !important;
-    margin-top: 0 !important; /* Supprime toute marge supérieure ajoutée par Streamlit */
+    margin-top: 40 !important; /* Supprime toute marge supérieure ajoutée par Streamlit */
     position: relative; /* Assure un contexte de positionnement */
     top: 0; /* Réinitialise la position verticale */
 }
