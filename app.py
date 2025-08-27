@@ -200,7 +200,7 @@ elif st.session_state.screen == "Examples":
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
         st.write("Erreur : Certaines images n'ont pas pu être encodées en base64.")
     else:
-        # Affichage des en-têtes et images cliquables
+        # Affichage des en-têtes et images cliquables avec taille réduite
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
@@ -208,7 +208,7 @@ elif st.session_state.screen == "Examples":
                 [f"data:image/jpeg;base64,{b}" for b in benign_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
                 div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-                img_style={"margin": "5px", "cursor": "pointer"}
+                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto"}  # Réduit la taille
             )
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
@@ -226,7 +226,7 @@ elif st.session_state.screen == "Examples":
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
                 div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-                img_style={"margin": "5px", "cursor": "pointer"}
+                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto"}  # Réduit la taille
             )
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
