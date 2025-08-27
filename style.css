@@ -34,7 +34,7 @@
 .main-container {
     width: 390px !important;
     max-height: 844px;
-    min-height: 100/*vh*/; /* Assure que le conteneur couvre toute la hauteur */
+    min-height: 100px/*vh*/; /* Assure que le conteneur couvre toute la hauteur */
     position: relative;
     margin: 0 auto;
     overflow-y: auto;
