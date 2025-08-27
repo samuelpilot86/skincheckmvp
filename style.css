@@ -1,8 +1,33 @@
 /* Styles globaux */
 .stApp {
-    /*background-color: #F5F5F5 !important;*/
     margin: 0 !important;
     padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.appview-container {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
+    max-width: 390px !important;
+    padding-top: 30px !important; 
+    background-color: #F5F5F5 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.main {
+    border: none !important;
+    box-shadow: none !important;
+    padding-top: 0 !important; /* Supprime tout padding supérieur */
+}
+
+.main-container {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 body {
@@ -10,15 +35,7 @@ body {
     padding: 0;
 }
 
-.block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
-    max-width: 390px !important;
-    padding-top: 30px !important; 
-    background-color: #F5F5F5 !important;
-}
 
-.main {
-    padding: 0 !important; #Inutile ?
-}
 
 /* Conteneur principal pour responsivité */
 .main-container {
@@ -28,7 +45,7 @@ body {
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
-    background-color: #F5F5F5 !important; /* Fond blanc cassé à l'intérieur */
+    #background-color: #F5F5F5 !important; /* Fond blanc cassé à l'intérieur */
     padding: 0;
     border: none; /* Supprime toutes les bordures */
 }
