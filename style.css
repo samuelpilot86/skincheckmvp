@@ -13,6 +13,7 @@ body {
 .block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
     max-width: 390px !important;
     padding-top: 30px !important; 
+    background-color: #F5F5F5 !important;
 }
 
 .main {
