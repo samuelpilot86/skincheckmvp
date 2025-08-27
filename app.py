@@ -149,6 +149,7 @@ elif st.session_state.screen == "Browse":
         st.session_state.image = image
         st.session_state.screen = "Reframe"
         st.rerun()
+
 elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
@@ -160,16 +161,19 @@ elif st.session_state.screen == "Examples":
     st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Définition des chemins des images fixes
+    # Définition des chemins des images fixes (ajustement du chemin)
+    base_dir = os.path.join(os.getcwd(), "examples")
+    st.write(f"Répertoire de travail : {os.getcwd()}")  # Débogage
+    st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")  # Débogage
     benign_images = [
-        "examples/Grain de beauté 1.jpg",
-        "examples/Grain de beauté 2.jpg",
-        "examples/Grain de beauté 3.jpg"
+        os.path.join(base_dir, "Grain de beauté 1.jpg"),
+        os.path.join(base_dir, "Grain de beauté 2.jpg"),
+        os.path.join(base_dir, "Grain de beauté 3.jpg")
     ]
     melanoma_images = [
-        "examples/Mélanome 1.jpg",
-        "examples/Mélanome 2.jpg",
-        "examples/Mélanome 3.jpg"
+        os.path.join(base_dir, "Mélanome 1.jpg"),
+        os.path.join(base_dir, "Mélanome 2.jpg"),
+        os.path.join(base_dir, "Mélanome 3.jpg")
     ]
 
     # HTML pour le tableau avec images cliquables (placeholders numérotés)
@@ -208,7 +212,6 @@ elif st.session_state.screen == "Examples":
             document.querySelectorAll('.clickable-image').forEach(img => {
                 img.addEventListener('click', function() {
                     const path = this.getAttribute('data-path');
-                    // Simuler une analyse locale au lieu de fetch
                     const imgElement = new Image();
                     imgElement.src = this.src;
                     imgElement.onload = function() {
