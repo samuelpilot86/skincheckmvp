@@ -136,10 +136,10 @@ body {
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
-    border: none;
+    border: none !important;
     border-collapse: collapse;
     margin-bottom: 20px;
-    margin-top: 0; /* Supprime toute marge en haut */
+    margin-top: 0 !important; /* Supprime toute marge en haut */
 }
 .header-table td {
     border: none;
