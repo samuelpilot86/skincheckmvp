@@ -4,13 +4,13 @@ import os
 import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["OMP_NUM_THREADS"] = "8" 
-os.environ["TF_FORCE_CPU_ONLY"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
 import tensorflow as tf
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
 import streamlit as st
 
-# Envelopper le contenu dans un conteneur principal
+# Envelopper tout le contenu dans un conteneur principal
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Fonction pour charger dynamiquement les images
@@ -79,14 +79,18 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+# Contenu principal dans .main-container
 # Logo et titre dans un tableau HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
-    logo_data = base64.b64encode(open(logo_path, "rb").read()).decode()
-    logo_html = f'<img src="data:image/png;base64,{logo_data}" alt="Logo" width="46" height="auto">'
+    try:
+        logo_data = base64.b64encode(open(logo_path, "rb").read()).decode()
+        logo_html = f'<img src="data:image/png;base64,{logo_data}" alt="Logo" width="46" height="auto">'
+    except Exception as e:
+        st.write(f"Erreur lors du chargement de l'image : {e}")
+        logo_html = ""
 else:
-    logo_html = ""  # Pas de fallback texte pour éviter le désalignement
-
+    logo_html = ""
 html = f'''
     <table class="header-table">
       <tr>
@@ -205,4 +209,5 @@ elif st.session_state.screen == "Result":
                 if st.button("Select demo example"):
                     st.session_state.screen = "Examples"
             st.markdown('</div>', unsafe_allow_html=True)
+
 st.markdown('</div>', unsafe_allow_html=True) # Ferme le conteneur principal
