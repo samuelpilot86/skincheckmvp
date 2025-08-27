@@ -112,10 +112,10 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
   
 elif st.session_state.screen == "Photo":
+    st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="header-container">', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click \'Browse\' to select a photo or take one (phone only). Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
     if uploaded_file is not None:
