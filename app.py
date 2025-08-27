@@ -92,7 +92,7 @@ title_html = f'''
     <table class="header-table">
       <tr>
         <td class="logo-cell">{logo_html}</td>
-        <td class="title-cell">
+        <td class="title-cell"> 
           <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
           <div class="subtitle">Should I show this mole to my dermatologist?</div>
         </td>
