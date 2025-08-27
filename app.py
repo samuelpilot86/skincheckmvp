@@ -1,16 +1,34 @@
-import numpy as np 
-from PIL import Image, ImageOps 
-import os 
-import base64   
-os.environ["CUDA_VISIBLE_DEVICES"] = ""  
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   
-os.environ["OMP_NUM_THREADS"] = "8"  
-os.environ["TF_FORCE_CPU_ONLY"] = "1"  
-import tensorflow as tf   
-from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer 
-import streamlit as st 
+import numpy as np
+from PIL import Image, ImageOps
+import os
+import base64
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
+import tensorflow as tf
+from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
+import streamlit as st
 from st_clickable_images import clickable_images
-
+# Fonction pour charger dynamiquement les images
+def load_examples(dynamic_dir="examples"):
+    exemples_complets = {"benign": [], "melanoma": []}
+    base_dir = os.path.join(os.getcwd(), dynamic_dir)
+    if os.path.exists(base_dir):
+        for root, dirs, files in os.walk(base_dir):
+            for file in files:
+                if file.lower().endswith((".jpg", ".jpeg", ".png")):
+                    file_path = os.path.join(root, file)
+                    if os.path.exists(file_path):
+                        relative_path = os.path.relpath(file_path, os.getcwd())
+                        label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
+                        category = "benign" if "benign" in root.lower() else "melanoma"
+                        exemples_complets[category].append((label, relative_path))
+    else:
+        st.write(f"Le répertoire {base_dir} n'existe pas.")
+    return exemples_complets
+# Charger les exemples dynamiquement
+exemples_complets = load_examples()
 # Charger le modèle
 @st.cache_resource
 def load_model():
@@ -22,9 +40,7 @@ def load_model():
         'ThresholdOptimizer': ThresholdOptimizer
     }
     return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
-
 model = load_model()
-
 # Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
     try:
@@ -35,7 +51,6 @@ def preprocess_image(image, target_size=(224, 224)):
     except Exception as e:
         st.error(f"Erreur de prétraitement : {e}")
         return None
-
 # Fonction de prédiction
 def predict_user_image(image):
     img_array = preprocess_image(image)
@@ -49,14 +64,11 @@ def predict_user_image(image):
         return "Melanoma", probability, "red"
     else:
         return "Benign", (100 - probability), "green"
-
 # Interface Streamlit
 st.set_page_config(page_title="SkinCheck", layout="centered")
-
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
- 
 # Logo et titre dans un tableau HTML - définition en amont pour pouvoir la réutiliser dans plusieurs pages
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
@@ -72,7 +84,7 @@ title_html = f'''
     <table class="header-table">
       <tr>
         <td class="logo-cell">{logo_html}</td>
-        <td class="title-cell"> 
+        <td class="title-cell">
           <div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>
           <div class="subtitle">Should I show this mole to my dermatologist?</div>
         </td>
@@ -80,63 +92,58 @@ title_html = f'''
       </tr>
     </table>
 '''
-
-
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Take a photo of your mole*. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
     st.markdown('<div class="button-container">', unsafe_allow_html=True)
-    col_btn = st.columns([1, 1, 1])
+    col_btn = st.columns([1, 1])
     with col_btn[0]:
-        if st.button("Take a photo", key="take_photo"):
+        if st.button("Photo", key="photo"):
             st.session_state.screen = "Photo"
             st.rerun()
     with col_btn[1]:
-        if st.button("Browse phone photos", key="browse"):
-            st.session_state.screen = "Browse"
-            st.rerun()
-    with col_btn[2]:
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
-   
+  
 elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
-    captured_file = st.camera_input("")
-    if captured_file is not None:
-        image = Image.open(captured_file)
-        image = ImageOps.exif_transpose(image)
-        st.session_state.image = image
-        st.session_state.screen = "Reframe"
-        st.rerun()
-elif st.session_state.screen == "Browse":
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()  # Ajouté pour revenir à l'écran "Accueil" avec un seul clic
-    st.markdown('<div class="photo-section">Choose an image (JPG/PNG)</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("", type=["jpg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image)
-        st.session_state.image = image
-        st.session_state.screen = "Reframe"
-        st.rerun()
-
+    st.markdown('<div class="photo-section">Take a sharp photo as close as possible or choose an existing file</div>', unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        captured_file = st.camera_input("Take a photo", key="camera_input")
+        if captured_file is not None:
+            image = Image.open(captured_file)
+            image = ImageOps.exif_transpose(image)
+            st.session_state.image = image
+            st.session_state.screen = "Reframe"
+            st.rerun()
+    with col2:
+        uploaded_file = st.file_uploader("Choose file", type=["jpg", "png"], key="file_uploader")
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            image = ImageOps.exif_transpose(image)
+            st.session_state.image = image
+            st.session_state.screen = "Reframe"
+            st.rerun()
 elif st.session_state.screen == "Examples":
-    st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="normal-text">Click any of the following examples to analyze it:</div>', unsafe_allow_html=True)
-    
+    st.markdown('<div class="header-container">', unsafe_allow_html=True)
+    if os.path.exists(logo_path):
+        st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
+    st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
     # Définition des chemins des images fixes
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [
@@ -172,7 +179,7 @@ elif st.session_state.screen == "Examples":
         # Affichage des en-têtes et images cliquables avec fond blanc cassé
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown('<div class="column-title">Benign moles:</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
             clicked_benign = clickable_images(
                 [f"data:image/jpeg;base64,{b}" for b in benign_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
@@ -190,7 +197,7 @@ elif st.session_state.screen == "Examples":
                 st.rerun()
         
         with col2:
-            st.markdown('<div class="column-title">Melanomas:</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images(
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
@@ -206,11 +213,11 @@ elif st.session_state.screen == "Examples":
                 st.session_state.image = img_path
                 st.session_state.result = (result, prob, color)
                 st.rerun()
-                
+               
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
-        st.rerun()  
+        st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
         st.image(image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
@@ -222,11 +229,11 @@ elif st.session_state.screen == "Reframe":
                 result, prob, color = predict_user_image(image)
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
-            st.rerun() 
+            st.rerun()
 elif st.session_state.screen == "Result":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
-        st.rerun() 
+        st.rerun()
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
         st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
@@ -246,13 +253,13 @@ elif st.session_state.screen == "Result":
             with col_btn[0]:
                 if st.button("Take a photo"):
                     st.session_state.screen = "Photo"
-                    st.rerun() 
+                    st.rerun()
             with col_btn[1]:
                 if st.button("Browse phone photos"):
                     st.session_state.screen = "Browse"
-                    st.rerun() 
+                    st.rerun()
             with col_btn[2]:
                 if st.button("Select demo example"):
                     st.session_state.screen = "Examples"
-                    st.rerun()  
+                    st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
