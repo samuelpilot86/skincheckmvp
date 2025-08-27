@@ -24,13 +24,12 @@
 
 /* Conteneur principal pour responsivité */
 .main-container {
-    width: 390px; /* Largeur fixe comme un iPhone 13 */
+    /*width: 390px; /* Largeur fixe comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
     position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
-    #background-color: #F5F5F5 !important; /* Fond blanc cassé à l'intérieur */
     padding: 0;
     border: none; /* Supprime toutes les bordures */
 }
