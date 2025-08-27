@@ -1,11 +1,24 @@
-/* Styles globaux */ 
+/* Styles globaux */
+.stApp {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    /* Pas de background-color pour laisser le fond par défaut (#FFFFFF) */
+}
 
-.block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
+.appview-container {
+    border: none !important;
+    box-shadow: none !important;
+    /* Pas de background-color pour laisser le fond par défaut */
+}
+
+.block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
     max-width: 390px !important;
     padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
-    /*background-color: #F5F5F5 !important;*/
+    /* Pas de background-color pour laisser .main-container gérer le fond */
     border: none !important;
-    box-shadow: none !important; 
+    box-shadow: none !important;
 }
 
 /* Nouvelles règles pour supprimer la barre d'outils ou l'en-tête */
@@ -14,21 +27,25 @@
 }
 
 .stHeader {
+    border: none !important;
+    box-shadow: none !important;
 }
-
 
 /* Conteneur principal pour responsivité */
 .main-container {
-    width: 390px; /* Largeur fixe comme un iPhone 13 */
+    width: 390px !important; /* Largeur fixe comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
     position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
-    background-color: #F5F5F5 !important;
+    background-color: #F5F5F5 !important; /* Applique le blanc cassé uniquement à cette bande */
     font-family: 'Roboto', sans-serif;
     padding: 0;
     border: none; /* Supprime toutes les bordures */
+    display: flex; /* Assure que le contenu est centré verticalement */
+    flex-direction: column; /* Aligne les éléments en colonne */
 }
+
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
     align-items: center;
@@ -43,12 +60,15 @@
     text-align: center;
     margin: 0;
 }
+
 .app-title span.skin {
     color: #4A90E2;
 }
+
 .app-title span.check {
     color: #7ED321;
 }
+
 /* Sous-titre */
 .subtitle {
     font-family: 'Roboto', sans-serif;
@@ -58,6 +78,7 @@
     text-align: center;
     margin-top: 5px;
 }
+
 /* Texte normal */
 .normal-text {
     font-family: 'Roboto', sans-serif;
@@ -65,6 +86,7 @@
     font-size: 18px;
     color: #333333;
 }
+
 /* Boutons */
 .stButton > button {
     background-color: #4A90E2; /* Bleu clair */
@@ -79,13 +101,16 @@
     display: inline-block;
     margin: 5px;
 }
+
 .stButton > button:hover {
     background-color: #3A7AC2; /* Bleu légèrement plus foncé au hover */
 }
+
 /* Icônes dans les boutons (simulées avec texte pour l'instant) */
 .button-icon {
     color: #F5F5F5; /* Blanc cassé */
 }
+
 /* Fond pour la prise et le recadrage de photos */
 .photo-section {
     background-color: #333333;
@@ -95,6 +120,7 @@
     font-size: 24px;
     padding: 20px;
 }
+
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
     display: flex;
@@ -110,20 +136,24 @@
     margin-bottom: 20px;
     margin-top: 0 !important; /* Supprime toute marge en haut */
 }
+
 .header-table td {
     border: none;
     padding: 0;
 }
+
 .logo-cell {
     width: 46px;
     vertical-align: middle;
     padding-right: 10px;
 }
+
 .title-cell {
     vertical-align: middle;
     text-align: center;
     flex-grow: 1; /* Permet à la cellule du titre de prendre l'espace restant */
 }
+
 .empty-cell {
     width: 46px;
     vertical-align: middle;
