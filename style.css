@@ -26,11 +26,6 @@
     top: 0; /* Réinitialise la position verticale */
 }
 
-/* Nouvelles règles pour supprimer la barre d'outils ou l'en-tête */
-.stToolbar {
-    display: none !important; /* Cache la barre d'outils si elle est présente */
-}
-
 /* Conteneur principal pour responsivité (facultatif, peut être simplifié) */
 .main-container {
     width: 390px !important; /* Largeur fixe comme un iPhone 13 */
@@ -59,12 +54,12 @@
     font-size: 28px;
     text-align: center;
     margin: 0;
-    padding-top: 0 !important; /* Supprime tout padding supérieur interne */
+    padding-top: 10px !important; /* Décalage vers le bas pour afficher le titre en entier */
     line-height: 1.2; /* Ajuste la hauteur de ligne pour éviter le débordement */
     white-space: normal; /* Permet le retour à la ligne si nécessaire */
     overflow: visible; /* Évite la troncature */
     position: relative; /* Contexte pour le positionnement */
-    top: 0; /* Aligne avec le haut de .block-container */
+    top: 0; /* Aligne avec le haut de .block-container après padding */
 }
 
 /* Sous-titre */
@@ -129,7 +124,7 @@
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
-    height: auto; /* Corrige la faute "heighth" et ajuste à la hauteur du contenu */
+    height: auto; /* Ajuste à la hauteur du contenu */
     border: none !important;
     border-collapse: collapse;
     margin-top: 0 !important; /* Supprime toute marge supérieure */
