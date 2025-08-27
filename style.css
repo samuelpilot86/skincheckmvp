@@ -13,10 +13,10 @@
     /* Pas de background-color pour laisser le fond par défaut */
 }
 
-.block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
+.block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner */
     max-width: 390px !important;
     padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
-    /* Pas de background-color pour laisser .main-container gérer le fond */
+    background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande de 390px contenant tous les éléments */
     border: none !important;
     box-shadow: none !important;
 }
@@ -31,17 +31,18 @@
     box-shadow: none !important;
 }
 
+/* Conteneur principal pour responsivité (facultatif, peut être simplifié) */
 .main-container {
-    width: 390px !important;
-    max-height: 844px;
-    min-height: 100px/*vh*/; /* Assure que le conteneur couvre toute la hauteur */
-    position: relative;
-    margin: 0 auto;
-    overflow-y: auto;
-    background-color: #F5F5F5 !important;
+    width: 390px !important; /* Largeur fixe comme un iPhone 13 */
+    max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
+    position: relative; /* Pour le positionnement */
+    margin: 0 auto; /* Centre l'app horizontalement */
+    overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
+    /* Pas de background-color, laissé à .block-container */
     font-family: 'Roboto', sans-serif;
     padding: 0;
-    border: none;
+    border: none; /* Supprime toutes les bordures */
+    display: block; /* Réinitialise à block */
 }
 
 /* Conteneur pour logo, titre et sous-titre */
