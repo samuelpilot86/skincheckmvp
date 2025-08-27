@@ -104,7 +104,7 @@ html = f'''
     </table>
 '''
 st.markdown(html, unsafe_allow_html=True)
-'''
+"""
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
@@ -203,6 +203,6 @@ elif st.session_state.screen == "Result":
                     st.session_state.screen = "Examples"
             st.markdown('</div>', unsafe_allow_html=True)
 
-'''
+"""
 
 st.markdown('</div>', unsafe_allow_html=True) # Ferme le conteneur principal
