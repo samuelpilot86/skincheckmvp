@@ -122,6 +122,8 @@ if st.session_state.screen == "Accueil":
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
     st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">*to French users: a mole is a “grain de beauté”</div>', unsafe_allow_html=True)
+    
 elif st.session_state.screen == "Photo":
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
