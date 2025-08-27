@@ -10,25 +10,7 @@ import tensorflow as tf
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
 import streamlit as st
 from st_clickable_images import clickable_images
-# Fonction pour charger dynamiquement les images
-def load_examples(dynamic_dir="examples"):
-    exemples_complets = {"benign": [], "melanoma": []}
-    base_dir = os.path.join(os.getcwd(), dynamic_dir)
-    if os.path.exists(base_dir):
-        for root, dirs, files in os.walk(base_dir):
-            for file in files:
-                if file.lower().endswith((".jpg", ".jpeg", ".png")):
-                    file_path = os.path.join(root, file)
-                    if os.path.exists(file_path):
-                        relative_path = os.path.relpath(file_path, os.getcwd())
-                        label = f"{os.path.basename(os.path.dirname(file_path))} - {file}"
-                        category = "benign" if "benign" in root.lower() else "melanoma"
-                        exemples_complets[category].append((label, relative_path))
-    else:
-        st.write(f"Le répertoire {base_dir} n'existe pas.")
-    return exemples_complets
-# Charger les exemples dynamiquement
-exemples_complets = load_examples()
+
 # Charger le modèle
 @st.cache_resource
 def load_model():
