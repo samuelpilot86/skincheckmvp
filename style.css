@@ -31,28 +31,6 @@
     display: none !important; /* Cache la barre d'outils si elle est présente */
 }
 
-.stHeader {
-    border: none !important;
-    box-shadow: none !important;
-    margin: 0 !important; /* Supprime toute marge */
-    padding: 0 !important;
-    height: 0 !important; /* Réduit la hauteur à 0 */
-    max-height: 0 !important; /* Limite la hauteur maximale */
-    overflow: hidden; /* Cache tout contenu débordant */
-}
-
-.stAppHeader {
-    height: 0 !important; /* Réduit la hauteur à 0 */
-    max-height: 0 !important; /* Limite la hauteur maximale */
-    overflow: hidden; /* Cache le header */
-}
-
-.e3g0k5y1 {
-    height: 0 !important; /* Corrige la faute de frappe "heigth" */
-    max-height: 0 !important;
-    overflow: hidden; /* Cache le contenu */
-}
-
 /* Conteneur principal pour responsivité (facultatif, peut être simplifié) */
 .main-container {
     width: 390px !important; /* Largeur fixe comme un iPhone 13 */
