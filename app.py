@@ -138,6 +138,9 @@ elif st.session_state.screen == "Photo":
         st.session_state.screen = "Reframe"
         st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
 elif st.session_state.screen == "Browse":
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
+        st.rerun()  # Ajouté pour revenir à l'écran "Accueil" avec un seul clic
     st.markdown('<div class="photo-section">Choose an image (JPG/PNG)</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["jpg", "png"])
     if uploaded_file is not None:
@@ -147,6 +150,9 @@ elif st.session_state.screen == "Browse":
         st.session_state.screen = "Reframe"
         st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
 elif st.session_state.screen == "Examples":
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
+        st.rerun()  # Ajouté pour revenir à l'écran "Accueil" avec un seul clic
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
         st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
@@ -170,6 +176,9 @@ elif st.session_state.screen == "Examples":
                 st.session_state.screen = "Reframe"
                 st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
 elif st.session_state.screen == "Reframe":
+    if st.button("←", key="back"):
+        st.session_state.screen = "Photo"
+        st.rerun()  
     if 'image' in st.session_state:
         image = st.session_state.image
         st.image(image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
@@ -181,8 +190,11 @@ elif st.session_state.screen == "Reframe":
                 result, prob, color = predict_user_image(image)
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
-            st.rerun()  # Ajouté pour passer à l'écran "Result" avec un seul clic
+            st.rerun() 
 elif st.session_state.screen == "Result":
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
+        st.rerun() 
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
         st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
@@ -202,13 +214,13 @@ elif st.session_state.screen == "Result":
             with col_btn[0]:
                 if st.button("Take a photo"):
                     st.session_state.screen = "Photo"
-                    st.rerun()  # Ajouté pour revenir à "Photo" avec un seul clic
+                    st.rerun() 
             with col_btn[1]:
                 if st.button("Browse phone photos"):
                     st.session_state.screen = "Browse"
-                    st.rerun()  # Ajouté pour revenir à "Browse" avec un seul clic
+                    st.rerun() 
             with col_btn[2]:
                 if st.button("Select demo example"):
                     st.session_state.screen = "Examples"
-                    st.rerun()  # Ajouté pour revenir à "Examples" avec un seul clic
+                    st.rerun()  
             st.markdown('</div>', unsafe_allow_html=True)
