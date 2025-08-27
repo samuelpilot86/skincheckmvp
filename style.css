@@ -138,14 +138,16 @@
 
 /* Boutons */
 
+/* ... (vos styles existants) ... */
+
 /* Styles pour centrer les boutons */
 .button-container-centered {
     display: flex;
     justify-content: center;
     width: 100%;
+    text-align: center; /* Ajout pour renforcer le centrage */
 }
 
-/* Ajustement des boutons pour s'adapter au centrage */
 .stButton > button {
     background-color: #4A90E2;
     color: #F5F5F5;
@@ -156,8 +158,13 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block; /* Permet le centrage par le parent */
-    margin: 5px auto; /* Centre horizontalement avec marge automatique */
+    display: block; /* Changé de inline-block à block pour mieux interagir avec flex */
+    margin: 0 auto; /* Centre le bouton dans son conteneur */
+    width: auto; /* Permet au bouton de s'ajuster naturellement */
+}
+
+.stButton {
+    display: inline-block !important; /* Assure que le conteneur Streamlit respecte le centrage */
 }
 
 .stButton > button:hover {
