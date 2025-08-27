@@ -137,18 +137,27 @@
 
 
 /* Boutons */
+
+/* Styles pour centrer les boutons */
+.button-container-centered {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Ajustement des boutons pour s'adapter au centrage */
 .stButton > button {
-    background-color: #4A90E2; /* Bleu clair */
-    color: #F5F5F5; /* Blanc cassé */
+    background-color: #4A90E2;
+    color: #F5F5F5;
     font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-size: 18px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block;
-    margin: 5px;
+    display: inline-block; /* Permet le centrage par le parent */
+    margin: 5px auto; /* Centre horizontalement avec marge automatique */
 }
 
 .stButton > button:hover {
