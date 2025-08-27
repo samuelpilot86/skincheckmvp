@@ -179,13 +179,13 @@ elif st.session_state.screen == "Examples":
     st.write(f"Répertoire de travail : {os.getcwd()}")
     st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
 
-    # Conversion des chemins en URLs ou vérification
+    # Conversion des chemins en URLs absolues
     import urllib.parse
-    base_url = "https://skincheckmvp.streamlit.app/~/+/media/"  # URL de base générée par Streamlit Cloud
-    benign_urls = [urllib.parse.quote(os.path.join("examples", os.path.basename(img))) for img in benign_images]
-    melanoma_urls = [urllib.parse.quote(os.path.join("examples", os.path.basename(img))) for img in melanoma_images]
-    st.write(f"URLs générées (benign): {benign_urls}")
-    st.write(f"URLs générées (melanoma): {melanoma_urls}")
+    base_url = "https://skincheckmvp.streamlit.app/~/+/media/"  # Base URL de votre app
+    benign_urls = [f"{base_url}{urllib.parse.quote(os.path.relpath(img, os.getcwd()))}" for img in benign_images]
+    melanoma_urls = [f"{base_url}{urllib.parse.quote(os.path.relpath(img, os.getcwd()))}" for img in melanoma_images]
+    st.write(f"URLs absolues (benign): {benign_urls}")
+    st.write(f"URLs absolues (melanoma): {melanoma_urls}")
 
     # Affichage des en-têtes et images cliquables
     col1, col2 = st.columns(2)
