@@ -91,7 +91,7 @@ if os.path.exists(logo_path):
 else:
     logo_html = ""
 html = f'''
-    <table class="header-table" style="border: none; margin-top: 0;">
+    <table class="header-table">
       <tr>
         <td class="logo-cell">{logo_html}</td>
         <td class="title-cell">
