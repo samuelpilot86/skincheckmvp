@@ -7,6 +7,10 @@
     /* Pas de background-color pour laisser le fond par défaut (#FFFFFF) */
 }
 
+.stAppHeader {
+    heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
+}
+
 .appview-container {
     margin: 0 !important; /* Supprime toute marge supérieure par défaut */
     padding: 0 !important;
