@@ -159,22 +159,109 @@ elif st.session_state.screen == "Examples":
     st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">### Choose one of the following examples:</div>', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('<div class="normal-text">**Benign moles:**</div>', unsafe_allow_html=True)
-        for label, path in exemples_complets.get("benign", []):
-            if st.button(label, key=f"benign_{label}"):
-                st.session_state.image = Image.open(path)
-                st.session_state.screen = "Reframe"
-                st.rerun()
-    with col2:
-        st.markdown('<div class="normal-text">**Melanomas:**</div>', unsafe_allow_html=True)
-        for label, path in exemples_complets.get("melanoma", []):
-            if st.button(label, key=f"melanoma_{label}"):
-                st.session_state.image = Image.open(path)
-                st.session_state.screen = "Reframe"
-                st.rerun()
+
+    # Définition des chemins des images fixes
+    benign_images = [
+        "examples/Grain de beauté 1.jpg",
+        "examples/Grain de beauté 2.jpg",
+        "examples/Grain de beauté 3.jpg"
+    ]
+    melanoma_images = [
+        "examples/Mélanome 1.jpg",
+        "examples/Mélanome 2.jpg",
+        "examples/Mélanome 3.jpg"
+    ]
+
+    # HTML pour le tableau avec images cliquables
+    table_html = """
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="text-align: center; padding: 10px; background-color: #f0f0f0;">Benign moles</th>
+                <th style="text-align: center; padding: 10px; background-color: #f0f0f0;">Melanomas</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Benign 1" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 1" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Benign 2" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 2" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Benign 3" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 3" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+            </tr>
+        </table>
+        <script>
+            document.querySelectorAll('.clickable-image').forEach(img => {
+                img.addEventListener('click', function() {
+                    const path = this.getAttribute('data-path');
+                    fetch('/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image_path: path })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        window.parent.postMessage({
+                            type: 'updateSession',
+                            screen: 'Result',
+                            image: path,
+                            result: data.result,
+                            probability: data.probability,
+                            color: data.color
+                        }, '*');
+                    });
+                });
+            });
+        </script>
+    """
+
+    # Conversion des images en base64
+    def image_to_base64(image_path):
+        try:
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode()
+        except Exception as e:
+            st.write(f"Erreur lors du chargement de {image_path} : {e}")
+            return ""
+
+    benign_base64 = [image_to_base64(img) for img in benign_images]
+    melanoma_base64 = [image_to_base64(img) for img in melanoma_images]
+
+    # Remplissage du HTML avec les images encodées
+    filled_table_html = table_html.format(
+        benign_base64[0], benign_images[0],
+        melanoma_base64[0], melanoma_images[0],
+        benign_base64[1], benign_images[1],
+        melanoma_base64[1], melanoma_images[1],
+        benign_base64[2], benign_images[2],
+        melanoma_base64[2], melanoma_images[2]
+    )
+
+    st.markdown(filled_table_html, unsafe_allow_html=True)
+
+    # Gestion de la réponse du message (simulée ici, à adapter selon votre backend)
+    def handle_message(event):
+        if event.data.type === 'updateSession':
+            st.session_state.screen = event.data.screen
+            st.session_state.image = event.data.image
+            st.session_state.result = [event.data.result, event.data.probability, event.data.color]
+            st.rerun()
+
+    st.markdown('<script>window.addEventListener("message", handle_message);</script>', unsafe_allow_html=True)
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
