@@ -155,12 +155,7 @@ elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="header-container">', unsafe_allow_html=True)
-    if os.path.exists(logo_path):
-        st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
-    st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(title_html, unsafe_allow_html=True)
 
     # Définition des chemins des images fixes
     base_dir = os.path.join(os.getcwd(), "examples")
