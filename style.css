@@ -6,15 +6,13 @@ body {
     /* Pas de background-color explicite pour laisser le blanc pur par défaut */
 }
 .stApp {
-    max-width: 390px; /* Largeur maximale comme un iPhone 13 */
-    max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
     font-family: 'Roboto', sans-serif;
-    background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur de 390x844 */
-    padding: 0; /* Supprime tous les paddings par défaut */
-    border: none; /* Supprime toutes les bordures */
-    position: static; /* Réinitialise la position */
+    /* Supprime les contraintes de largeur et hauteur, laissées à .main-container */
+    padding: 0;
+    border: none;
+    position: relative;
 }
 @media (min-width: 391px) or (min-height: 845px) {
     .stApp {
@@ -23,14 +21,16 @@ body {
 }
 /* Conteneur principal pour responsivité */
 .main-container {
-    width: 100%;
-    padding: 10px;
+    width: 390px; /* Largeur fixe comme un iPhone 13 */
+    max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
+    margin: 0 auto; /* Centre l'app horizontalement */
+    overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
+    font-family: 'Roboto', sans-serif;
+    background-color: #F5F5F5; /* Fond blanc cassé à l'intérieur */
+    padding: 10px; /* Padding interne */
     box-sizing: border-box; /* Inclut padding dans les dimensions */
-    margin: 0; /* Réinitialise toutes les marges */
     border: none; /* Supprime toutes les bordures */
-    background-color: #F5F5F5; /* Assure un fond cohérent */
-    position: static; /* Réinitialise la position */
-    z-index: auto; /* Réinitialise le z-index */
+    position: relative; /* Pour le positionnement */
 }
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
