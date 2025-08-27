@@ -174,101 +174,43 @@ elif st.session_state.screen == "Examples":
         os.path.join(base_dir, "melanoma3.jpg")
     ]
 
-    # HTML pour le tableau avec images cliquables (placeholders numérotés)
-    table_html = """
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <th style="text-align: center; padding: 10px; background-color: #f0f0f0;">Benign moles</th>
-                <th style="text-align: center; padding: 10px; background-color: #f0f0f0;">Melanomas</th>
-            </tr>
-            <tr>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{0}" alt="Benign 1" class="clickable-image" data-path="{1}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{2}" alt="Melanoma 1" class="clickable-image" data-path="{3}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{4}" alt="Benign 2" class="clickable-image" data-path="{5}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{6}" alt="Melanoma 2" class="clickable-image" data-path="{7}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{8}" alt="Benign 3" class="clickable-image" data-path="{9}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{10}" alt="Melanoma 3" class="clickable-image" data-path="{11}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-            </tr>
-        </table>
-        <script>
-            document.querySelectorAll('.clickable-image').forEach(img => {
-                img.addEventListener('click', function() {
-                    const path = this.getAttribute('data-path');
-                    const imgElement = new Image();
-                    imgElement.src = this.src;
-                    imgElement.onload = function() {
-                        const result = { result: "Simulated", probability: 50, color: "yellow" }; // Remplacez par predict_user_image si possible
-                        window.parent.postMessage({
-                            type: 'updateSession',
-                            screen: 'Result',
-                            image: path,
-                            result: result.result,
-                            probability: result.probability,
-                            color: result.color
-                        }, '*');
-                    };
-                });
-            });
-            window.addEventListener('message', function(event) {
-                if (event.data.type == 'updateSession') {
-                    window.parent.postMessage({
-                        type: 'updateSession',
-                        screen: event.data.screen,
-                        image: event.data.image,
-                        result: event.data.result,
-                        probability: event.data.probability,
-                        color: event.data.color
-                    }, '*');
-                }
-            });
-        </script>
-    """
+    # Affichage des en-têtes
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("<h3 style='text-align: center; background-color: #f0f0f0; padding: 10px;'>Benign moles</h3>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<h3 style='text-align: center; background-color: #f0f0f0; padding: 10px;'>Melanomas</h3>", unsafe_allow_html=True)
 
-    # Conversion des images en base64 avec vérification stricte
-    def image_to_base64(image_path):
-        try:
-            with open(image_path, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode()
-        except FileNotFoundError:
-            st.write(f"Erreur : Fichier {image_path} non trouvé.")
-            return None  # Retourne None au lieu de "" pour détecter les échecs
-        except Exception as e:
-            st.write(f"Erreur lors du chargement de {image_path} : {e}")
-            return None
-
-    benign_base64 = [image_to_base64(img) for img in benign_images]
-    melanoma_base64 = [image_to_base64(img) for img in melanoma_images]
-
-    # Vérification stricte des données avant formatage
-    if any(b is None for b in benign_base64) or any(m is None for m in melanoma_base64):
-        st.write("Erreur : Certaines images n'ont pas pu être chargées. Vérifiez les chemins ou le déploiement.")
-    else:
-        # Remplissage du HTML avec les images encodées
-        filled_table_html = table_html.format(
-            benign_base64[0], benign_images[0],
-            melanoma_base64[0], melanoma_images[0],
-            benign_base64[1], benign_images[1],
-            melanoma_base64[1], melanoma_images[1],
-            benign_base64[2], benign_images[2],
-            melanoma_base64[2], melanoma_images[2]
-        )
-        st.markdown(filled_table_html, unsafe_allow_html=True)
+    # Affichage des images avec boutons cliquables
+    with col1:
+        for i, img_path in enumerate(benign_images, 1):
+            if os.path.exists(img_path):
+                st.image(img_path, caption=f"Benign {i}", use_column_width=True, output_format="JPEG")
+                if st.button(f"Analyze Benign {i}", key=f"benign_{i}"):
+                    image = Image.open(img_path)
+                    with st.spinner("Analysis in progress..."):
+                        result, prob, color = predict_user_image(image)
+                    st.session_state.screen = "Result"
+                    st.session_state.image = img_path
+                    st.session_state.result = (result, prob, color)
+                    st.rerun()
+            else:
+                st.write(f"Image {img_path} non trouvée.")
+    
+    with col2:
+        for i, img_path in enumerate(melanoma_images, 1):
+            if os.path.exists(img_path):
+                st.image(img_path, caption=f"Melanoma {i}", use_column_width=True, output_format="JPEG")
+                if st.button(f"Analyze Melanoma {i}", key=f"melanoma_{i}"):
+                    image = Image.open(img_path)
+                    with st.spinner("Analysis in progress..."):
+                        result, prob, color = predict_user_image(image)
+                    st.session_state.screen = "Result"
+                    st.session_state.image = img_path
+                    st.session_state.result = (result, prob, color)
+                    st.rerun()
+            else:
+                st.write(f"Image {img_path} non trouvée.")
 
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
