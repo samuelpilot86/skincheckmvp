@@ -174,49 +174,43 @@ elif st.session_state.screen == "Examples":
         os.path.join(base_dir, "melanoma3.jpg")
     ]
 
-    # Affichage des en-têtes
+    # Affichage des en-têtes et images cliquables
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
-
-    # Affichage des images cliquables
-    with col1:
-        for i, img_path in enumerate(benign_images, 1):
-            if os.path.exists(img_path):
-                st.image(img_path, use_container_width=True, output_format="JPEG")
-                if st.button("Click to analyze", key=f"benign_click_{i}", help="Click the image to analyze"):
-                    pass  # Bouton masqué via CSS, détecte le clic
-                if st.session_state.get(f"benign_click_{i}", False):
-                    image = Image.open(img_path)
-                    with st.spinner("Analysis in progress..."):
-                        result, prob, color = predict_user_image(image)
-                    st.session_state.screen = "Result"
-                    st.session_state.image = img_path
-                    st.session_state.result = (result, prob, color)
-                    st.session_state[f"benign_click_{i}"] = False  # Réinitialiser l'état
-                    st.rerun()
-            else:
-                st.write(f"Image {i} non trouvée.")
+        clicked_benign = st_clickable_images(
+            benign_images,
+            titles=["", "", ""],  # Vides pour éviter les légendes
+            div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+            img_style={"margin": "5px", "cursor": "pointer"}
+        )
+        if clicked_benign is not None and clicked_benign >= 0:
+            img_path = benign_images[clicked_benign]
+            image = Image.open(img_path)
+            with st.spinner("Analysis in progress..."):
+                result, prob, color = predict_user_image(image)
+            st.session_state.screen = "Result"
+            st.session_state.image = img_path
+            st.session_state.result = (result, prob, color)
+            st.rerun()
     
     with col2:
-        for i, img_path in enumerate(melanoma_images, 1):
-            if os.path.exists(img_path):
-                st.image(img_path, use_container_width=True, output_format="JPEG")
-                if st.button("Click to analyze", key=f"melanoma_click_{i}", help="Click the image to analyze"):
-                    pass  # Bouton masqué via CSS, détecte le clic
-                if st.session_state.get(f"melanoma_click_{i}", False):
-                    image = Image.open(img_path)
-                    with st.spinner("Analysis in progress..."):
-                        result, prob, color = predict_user_image(image)
-                    st.session_state.screen = "Result"
-                    st.session_state.image = img_path
-                    st.session_state.result = (result, prob, color)
-                    st.session_state[f"melanoma_click_{i}"] = False  # Réinitialiser l'état
-                    st.rerun()
-            else:
-                st.write(f"Image {i} non trouvée.")
+        st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
+        clicked_melanoma = st_clickable_images(
+            melanoma_images,
+            titles=["", "", ""],  # Vides pour éviter les légendes
+            div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+            img_style={"margin": "5px", "cursor": "pointer"}
+        )
+        if clicked_melanoma is not None and clicked_melanoma >= 0:
+            img_path = melanoma_images[clicked_melanoma]
+            image = Image.open(img_path)
+            with st.spinner("Analysis in progress..."):
+                result, prob, color = predict_user_image(image)
+            st.session_state.screen = "Result"
+            st.session_state.image = img_path
+            st.session_state.result = (result, prob, color)
+            st.rerun()
                 
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
