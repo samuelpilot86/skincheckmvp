@@ -1,14 +1,14 @@
-import numpy as np     
-from PIL import Image, ImageOps   
-import os 
-import base64 
+import numpy as np
+from PIL import Image, ImageOps
+import os
+import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["OMP_NUM_THREADS"] = "8"  
-os.environ["TF_FORCE_CPU_ONLY"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
 import tensorflow as tf
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer
-import streamlit as st 
+import streamlit as st
 
 # Fonction pour charger dynamiquement les images
 def load_examples(dynamic_dir="examples"):
@@ -42,6 +42,7 @@ def load_model():
         'ThresholdOptimizer': ThresholdOptimizer
     }
     return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+
 model = load_model()
 
 # Fonction de prétraitement
@@ -76,7 +77,7 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Envelopper tout le contenu dans un conteneur principal 
+# Envelopper tout le contenu dans un conteneur principal
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Logo et titre dans un tableau HTML
@@ -103,7 +104,6 @@ html = f'''
     </table>
 '''
 st.markdown(html, unsafe_allow_html=True)
-
 
 # Navigation et mode
 if 'screen' not in st.session_state:
@@ -203,4 +203,5 @@ elif st.session_state.screen == "Result":
                     st.session_state.screen = "Examples"
             st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True) # Ferme le conteneur principal
+# Ferme le conteneur principal
+st.markdown('</div>', unsafe_allow_html=True)
