@@ -62,8 +62,13 @@
     top: 0; /* Aligne avec le haut de .block-container après padding */
 }
 
-.skin{color: #4A90E2;}
-.check{color: #7ED321;}
+.skin{
+    color: #4A90E2;
+}
+
+.check{
+    color: #7ED321;
+}
 
 /* Sous-titre */
 .subtitle {
