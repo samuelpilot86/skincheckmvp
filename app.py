@@ -185,7 +185,7 @@ elif st.session_state.screen == "Examples":
     with col1:
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption=f"Benign {i}", use_column_width=True, output_format="JPEG")
+                st.image(img_path, caption=f"Benign {i}", use_container_width=True, output_format="JPEG")
                 if st.button(f"Analyze Benign {i}", key=f"benign_{i}"):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
@@ -200,7 +200,7 @@ elif st.session_state.screen == "Examples":
     with col2:
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption=f"Melanoma {i}", use_column_width=True, output_format="JPEG")
+                st.image(img_path, caption=f"Melanoma {i}", use_container_width=True, output_format="JPEG")
                 if st.button(f"Analyze Melanoma {i}", key=f"melanoma_{i}"):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
