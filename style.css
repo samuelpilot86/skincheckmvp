@@ -14,6 +14,10 @@ body {
     max-width: 390px !important;
 }
 
+.main {
+    padding: 0 !important;
+}
+
 /* Conteneur principal pour responsivité */
 .main-container {
     width: 390px; /* Largeur fixe comme un iPhone 13 */
