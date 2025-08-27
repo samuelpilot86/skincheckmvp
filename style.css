@@ -88,6 +88,12 @@
     color: #333333;
 }
 
+.bottom-note {
+    font-size: 12px;
+}
+
+
+
 /* Boutons */
 .stButton > button {
     background-color: #4A90E2; /* Bleu clair */
