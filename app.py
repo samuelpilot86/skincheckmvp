@@ -83,7 +83,7 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="button-container">', unsafe_allow_html=True)
     col_btn = st.columns([1, 1])
     with col_btn[0]:
-        if st.button("Photo", key="photo"):
+        if st.button("Select/take photo", key="photo"):
             st.session_state.screen = "Photo"
             st.rerun()
     with col_btn[1]:
