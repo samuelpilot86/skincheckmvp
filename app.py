@@ -179,7 +179,7 @@ elif st.session_state.screen == "Examples":
     st.write(f"Répertoire de travail : {os.getcwd()}")
     st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
 
-    # Conversion des images en base64
+    # Conversion des images en base64 avec débogage
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
@@ -193,6 +193,8 @@ elif st.session_state.screen == "Examples":
 
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
+    st.write(f"Base64 lengths (benign): {[len(b) for b in benign_base64]}")  # Débogage de la taille des données
+    st.write(f"Base64 lengths (melanoma): {[len(m) for m in melanoma_base64]}")  # Débogage de la taille des données
 
     # Vérification des données
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
