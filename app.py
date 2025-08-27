@@ -186,16 +186,19 @@ elif st.session_state.screen == "Examples":
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
                 st.image(img_path, caption="", use_container_width=True, output_format="JPEG")
-                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)  # Conteneur centré
-                if st.button(f"Analyze {i}", key=f"benign_analyze_{i}"):
+                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)
+                with st.container():
+                    st.button("Analyze", key=f"benign_analyze_{i}")
+                st.markdown('</div>', unsafe_allow_html=True)
+                if st.session_state.get(f"benign_analyze_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
                     st.session_state.screen = "Result"
                     st.session_state.image = img_path
                     st.session_state.result = (result, prob, color)
+                    st.session_state[f"benign_analyze_{i}"] = False  # Réinitialiser l'état
                     st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)  # Fermeture du conteneur
             else:
                 st.write(f"Image {i} non trouvée.")
     
@@ -203,18 +206,22 @@ elif st.session_state.screen == "Examples":
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
                 st.image(img_path, caption="", use_container_width=True, output_format="JPEG")
-                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)  # Conteneur centré
-                if st.button(f"Analyze {i}", key=f"melanoma_analyze_{i}"):
+                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)
+                with st.container():
+                    st.button("Analyze", key=f"melanoma_analyze_{i}")
+                st.markdown('</div>', unsafe_allow_html=True)
+                if st.session_state.get(f"melanoma_analyze_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
                     st.session_state.screen = "Result"
                     st.session_state.image = img_path
                     st.session_state.result = (result, prob, color)
+                    st.session_state[f"melanoma_analyze_{i}"] = False  # Réinitialiser l'état
                     st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)  # Fermeture du conteneur
             else:
                 st.write(f"Image {i} non trouvée.")
+                
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
