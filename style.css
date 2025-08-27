@@ -147,6 +147,8 @@
     cursor: pointer; /* Indique que l'image est cliquable */
 }
 
+
+
 /* Boutons */
 
 .stButton {
@@ -154,13 +156,7 @@
     margin-bottom: 10px; /* Espacement entre l'image et le bouton */
 }
 
-/* Masquer les boutons inutiles */
-.stButton[style*="display: none"] {
-    display: none !important; /* Assure que le bouton caché reste invisible */
-}
-
-
-
+/* Masquer les boutons tout en détectant les clics */
 .stButton > button {
     background-color: #4A90E2;
     color: #F5F5F5;
@@ -171,9 +167,13 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block; /* Permet le centrage avec text-align */
-    width: 150px; /* Largeur fixe pour un centrage prévisible */
-    margin: 0 auto; /* Centre horizontalement */
+    display: none; /* Masque le bouton visuellement */
+    position: absolute; /* Superpose le bouton sur l'image */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0; /* Rend le bouton invisible mais cliquable */
 }
 
 .stButton > button:hover {
