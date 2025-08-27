@@ -142,18 +142,15 @@
 .header-table td {
     border: none;
     padding: 0;
-    /*vertical-align: top;*/ /* Aligne le contenu en haut pour respecter le padding */
 }
 
 .logo-cell {
     width: 46px;
-    /*vertical-align: middle;*/
     padding-right: 10px;
 }
 
 .title-cell {
     width: auto; /* Laisse le titre prendre l'espace disponible */
-    /*vertical-align: top; */ /* Aligne avec le padding supérieur */
     text-align: center;
     flex-grow: 1; /* Permet au titre de s'étendre */
 }
