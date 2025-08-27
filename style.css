@@ -134,7 +134,7 @@
     width: 100%;
     border: none !important;
     border-collapse: collapse;
-    margin-top: 0 !important; /* Supprime toute marge supérieure */
+    margin-top: 100px !important; 
     margin-bottom: 20px;
 }
 
