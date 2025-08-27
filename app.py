@@ -9,6 +9,7 @@ os.environ["TF_FORCE_CPU_ONLY"] = "1"
 import tensorflow as tf   
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer 
 import streamlit as st 
+from st_clickable_images import clickable_images
 
 # Fonction pour charger dynamiquement les images
 def load_examples(dynamic_dir="examples"):
