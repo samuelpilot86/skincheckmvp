@@ -29,7 +29,7 @@
 
 /* Conteneur principal pour responsivité */
 .main-container {
-    max-width: 390px; /* Largeur fixe comme un iPhone 13 */
+    width: 390px; /* Largeur fixe comme un iPhone 13 */
     max-height: 844px; /* Hauteur maximale comme un iPhone 13 */
     position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
