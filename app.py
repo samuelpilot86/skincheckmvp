@@ -175,11 +175,7 @@ elif st.session_state.screen == "Examples":
         os.path.join(base_dir, "melanoma3.jpg")
     ]
 
-    # Débogage des chemins
-    st.write(f"Répertoire de travail : {os.getcwd()}")
-    st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
-
-    # Conversion des images en base64 avec débogage
+    # Conversion des images en base64
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
@@ -193,22 +189,20 @@ elif st.session_state.screen == "Examples":
 
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
-    st.write(f"Base64 lengths (benign): {[len(b) for b in benign_base64]}")  # Débogage de la taille des données
-    st.write(f"Base64 lengths (melanoma): {[len(m) for m in melanoma_base64]}")  # Débogage de la taille des données
 
     # Vérification des données
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
         st.write("Erreur : Certaines images n'ont pas pu être encodées en base64.")
     else:
-        # Affichage des en-têtes et images cliquables avec taille réduite
+        # Affichage des en-têtes et images cliquables avec fond blanc cassé
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
             clicked_benign = clickable_images(
                 [f"data:image/jpeg;base64,{b}" for b in benign_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto"}  # Réduit la taille
+                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
+                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
             )
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
@@ -225,8 +219,8 @@ elif st.session_state.screen == "Examples":
             clicked_melanoma = clickable_images(
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],  # Vides pour éviter les légendes
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto"}  # Réduit la taille
+                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
+                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
             )
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
