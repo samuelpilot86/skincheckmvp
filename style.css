@@ -6,34 +6,32 @@
     box-shadow: none !important;
     /* Pas de background-color pour laisser le fond par défaut (#FFFFFF) */
 }
-
 .appview-container {
-    margin: 0 !important; /* Supprime toute marge supérieure par défaut */ 
+    margin: 0 !important; /* Supprime toute marge supérieure par défaut */
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
     /* Pas de background-color pour laisser le fond par défaut */
 }
-
 .block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner */
     max-width: 390px !important;
     padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
     background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande de 390px */
     border: none !important;
     box-shadow: none !important;
-    margin-top: 0 !important; /* Supprime toute marge supérieure ajoutée par Streamlit */
+    margin: 0 auto !important; /* Centre le conteneur */
     position: relative; /* Assure un contexte de positionnement */
     top: 0; /* Réinitialise la position verticale */
+    width: 100%; /* S'adapte à la largeur de l'écran sur mobile */
 }
-
-/* Conteneur principal pour responsivité (facultatif, peut être simplifié) */
+/* Conteneur principal pour responsivité */
 .main-container {
-    width: 390px !important; /* Largeur fixe comme un iPhone 13 */
-    max-height: 644px; /* Hauteur maximale comme un iPhone 13 moins 200 pixels pour compter le navigateur et la barre StreamLit */
+    width: 100% !important; /* Remplace la largeur fixe par 100% pour s'adapter */
+    max-width: 390px; /* Limite maximale comme un iPhone 13 */
+    max-height: 644px; /* Hauteur maximale comme un iPhone 13 moins 200 pixels */
     position: relative; /* Pour le positionnement */
     margin: 0 auto; /* Centre l'app horizontalement */
     overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
-    /* Pas de background-color, laissé à .block-container */
     font-family: 'Roboto', sans-serif;
     padding: 0;
     border: none; /* Supprime toutes les bordures */
@@ -46,7 +44,6 @@
     width: 100%; /* Occupe toute la largeur disponible */
     margin-top: 0 !important; /* Supprime toute marge supérieure */
 }
-
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
@@ -61,15 +58,12 @@
     position: relative; /* Contexte pour le positionnement */
     top: 0; /* Aligne avec le haut de .block-container après padding */
 }
-
-.skin{
+.skin {
     color: #4A90E2;
 }
-
-.check{
+.check {
     color: #7ED321;
 }
-
 /* Sous-titre */
 .subtitle {
     font-family: 'Roboto', sans-serif;
@@ -79,7 +73,6 @@
     text-align: center;
     margin-top: 5px;
 }
-
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
@@ -89,28 +82,23 @@
     margin-top: 16px !important;
     margin-bottom: 20px;
 }
-
 .header-table td {
     border: none;
     padding: 0;
 }
-
 .logo-cell {
     width: 46px;
     padding-right: 10px;
 }
-
 .title-cell {
     width: auto; /* Laisse le titre prendre l'espace disponible */
     text-align: center;
     flex-grow: 1; /* Permet au titre de s'étendre */
 }
-
 .empty-cell {
     width: 46px;
     padding-left: 10px;
 }
-
 /* Textes (normal...) */
 .normal-text {
     font-family: 'Roboto', sans-serif;
@@ -118,35 +106,12 @@
     font-size: 18px;
     color: #333333;
 }
-
 .bottom-note {
     font-family: 'Roboto', sans-serif;
     font-weight: 400; /* Regular */
     font-size: 12px;
     color: #333333;
 }
-
-.column-title {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
-    font-size: 18px;
-    color: #333333;
-    text-align: center;
-    line-height: 2;
-}
-
-/* Styles pour centrer les images dans st-clickable-images */
-.st-clickable-image {
-    text-align: center;
-    margin: 5px auto; /* Centrage horizontal avec espacement */
-}
-
-.st-clickable-image img {
-    display: inline-block; /* Permet le centrage */
-    max-width: 100%; /* Respecte la largeur de la colonne */
-    cursor: pointer; /* Indique que l'image est cliquable */
-}
-
 /* Styles pour les titres de colonne */
 .column-title {
     font-family: 'Roboto', sans-serif;
@@ -154,18 +119,44 @@
     font-size: 18px;
     color: #333333;
     text-align: center;
-    background-color: #f5f5f5;
+    background-color: #f0f0f0; /* Blanc cassé normal */
     padding: 10px;
 }
+/* Styles pour centrer les images dans st-clickable-images */
+.st-clickable-image {
+    text-align: center;
+    margin: 5px auto; /* Centrage horizontal avec espacement */
+    max-width: 100%; /* S'adapte à la colonne */
+}
 
+.st-clickable-image img {
+    display: inline-block; /* Permet le centrage */
+    max-width: 150px; /* Limite la taille pour mobile */
+    height: auto; /* Conserve les proportions */
+    cursor: pointer; /* Indique que l'image est cliquable */
+    background-color: #F5F5F5; /* Fond blanc cassé pour harmoniser */
+}
+
+/* Media query pour iPhone et petits écrans */
+@media only screen and (max-width: 390px) {
+    .block-container {
+        max-width: 100% !important; /* S'adapte pleinement à l'écran */
+        padding-top: 20px !important; /* Ajuste le padding pour mobile */
+    }
+    .main-container {
+        max-width: 100%; /* S'adapte à l'écran */
+        max-height: 100%; /* Ajuste la hauteur */
+    }
+    .st-clickable-image img {
+        max-width: 120px; /* Réduit encore plus pour petits écrans */
+    }
+}
 
 /* Boutons */
-
 .stButton {
     text-align: center;
     margin-bottom: 10px; /* Espacement entre l'image et le bouton */
 }
-
 .stButton > button {
     background-color: #4A90E2;
     color: #F5F5F5;
@@ -181,16 +172,13 @@
     top: 0;
     left: 0;
 }
-
 .stButton > button:hover {
     background-color: #3A7AC2; /* Bleu légèrement plus foncé au hover */
 }
-
 /* Icônes dans les boutons (simulées avec texte pour l'instant) */
 .button-icon {
     color: #F5F5F5; /* Blanc cassé */
 }
-
 /* Fond pour la prise et le recadrage de photos */
 .photo-section {
     background-color: #333333;
@@ -200,12 +188,9 @@
     font-size: 24px;
     padding: 20px;
 }
-
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
     display: flex;
     justify-content: center;
     gap: 10px; /* Espacement entre les boutons */
 }
-
-
