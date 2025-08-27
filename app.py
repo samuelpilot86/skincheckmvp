@@ -172,7 +172,7 @@ elif st.session_state.screen == "Examples":
         "examples/Mélanome 3.jpg"
     ]
 
-    # HTML pour le tableau avec images cliquables
+    # HTML pour le tableau avec images cliquables (placeholders numérotés)
     table_html = """
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
@@ -181,26 +181,26 @@ elif st.session_state.screen == "Examples":
             </tr>
             <tr>
                 <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Benign 1" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                    <img src="data:image/jpeg;base64,{0}" alt="Benign 1" class="clickable-image" data-path="{1}" style="width: 150px; height: auto; cursor: pointer;">
                 </td>
                 <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 1" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Benign 2" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
-                </td>
-                <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 2" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                    <img src="data:image/jpeg;base64,{2}" alt="Melanoma 1" class="clickable-image" data-path="{3}" style="width: 150px; height: auto; cursor: pointer;">
                 </td>
             </tr>
             <tr>
                 <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Benign 3" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                    <img src="data:image/jpeg;base64,{4}" alt="Benign 2" class="clickable-image" data-path="{5}" style="width: 150px; height: auto; cursor: pointer;">
                 </td>
                 <td style="padding: 10px; text-align: center;">
-                    <img src="data:image/jpeg;base64,{}" alt="Melanoma 3" class="clickable-image" data-path="{}" style="width: 150px; height: auto; cursor: pointer;">
+                    <img src="data:image/jpeg;base64,{6}" alt="Melanoma 2" class="clickable-image" data-path="{7}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{8}" alt="Benign 3" class="clickable-image" data-path="{9}" style="width: 150px; height: auto; cursor: pointer;">
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <img src="data:image/jpeg;base64,{10}" alt="Melanoma 3" class="clickable-image" data-path="{11}" style="width: 150px; height: auto; cursor: pointer;">
                 </td>
             </tr>
         </table>
@@ -255,13 +255,14 @@ elif st.session_state.screen == "Examples":
 
     # Gestion de la réponse du message (simulée ici, à adapter selon votre backend)
     def handle_message(event):
-        if event.data.type == 'updateSession':
+        if event.data.type === 'updateSession':
             st.session_state.screen = event.data.screen
             st.session_state.image = event.data.image
             st.session_state.result = [event.data.result, event.data.probability, event.data.color]
             st.rerun()
 
     st.markdown('<script>window.addEventListener("message", handle_message);</script>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
