@@ -240,24 +240,24 @@ elif st.session_state.screen == "Examples":
         </script>
     """
 
-    # Conversion des images en base64 avec vérification
+    # Conversion des images en base64 avec vérification stricte
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode()
         except FileNotFoundError:
             st.write(f"Erreur : Fichier {image_path} non trouvé.")
-            return ""
+            return None  # Retourne None au lieu de "" pour détecter les échecs
         except Exception as e:
             st.write(f"Erreur lors du chargement de {image_path} : {e}")
-            return ""
+            return None
 
     benign_base64 = [image_to_base64(img) for img in benign_images]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images]
 
-    # Vérification des données avant formatage
-    if len(benign_base64) != 3 or len(melanoma_base64) != 3 or any(b == "" for b in benign_base64) or any(m == "" for m in melanoma_base64):
-        st.write("Erreur : Certaines images n'ont pas pu être chargées. Vérifiez les chemins.")
+    # Vérification stricte des données avant formatage
+    if any(b is None for b in benign_base64) or any(m is None for m in melanoma_base64):
+        st.write("Erreur : Certaines images n'ont pas pu être chargées. Vérifiez les chemins ou le déploiement.")
     else:
         # Remplissage du HTML avec les images encodées
         filled_table_html = table_html.format(
