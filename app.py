@@ -105,13 +105,6 @@ html = f'''
 '''
 st.markdown(html, unsafe_allow_html=True)
 
-# Avertissement
-st.markdown(
-    '<div style="background-color: #ff4500; color: white; padding: 10px; border-radius: 5px; text-align: center;">'
-    '<strong>Warning:</strong> This app is a prototype and has not been validated by any medical authority. Its results should not be trusted. If you have any doubts, consult your dermatologist.</div>',
-    unsafe_allow_html=True
-)
-
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
