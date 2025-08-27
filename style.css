@@ -5,7 +5,7 @@
     padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
     background-color: #F5F5F5 !important;
     border: none !important;
-    box-shadow: none !important;
+    box-shadow: none !important; 
 }
 
 /* Nouvelles règles pour supprimer la barre d'outils ou l'en-tête */
