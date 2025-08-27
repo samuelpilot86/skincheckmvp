@@ -185,7 +185,7 @@ elif st.session_state.screen == "Examples":
     with col1:
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption="", use_column_width=True, output_format="JPEG")  # Retire la légende
+                st.image(img_path, caption="", use_container_width=True, output_format="JPEG")  # Retire la légende
                 if st.button(f"Analyze {i}", key=f"benign_analyze_{i}"):  # Utilise uniquement le numéro
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
@@ -200,7 +200,7 @@ elif st.session_state.screen == "Examples":
     with col2:
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption="", use_column_width=True, output_format="JPEG")  # Retire la légende
+                st.image(img_path, caption="", use_container_width=True, output_format="JPEG")  # Retire la légende
                 if st.button(f"Analyze {i}", key=f"melanoma_analyze_{i}"):  # Utilise uniquement le numéro
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
