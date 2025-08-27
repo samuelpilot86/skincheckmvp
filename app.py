@@ -128,7 +128,7 @@ if st.session_state.screen == "Accueil":
 elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
-        st.rerun()  # Ajouté pour revenir à l'écran "Accueil" avec un seul clic
+        st.rerun()
     st.markdown('<div class="photo-section">Take a sharp photo as close as possible</div>', unsafe_allow_html=True)
     captured_file = st.camera_input("")
     if captured_file is not None:
@@ -136,7 +136,7 @@ elif st.session_state.screen == "Photo":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
-        st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
+        st.rerun()
 elif st.session_state.screen == "Browse":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
@@ -148,11 +148,11 @@ elif st.session_state.screen == "Browse":
         image = ImageOps.exif_transpose(image)
         st.session_state.image = image
         st.session_state.screen = "Reframe"
-        st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
+        st.rerun()
 elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
-        st.rerun()  # Ajouté pour revenir à l'écran "Accueil" avec un seul clic
+        st.rerun()
     st.markdown('<div class="header-container">', unsafe_allow_html=True)
     if os.path.exists(logo_path):
         st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
@@ -167,14 +167,14 @@ elif st.session_state.screen == "Examples":
             if st.button(label, key=f"benign_{label}"):
                 st.session_state.image = Image.open(path)
                 st.session_state.screen = "Reframe"
-                st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
+                st.rerun()
     with col2:
         st.markdown('<div class="normal-text">**Melanomas:**</div>', unsafe_allow_html=True)
         for label, path in exemples_complets.get("melanoma", []):
             if st.button(label, key=f"melanoma_{label}"):
                 st.session_state.image = Image.open(path)
                 st.session_state.screen = "Reframe"
-                st.rerun()  # Ajouté pour passer à l'écran "Reframe" avec un seul clic
+                st.rerun()
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
