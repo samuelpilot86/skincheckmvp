@@ -88,8 +88,8 @@
     color: #333333;
 }
 
-.bottom-note {
-    font-size: 12px;
+.normal-text > bottom-note {
+    font-size: 14px;
 }
 
 
