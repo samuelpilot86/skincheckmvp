@@ -8,7 +8,7 @@
 }
 
 .stAppHeader {
-    heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
+    max-heigth: 0 !important; /* Tentative pour ne pas voir la barre du haut */
 }
 
 .appview-container {
