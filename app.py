@@ -190,7 +190,7 @@ elif st.session_state.screen == "Examples":
                 st.session_state.result = (result, prob, color)
                 st.rerun()
                
-elif st.session_state.screen = "Reframe":
+elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
         st.session_state.screen = "Photo"
         st.rerun()
