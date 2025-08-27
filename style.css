@@ -135,6 +135,17 @@
     line-height: 2;
 }
 
+/* Styles pour centrer les images */
+.stImage {
+    text-align: center;
+    margin-bottom: 10px; /* Espacement avec l'élément suivant */
+}
+
+.stImage img {
+    display: inline-block; /* Permet le centrage avec text-align */
+    max-width: 100%; /* Respecte la largeur de la colonne */
+    cursor: pointer; /* Indique que l'image est cliquable */
+}
 
 /* Boutons */
 
@@ -142,6 +153,13 @@
     text-align: center;
     margin-bottom: 10px; /* Espacement entre l'image et le bouton */
 }
+
+/* Masquer les boutons inutiles */
+.stButton[style*="display: none"] {
+    display: none !important; /* Assure que le bouton caché reste invisible */
+}
+
+
 
 .stButton > button {
     background-color: #4A90E2;
