@@ -194,16 +194,39 @@ elif st.session_state.screen == "Reframe":
         st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
-        st.image(image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
-        st.markdown(f'<div class="normal-text">Current size: {image.size[0]} x {image.size[1]}</div>', unsafe_allow_html=True)
-        if st.button("Reframe", key="reframe"):
-            st.warning("Veuillez recadrer manuellement l'image pour que la lésion occupe environ la moitié de l'espace.")
+        # Initialisation des coordonnées de recadrage
+        if 'crop_coords' not in st.session_state:
+            width, height = image.size
+            st.session_state.crop_coords = {'left': 0, 'top': 0, 'right': width, 'bottom': height}
+
+        # Sliders pour ajuster le recadrage
+        col1, col2 = st.columns(2)
+        with col1:
+            left = st.slider("Left", 0, image.size[0], st.session_state.crop_coords['left'], key="left_slider")
+            top = st.slider("Top", 0, image.size[1], st.session_state.crop_coords['top'], key="top_slider")
+        with col2:
+            right = st.slider("Right", 0, image.size[0], st.session_state.crop_coords['right'], key="right_slider")
+            bottom = st.slider("Bottom", 0, image.size[1], st.session_state.crop_coords['bottom'], key="bottom_slider")
+
+        # Mettre à jour les coordonnées dans l'état
+        st.session_state.crop_coords = {'left': left, 'top': top, 'right': right, 'bottom': bottom}
+
+        # Recadrer l'image
+        cropped_image = image.crop((left, top, right, bottom))
+        st.image(cropped_image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
+        st.markdown(f'<div class="normal-text">Current size: {cropped_image.size[0]} x {cropped_image.size[1]}</div>', unsafe_allow_html=True)
+
+        # Boutons de validation
+        if st.button("Adjust", key="adjust"):
+            pass  # Pas d'action spécifique, juste pour indiquer que l'utilisateur peut ajuster
         if st.button("Analyze", key="analyze"):
             with st.spinner("Analysis in progress..."):
-                result, prob, color = predict_user_image(image)
+                result, prob, color = predict_user_image(cropped_image)
             st.session_state.screen = "Result"
             st.session_state.result = (result, prob, color)
+            st.session_state.image = cropped_image  # Mettre à jour l'image recadrée
             st.rerun()
+
 elif st.session_state.screen == "Result":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
