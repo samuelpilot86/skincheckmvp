@@ -175,6 +175,10 @@ elif st.session_state.screen == "Examples":
         os.path.join(base_dir, "melanoma3.jpg")
     ]
 
+    # Débogage des chemins
+    st.write(f"Répertoire de travail : {os.getcwd()}")
+    st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
+
     # Affichage des en-têtes et images cliquables
     col1, col2 = st.columns(2)
     with col1:
@@ -194,7 +198,7 @@ elif st.session_state.screen == "Examples":
             st.session_state.image = img_path
             st.session_state.result = (result, prob, color)
             st.rerun()
-    
+   
     with col2:
         st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
         clicked_melanoma = clickable_images(
