@@ -181,23 +181,21 @@ elif st.session_state.screen == "Examples":
     with col2:
         st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
 
-    # Affichage des images avec boutons cliquables sans noms de fichiers
+    # Affichage des images cliquables
     with col1:
         for i, img_path in enumerate(benign_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption="", use_container_width=True, output_format="JPEG")
-                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)
-                with st.container():
-                    st.button("Analyze", key=f"benign_analyze_{i}")
-                st.markdown('</div>', unsafe_allow_html=True)
-                if st.session_state.get(f"benign_analyze_{i}", False):
+                st.image(img_path, use_container_width=True, output_format="JPEG", key=f"benign_image_{i}")
+                if st.button("Click to analyze", key=f"benign_click_{i}", help="Click the image to analyze", style={"display": "none"}):
+                    pass  # Bouton caché, utilisé uniquement pour détecter le clic
+                if st.session_state.get(f"benign_click_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
                     st.session_state.screen = "Result"
                     st.session_state.image = img_path
                     st.session_state.result = (result, prob, color)
-                    st.session_state[f"benign_analyze_{i}"] = False  # Réinitialiser l'état
+                    st.session_state[f"benign_click_{i}"] = False  # Réinitialiser l'état
                     st.rerun()
             else:
                 st.write(f"Image {i} non trouvée.")
@@ -205,19 +203,17 @@ elif st.session_state.screen == "Examples":
     with col2:
         for i, img_path in enumerate(melanoma_images, 1):
             if os.path.exists(img_path):
-                st.image(img_path, caption="", use_container_width=True, output_format="JPEG")
-                st.markdown('<div class="button-container-centered">', unsafe_allow_html=True)
-                with st.container():
-                    st.button("Analyze", key=f"melanoma_analyze_{i}")
-                st.markdown('</div>', unsafe_allow_html=True)
-                if st.session_state.get(f"melanoma_analyze_{i}", False):
+                st.image(img_path, use_container_width=True, output_format="JPEG", key=f"melanoma_image_{i}")
+                if st.button("Click to analyze", key=f"melanoma_click_{i}", help="Click the image to analyze", style={"display": "none"}):
+                    pass  # Bouton caché, utilisé uniquement pour détecter le clic
+                if st.session_state.get(f"melanoma_click_{i}", False):
                     image = Image.open(img_path)
                     with st.spinner("Analysis in progress..."):
                         result, prob, color = predict_user_image(image)
                     st.session_state.screen = "Result"
                     st.session_state.image = img_path
                     st.session_state.result = (result, prob, color)
-                    st.session_state[f"melanoma_analyze_{i}"] = False  # Réinitialiser l'état
+                    st.session_state[f"melanoma_click_{i}"] = False  # Réinitialiser l'état
                     st.rerun()
             else:
                 st.write(f"Image {i} non trouvée.")
