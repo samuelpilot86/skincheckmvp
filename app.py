@@ -135,7 +135,8 @@ elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-
+    st.markdown('<div class="normal-text">Click any of the following examples to analyze it:</div>', unsafe_allow_html=True)
+    
     # Définition des chemins des images fixes
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [
