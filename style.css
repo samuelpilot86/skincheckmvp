@@ -1,4 +1,10 @@
 /* Styles globaux */
+.stApp {
+    background-color: #F5F5F5 !important;
+    /*margin: 0 !important;
+    padding: 0 !important;*/
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -7,9 +13,6 @@ body {
 .block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
     max-width: 390px !important;
 }
-.stApp {
-    /* Rien, parce que je n'ai pas tout le contrôle sur .stApp */
-    }
 
 /* Conteneur principal pour responsivité */
 .main-container {
