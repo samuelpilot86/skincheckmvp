@@ -6,8 +6,6 @@ body {
 
 .block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
     max-width: 390px !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
 }
 .stApp {
     /* Rien, parce que je n'ai pas tout le contrôle sur .stApp */
