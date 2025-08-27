@@ -8,6 +8,8 @@
 }
 
 .appview-container {
+    margin: 0 !important; /* Supprime toute marge supérieure par défaut */
+    padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
     /* Pas de background-color pour laisser le fond par défaut */
@@ -15,10 +17,11 @@
 
 .block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner */
     max-width: 390px !important;
-    /*padding-top: 40px !important;*/ /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
-    background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande de 390px contenant tous les éléments */
+    padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
+    background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande de 390px */
     border: none !important;
     box-shadow: none !important;
+    margin-top: 0 !important; /* Supprime toute marge supérieure ajoutée par Streamlit */
 }
 
 /* Nouvelles règles pour supprimer la barre d'outils ou l'en-tête */
@@ -29,6 +32,8 @@
 .stHeader {
     border: none !important;
     box-shadow: none !important;
+    margin: 0 !important; /* Supprime toute marge */
+    padding: 0 !important;
 }
 
 /* Conteneur principal pour responsivité (facultatif, peut être simplifié) */
@@ -49,6 +54,7 @@
 .header-container {
     align-items: center;
     width: 100%; /* Occupe toute la largeur disponible */
+    margin-top: 0 !important; /* Supprime toute marge supérieure */
 }
 
 /* Titre de l'app "SkinCheck" */
@@ -58,14 +64,10 @@
     font-size: 28px;
     text-align: center;
     margin: 0;
-}
-
-.app-title span.skin {
-    color: #4A90E2;
-}
-
-.app-title span.check {
-    color: #7ED321;
+    padding-top: 0 !important; /* Supprime tout padding supérieur interne */
+    line-height: 1.2; /* Ajuste la hauteur de ligne pour éviter le débordement */
+    white-space: normal; /* Permet le retour à la ligne si nécessaire */
+    overflow: visible; /* Évite la troncature */
 }
 
 /* Sous-titre */
@@ -132,29 +134,29 @@
     width: 100%;
     border: none !important;
     border-collapse: collapse;
+    margin-top: 0 !important; /* Supprime toute marge supérieure */
     margin-bottom: 20px;
-    margin-top: 20;
 }
 
 .header-table td {
     border: none;
     padding: 0;
+    vertical-align: top; /* Aligne le contenu en haut pour respecter le padding */
 }
 
 .logo-cell {
     width: 46px;
-    vertical-align: middle;
     padding-right: 10px;
 }
 
 .title-cell {
-    vertical-align: middle;
+    width: auto; /* Laisse le titre prendre l'espace disponible */
+    vertical-align: top; /* Aligne avec le padding supérieur */
     text-align: center;
-    flex-grow: 1; /* Permet à la cellule du titre de prendre l'espace restant */
+    flex-grow: 1; /* Permet au titre de s'étendre */
 }
 
 .empty-cell {
     width: 46px;
-    vertical-align: middle;
     padding-left: 10px;
 }
