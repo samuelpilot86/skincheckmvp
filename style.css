@@ -3,6 +3,11 @@
 } 
 
 .appview-container {
+    background-color: #F5F5F5 !important
+}
+
+.main {
+    background-color: #F5F5F5 !important
 }
 
 .block-container { /* Un conteneur de streamlit que j'ai besoin de redimensionner, sinon il risque de prendre l'ascendant sur le reste */
