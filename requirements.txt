@@ -3,4 +3,4 @@ tensorflow-cpu==2.20.0
 numpy==2.3.2
 pillow==11.3.0
 st-clickable-images
-streamlit-cropper
+streamlit-cropper==0.3.1
