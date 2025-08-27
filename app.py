@@ -77,9 +77,6 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Envelopper tout le contenu dans un conteneur principal
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-
 # Logo et titre dans un tableau HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
@@ -202,6 +199,3 @@ elif st.session_state.screen == "Result":
                 if st.button("Select demo example"):
                     st.session_state.screen = "Examples"
             st.markdown('</div>', unsafe_allow_html=True)
-
-# Ferme le conteneur principal
-st.markdown('</div>', unsafe_allow_html=True)
