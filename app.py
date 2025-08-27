@@ -179,51 +179,62 @@ elif st.session_state.screen == "Examples":
     st.write(f"Répertoire de travail : {os.getcwd()}")
     st.write(f"Contenu de {base_dir}: {os.listdir(base_dir) if os.path.exists(base_dir) else 'Non trouvé'}")
 
-    # Conversion des chemins en URLs absolues
-    import urllib.parse
-    base_url = "https://skincheckmvp.streamlit.app/~/+/media/"  # Base URL de votre app
-    benign_urls = [f"{base_url}{urllib.parse.quote(os.path.relpath(img, os.getcwd()))}" for img in benign_images]
-    melanoma_urls = [f"{base_url}{urllib.parse.quote(os.path.relpath(img, os.getcwd()))}" for img in melanoma_images]
-    st.write(f"URLs absolues (benign): {benign_urls}")
-    st.write(f"URLs absolues (melanoma): {melanoma_urls}")
+    # Conversion des images en base64
+    def image_to_base64(image_path):
+        try:
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode()
+        except FileNotFoundError:
+            st.write(f"Erreur : Fichier {image_path} non trouvé.")
+            return None
+        except Exception as e:
+            st.write(f"Erreur lors du chargement de {image_path} : {e}")
+            return None
 
-    # Affichage des en-têtes et images cliquables
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
-        clicked_benign = clickable_images(
-            benign_urls,
-            titles=["", "", ""],  # Vides pour éviter les légendes
-            div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-            img_style={"margin": "5px", "cursor": "pointer"}
-        )
-        if clicked_benign is not None and clicked_benign >= 0:
-            img_path = benign_images[clicked_benign]
-            image = Image.open(img_path)
-            with st.spinner("Analysis in progress..."):
-                result, prob, color = predict_user_image(image)
-            st.session_state.screen = "Result"
-            st.session_state.image = img_path
-            st.session_state.result = (result, prob, color)
-            st.rerun()
-   
-    with col2:
-        st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
-        clicked_melanoma = clickable_images(
-            melanoma_urls,
-            titles=["", "", ""],  # Vides pour éviter les légendes
-            div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-            img_style={"margin": "5px", "cursor": "pointer"}
-        )
-        if clicked_melanoma is not None and clicked_melanoma >= 0:
-            img_path = melanoma_images[clicked_melanoma]
-            image = Image.open(img_path)
-            with st.spinner("Analysis in progress..."):
-                result, prob, color = predict_user_image(image)
-            st.session_state.screen = "Result"
-            st.session_state.image = img_path
-            st.session_state.result = (result, prob, color)
-            st.rerun()
+    benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
+    melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
+
+    # Vérification des données
+    if len(benign_base64) != 3 or len(melanoma_base64) != 3:
+        st.write("Erreur : Certaines images n'ont pas pu être encodées en base64.")
+    else:
+        # Affichage des en-têtes et images cliquables
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
+            clicked_benign = clickable_images(
+                [f"data:image/jpeg;base64,{b}" for b in benign_base64],
+                titles=["", "", ""],  # Vides pour éviter les légendes
+                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+                img_style={"margin": "5px", "cursor": "pointer"}
+            )
+            if clicked_benign is not None and clicked_benign >= 0:
+                img_path = benign_images[clicked_benign]
+                image = Image.open(img_path)
+                with st.spinner("Analysis in progress..."):
+                    result, prob, color = predict_user_image(image)
+                st.session_state.screen = "Result"
+                st.session_state.image = img_path
+                st.session_state.result = (result, prob, color)
+                st.rerun()
+        
+        with col2:
+            st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
+            clicked_melanoma = clickable_images(
+                [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
+                titles=["", "", ""],  # Vides pour éviter les légendes
+                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
+                img_style={"margin": "5px", "cursor": "pointer"}
+            )
+            if clicked_melanoma is not None and clicked_melanoma >= 0:
+                img_path = melanoma_images[clicked_melanoma]
+                image = Image.open(img_path)
+                with st.spinner("Analysis in progress..."):
+                    result, prob, color = predict_user_image(image)
+                st.session_state.screen = "Result"
+                st.session_state.image = img_path
+                st.session_state.result = (result, prob, color)
+                st.rerun()
                 
 elif st.session_state.screen == "Reframe":
     if st.button("←", key="back"):
