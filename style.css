@@ -147,6 +147,7 @@
 
 .logo-cell {
     width: 46px;
+    vertical-align: top; /* Aligne avec le padding supérieur */
     padding-right: 10px;
 }
 
