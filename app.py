@@ -17,10 +17,12 @@ model = load_model()
 
 # Interface Streamlit
 st.set_page_config(page_title="SkinCheck", layout="centered")
+
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-# Logo et titre dans un tableau HTML - définition en amont pour pouvoir la réutiliser dans plusieurs pages
+
+# Création du logo et titre dans une variable HTML - définition en amont pour pouvoir la réutiliser dans plusieurs pages
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
     try:
@@ -43,6 +45,28 @@ title_html = f'''
       </tr>
     </table>
 '''
+
+# Création des instructions de recadrage
+reframed_mole_path = os.path.join("images", "FramedMole.jpg")
+if os.path.exists(reframed_mole_path):
+    try:
+        reframed_mole_data = base64.b64encode(open(reframed_mole_path, "rb").read()).decode()
+        reframed_mole_html = f'<img src="data:image/jpg;base64,{reframed_mole_data}" alt="" width="100" height="auto">'
+    except Exception as e:
+        st.write(f"Erreur lors du chargement de l'image : {e}")
+        reframed_mole_html = ""
+else:
+    logo_html = ""
+
+reframe_instructions_html = f'''
+    <table>
+      <tr>
+        <td><div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div></td>
+        <td>{reframed_mole_html}</td>
+      </tr>
+    </table>
+'''
+
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
