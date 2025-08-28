@@ -202,72 +202,83 @@ elif st.session_state.screen == "Photo":
         except Exception as e:
             st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
 
-    def image_to_base64(image_path):
-        try:
-            with open(image_path, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode()
-        except FileNotFoundError:
-            st.markdown(f'<div class="normal-text">Erreur : Fichier {image_path} non trouvé.</div>', unsafe_allow_html=True)
-            return None
-        except Exception as e:
-            st.markdown(f'<div class="normal-text">Erreur lors du chargement de {image_path} : {e}</div>', unsafe_allow_html=True)
-            return None
-
-    benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
-    melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
-
-    if len(benign_base64) != 3 or len(melanoma_base64) != 3:
-        st.markdown('<div class="normal-text">Erreur : Certaines images n\'ont pas pu être encodées en base64.</div>', unsafe_allow_html=True)
+elif st.session_state.screen == "Examples":
+    st.markdown(title_html, unsafe_allow_html=True)
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
+        st.rerun()
+    st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
+    base_dir = os.path.join(os.getcwd(), "examples")
+    # Définir les listes d'images
+    benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
+    melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
+    
+    # Vérifier si les listes sont définies
+    if not benign_images or not melanoma_images:
+        st.markdown('<div class="normal-text">Erreur : Les listes d\'images de démonstration ne sont pas définies.</div>', unsafe_allow_html=True)
     else:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown('<div class="column-title">Benign moles:</div>', unsafe_allow_html=True)
-            clicked_benign = clickable_images(
-                [f"data:image/jpeg;base64,{b}" for b in benign_base64],
-                titles=["", "", ""],
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
-            )
-            if clicked_benign is not None and clicked_benign >= 0:
-                img_path = benign_images[clicked_benign]
-                try:
-                    image = Image.open(img_path)
-                    if not isinstance(image, Image.Image):
-                        st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
-                    else:
-                        # st.markdown(f'<div class="normal-text">Image exemple chargée - cropped_image.size: {image.size}</div>', unsafe_allow_html=True)
-                        with st.spinner("Analysis in progress..."):
-                            result, prob, color = predict_user_image(image, model)
-                        st.session_state.screen = "Result"
-                        st.session_state.cropped_image = image  # Pas de recadrage pour les démos
-                        st.session_state.result = (result, prob, color)
-                        st.rerun()
-                except Exception as e:
-                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-        with col2:
-            st.markdown('<div class="column-title">Melanomas:</div>', unsafe_allow_html=True)
-            clicked_melanoma = clickable_images(
-                [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
-                titles=["", "", ""],
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
-            )
-            if clicked_melanoma is not None and clicked_melanoma >= 0:
-                img_path = melanoma_images[clicked_melanoma]
-                try:
-                    image = Image.open(img_path)
-                    if not isinstance(image, Image.Image):
-                        st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
-                    else:
-                        # st.markdown(f'<div class="normal-text">Image exemple chargée - cropped_image.size: {image.size}</div>', unsafe_allow_html=True)
-                        with st.spinner("Analysis in progress..."):
-                            result, prob, color = predict_user_image(image, model)
-                        st.session_state.screen = "Result"
-                        st.session_state.cropped_image = image  # Pas de recadrage pour les démos
-                        st.session_state.result = (result, prob, color)
-                        st.rerun()
-                except Exception as e:
-                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
+        def image_to_base64(image_path):
+            try:
+                with open(image_path, "rb") as image_file:
+                    return base64.b64encode(image_file.read()).decode()
+            except FileNotFoundError:
+                st.markdown(f'<div class="normal-text">Erreur : Fichier {image_path} non trouvé.</div>', unsafe_allow_html=True)
+                return None
+            except Exception as e:
+                st.markdown(f'<div class="normal-text">Erreur lors du chargement de {image_path} : {e}</div>', unsafe_allow_html=True)
+                return None
+        benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
+        melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
+        if len(benign_base64) != 3 or len(melanoma_base64) != 3:
+            st.markdown('<div class="normal-text">Erreur : Certaines images n\'ont pas pu être encodées en base64.</div>', unsafe_allow_html=True)
+        else:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown('<div class="column-title">Benign moles:</div>', unsafe_allow_html=True)
+                clicked_benign = clickable_images(
+                    [f"data:image/jpeg;base64,{b}" for b in benign_base64],
+                    titles=["", "", ""],
+                    div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
+                    img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
+                )
+                if clicked_benign is not None and clicked_benign >= 0:
+                    img_path = benign_images[clicked_benign]
+                    try:
+                        image = Image.open(img_path)
+                        if not isinstance(image, Image.Image):
+                            st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
+                        else:
+                            with st.spinner("Analysis in progress..."):
+                                result, prob, color = predict_user_image(image, model)
+                            st.session_state.screen = "Result"
+                            st.session_state.cropped_image = image  # Pas de recadrage pour les démos
+                            st.session_state.result = (result, prob, color)
+                            st.rerun()
+                    except Exception as e:
+                        st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
+            with col2:
+                st.markdown('<div class="column-title">Melanomas:</div>', unsafe_allow_html=True)
+                clicked_melanoma = clickable_images(
+                    [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
+                    titles=["", "", ""],
+                    div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
+                    img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
+                )
+                if clicked_melanoma is not None and clicked_melanoma >= 0:
+                    img_path = melanoma_images[clicked_melanoma]
+                    try:
+                        image = Image.open(img_path)
+                        if not isinstance(image, Image.Image):
+                            st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
+                        else:
+                            with st.spinner("Analysis in progress..."):
+                                result, prob, color = predict_user_image(image, model)
+                            st.session_state.screen = "Result"
+                            st.session_state.cropped_image = image  # Pas de recadrage pour les démos
+                            st.session_state.result = (result, prob, color)
+                            st.rerun()
+                    except Exception as e:
+                        st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
