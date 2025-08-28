@@ -250,7 +250,7 @@ elif st.session_state.screen == "Result":
         result, prob, color = st.session_state.result
         st.image(st.session_state.image, caption="", use_container_width=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
-        if result = "Benign":
+        if result == "Benign":
             st.markdown(f'<div class="normal-text">This should be a benign mole. </div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         else:
