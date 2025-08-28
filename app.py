@@ -56,7 +56,7 @@ if os.path.exists(reframed_mole_path):
         st.write(f"Erreur lors du chargement de l'image : {e}")
         reframed_mole_html = ""
 else:
-    logo_html = ""
+    reframed_mole_html = ""
 
 reframe_instructions_html = f'''
     <table>
@@ -200,8 +200,9 @@ elif st.session_state.screen == "Reframe":
         else:  # Paysage
             aspect_ratio = (4, 3)  # 3 hauteur pour 4 largeur
         
-        st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="normal-text"> </div>', unsafe_allow_html=True)
+        st.markdown(reframe_instructions_html, unsafe_allow_html=True)
+        #st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>', unsafe_allow_html=True)
+        #st.markdown(f'<div class="normal-text"> </div>', unsafe_allow_html=True)
         # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
         
