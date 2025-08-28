@@ -114,6 +114,7 @@ if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
     
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
@@ -124,7 +125,7 @@ if st.session_state.screen == "Accueil":
         flex-direction: column;
         align-items: center;
         gap: 10px;
-        max-width: 200px;
+        max-width: 225px; /* Ajusté pour inclure le décalage de 25px */
         margin: 0 auto;
         margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
     }
@@ -153,7 +154,7 @@ if st.session_state.screen == "Accueil":
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+        margin: 0 auto;
         max-width: 200px;
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
@@ -163,7 +164,10 @@ if st.session_state.screen == "Accueil":
     [data-testid="stFileUploaderDropzone"] {
         background-color: transparent;
     }
-    /* Styliser et centrer le bouton Select demo example */
+    /* Styliser et décaler le bouton Select demo example à droite de 25px */
+    .stButton {
+        margin-left: 25px; /* Décalage de 25px à droite */
+    }
     .stButton > button {
         background-color: #4A90E2;
         color: #F5F5F5;
@@ -174,7 +178,7 @@ if st.session_state.screen == "Accueil":
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+        margin: 0 auto;
         max-width: 200px;
         display: block;
     }
@@ -368,7 +372,7 @@ elif st.session_state.screen == "Result":
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            max-width: 200px;
+            max-width: 225px; /* Ajusté pour inclure le décalage de 25px */
             margin: 0 auto;
             margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
         }
@@ -397,7 +401,7 @@ elif st.session_state.screen == "Result":
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+            margin: 0 auto;
             max-width: 200px;
         }
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
@@ -407,7 +411,10 @@ elif st.session_state.screen == "Result":
         [data-testid="stFileUploaderDropzone"] {
             background-color: transparent;
         }
-        /* Styliser et centrer le bouton Select demo example */
+        /* Styliser et décaler le bouton Select demo example à droite de 25px */
+        .stButton {
+            margin-left: 25px; /* Décalage de 25px à droite */
+        }
         .stButton > button {
             background-color: #4A90E2;
             color: #F5F5F5;
@@ -418,7 +425,7 @@ elif st.session_state.screen == "Result":
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+            margin: 0 auto;
             max-width: 200px;
             display: block;
         }
