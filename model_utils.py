@@ -189,7 +189,7 @@ def predict_user_image(image, model):
         # Déterminer le résultat en fonction d'un seuil (par exemple, 0.5)
         threshold = 0.487
         result = "Melanoma" if prob >= threshold else "Benign"
-        color = "#FF6B6B" if prob >= threshold else "#7ED321"  # Rouge pour mélanome, vert pour bénin
+        color = "#FFA500" if prob >= threshold else "#7ED321"  # Orange pour mélanome, vert pour bénin
 
         # st.markdown(f'<div class="normal-text">Débogage : Prédiction terminée. Probabilité : {prob:.2f}, Résultat : {result}</div>', unsafe_allow_html=True)
         return result, prob, color
