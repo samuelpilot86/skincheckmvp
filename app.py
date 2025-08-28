@@ -118,6 +118,8 @@ if st.session_state.screen == "Accueil":
             st.session_state.screen = "Examples"
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown(warning_html, unsafe_allow_html=True)
+
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Photo":
