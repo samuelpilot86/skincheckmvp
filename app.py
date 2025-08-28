@@ -115,7 +115,7 @@ elif st.session_state.screen == "Photo":
     if uploaded_file is not None:
         try:
             image = Image.open(uploaded_file)
-            if not image:
+            if not isinstance(image, Image.Image):
                 st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
             else:
                 image = ImageOps.exif_transpose(image)
@@ -156,10 +156,12 @@ elif st.session_state.screen == "Examples":
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
                 try:
+                    st.markdown(f'<div class="normal-text">Débogage : Tentative d\'ouverture de {img_path}...</div>', unsafe_allow_html=True)
                     image = Image.open(img_path)
-                    if not image:
+                    if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
+                        st.markdown(f'<div class="normal-text">Débogage : Image {img_path} ouverte avec succès.</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -175,10 +177,12 @@ elif st.session_state.screen == "Examples":
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
                 try:
+                    st.markdown(f'<div class="normal-text">Débogage : Tentative d\'ouverture de {img_path}...</div>', unsafe_allow_html=True)
                     image = Image.open(img_path)
-                    if not image:
+                    if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
+                        st.markdown(f'<div class="normal-text">Débogage : Image {img_path} ouverte avec succès.</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -219,6 +223,7 @@ elif st.session_state.screen == "Reframe":
                 st.rerun()
             else:
                 st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
