@@ -143,6 +143,7 @@ elif st.session_state.screen == "Photo":
             else:
                 image = ImageOps.exif_transpose(image)
                 st.session_state.original_image = image
+                st.markdown(f'<div class="normal-text">Image uploadée et transposée - original_image.size: {image.size}</div>', unsafe_allow_html=True)
                 st.session_state.screen = "Reframe"
                 st.rerun()
         except Exception as e:
@@ -191,6 +192,7 @@ elif st.session_state.screen == "Examples":
                     if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
+                        st.markdown(f'<div class="normal-text">Image exemple chargée - cropped_image.size: {image.size}</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -214,6 +216,7 @@ elif st.session_state.screen == "Examples":
                     if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
+                        st.markdown(f'<div class="normal-text">Image exemple chargée - cropped_image.size: {image.size}</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -231,32 +234,41 @@ elif st.session_state.screen == "Reframe":
     if 'original_image' in st.session_state:
         original_image = st.session_state.original_image
         original_width, original_height = original_image.size
+        st.markdown(f'<div class="normal-text">Récupération de l\'image originale - original_width: {original_width}, original_height: {original_height}</div>', unsafe_allow_html=True)
         if original_width > 390:
             new_width = 390
             new_height = int(original_height * (new_width / original_width))
             image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            st.markdown(f'<div class="normal-text">Redimensionnement pour UI (si >390px) - new_width: {new_width}, new_height: {new_height}</div>', unsafe_allow_html=True)
         else:
             image_resized = original_image
             new_width, new_height = original_width, original_height
+            st.markdown(f'<div class="normal-text">Pas de redimensionnement nécessaire - new_width: {new_width}, new_height: {new_height}</div>', unsafe_allow_html=True)
         aspect_ratio = (3, 4) if new_height > new_width else (4, 3)
+        st.markdown(f'<div class="normal-text">Calcul du ratio d\'aspect - aspect_ratio: {aspect_ratio}</div>', unsafe_allow_html=True)
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
+        if crop_box:
+            st.markdown(f'<div class="normal-text">Crop box récupéré (sur image redimensionnée) - crop_box: left={crop_box["left"]}, top={crop_box["top"]}, width={crop_box["width"]}, height={crop_box["height"]}</div>', unsafe_allow_html=True)
         if st.button("Analyze", key="analyze"):
             if crop_box:
                 # Calculer le facteur d'échelle
                 scale_x = original_width / new_width
                 scale_y = original_height / new_height
+                st.markdown(f'<div class="normal-text">Calcul des facteurs d\'échelle - scale_x: {scale_x}, scale_y: {scale_y}</div>', unsafe_allow_html=True)
                 # Appliquer l'échelle et arrondir pour éviter les incohérences de flottants
                 left = round(crop_box['left'] * scale_x)
                 top = round(crop_box['top'] * scale_y)
                 width = round(crop_box['width'] * scale_x)
                 height = round(crop_box['height'] * scale_y)
+                st.markdown(f'<div class="normal-text">Application de l\'échelle et arrondi (sur image originale) - left: {left}, top: {top}, width: {width}, height: {height}</div>', unsafe_allow_html=True)
                 # Vérifier la taille minimale (après arrondi)
                 if width < 224 or height < 224:
                     st.markdown('<div class="normal-text">Erreur : Le cadre de recadrage doit faire au moins 224 pixels en largeur et en hauteur. Veuillez recadrer une zone plus grande.</div>', unsafe_allow_html=True)
                 else:
                     # Recadrer l'image originale
                     cropped_image = original_image.crop((left, top, left + width, top + height))
+                    st.markdown(f'<div class="normal-text">Recadrage effectué - cropped_image.size: {cropped_image.size}</div>', unsafe_allow_html=True)
                     if isinstance(cropped_image, Image.Image):
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(cropped_image, model)
@@ -276,6 +288,7 @@ elif st.session_state.screen == "Result":
         st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
+        st.markdown(f'<div class="normal-text">Récupération de l\'image pour affichage - cropped_image.size: {st.session_state.cropped_image.size}</div>', unsafe_allow_html=True)
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
         if result == "probably benign mole":
             st.markdown(f'<div class="normal-text" style="color: {color};">Result: {result}</div>', unsafe_allow_html=True)
