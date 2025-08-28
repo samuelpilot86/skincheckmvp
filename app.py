@@ -145,8 +145,10 @@ elif st.session_state.screen == "Photo":
             if (uploadButton) {
                 uploadButton.textContent = 'Take/select photo';
                 console.log('Bouton renommé en : Take/select photo');
+                alert('Bouton renommé en : Take/select photo')
             } else {
                 console.log('Bouton non trouvé');
+                alert('Bouton non trouvé')
             }
         });
     """)
