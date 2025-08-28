@@ -14,7 +14,11 @@ from streamlit_cropper import st_cropper
 
 # Charger le modèle
 @st.cache_resource
+# Charger le modèle avec chemin vérifié
+@st.cache_resource
 def load_model():
+    model_path = os.path.join(os.getcwd(), "skin_lesion_model_binary.keras")
+    st.markdown(f'<div class="normal-text">Tentative de chargement du modèle depuis : {model_path}</div>', unsafe_allow_html=True)
     try:
         custom_objects = {
             'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
@@ -23,7 +27,7 @@ def load_model():
             'CombinedMetric': CombinedMetric,
             'ThresholdOptimizer': ThresholdOptimizer
         }
-        model = tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+        model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
         st.markdown('<div class="normal-text">Modèle chargé avec succès.</div>', unsafe_allow_html=True)
         return model
     except Exception as e:
