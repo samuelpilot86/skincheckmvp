@@ -96,9 +96,9 @@ reframe_instructions_html = f'''
 
 # Création de l'avertissement "prototype non validée médicalement"
 warning_html = f'''
-<table style="width:100%; border:none; margin-top:10px;">
+<table style="instructions-table">
     <tr>
-        <td style="width:20px; vertical-align:top;"><span class="warning">⚠</span></td>
+        <td><span class="warning">⚠</span></td>
         <td><div class="warning-text">This prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
     </tr>
 </table>
