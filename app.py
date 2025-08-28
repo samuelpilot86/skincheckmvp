@@ -116,11 +116,57 @@ if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+    
+    # Solution CSS pour styliser le bouton de st.file_uploader et rendre l'arrière-plan transparent
+    st.markdown("""
+    <style>
+    /* Styliser le bouton de st.file_uploader en "Take/select photo" */
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
+        visibility: hidden;
+        position: relative;
+    }
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
+        content: "Take/select photo";
+        visibility: visible;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4A90E2;
+        color: #F5F5F5;
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
+        background-color: #3A7AC2;
+    }
+    /* Rendre l'arrière-plan de la section transparent */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: transparent;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     col_btn = st.columns([1, 1])
     with col_btn[0]:
-        if st.button("Select/take photo", key="photo"):
-            st.session_state.screen = "Photo"
-            st.rerun()
+        uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_accueil")
+        if uploaded_file is not None:
+            try:
+                image = Image.open(uploaded_file)
+                if not isinstance(image, Image.Image):
+                    st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
+                else:
+                    image = ImageOps.exif_transpose(image)
+                    st.session_state.original_image = image
+                    st.session_state.screen = "Reframe"
+                    st.rerun()
+            except Exception as e:
+                st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
     with col_btn[1]:
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
@@ -283,47 +329,33 @@ elif st.session_state.screen == "Examples":
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
-        st.session_state.screen = "Photo"
+        st.session_state.screen = "Accueil"  # Changé de "Photo" à "Accueil"
         st.rerun()
     if 'original_image' in st.session_state:
         original_image = st.session_state.original_image
         original_width, original_height = original_image.size
-        # st.markdown(f'<div class="normal-text">Récupération de l\'image originale - original_width: {original_width}, original_height: {original_height}</div>', unsafe_allow_html=True)
         if original_width > 390:
             new_width = 390
             new_height = int(original_height * (new_width / original_width))
             image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-            # st.markdown(f'<div class="normal-text">Redimensionnement pour UI (si >390px) - new_width: {new_width}, new_height: {new_height}</div>', unsafe_allow_html=True)
         else:
             image_resized = original_image
             new_width, new_height = original_width, original_height
-            # st.markdown(f'<div class="normal-text">Pas de redimensionnement nécessaire - new_width: {new_width}, new_height: {new_height}</div>', unsafe_allow_html=True)
         aspect_ratio = (3, 4) if new_height > new_width else (4, 3)
-        # st.markdown(f'<div class="normal-text">Calcul du ratio d\'aspect - aspect_ratio: {aspect_ratio}</div>', unsafe_allow_html=True)
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
-        if crop_box:
-            # st.markdown(f'<div class="normal-text">Crop box récupéré (sur image redimensionnée) - crop_box: left={crop_box["left"]}, top={crop_box["top"]}, width={crop_box["width"]}, height={crop_box["height"]}</div>', unsafe_allow_html=True)
-            pass
         if st.button("Analyze", key="analyze"):
             if crop_box:
-                # Calculer le facteur d'échelle
                 scale_x = original_width / new_width
                 scale_y = original_height / new_height
-                # st.markdown(f'<div class="normal-text">Calcul des facteurs d\'échelle - scale_x: {scale_x}, scale_y: {scale_y}</div>', unsafe_allow_html=True)
-                # Appliquer l'échelle et arrondir pour éviter les incohérences de flottants
                 left = round(crop_box['left'] * scale_x)
                 top = round(crop_box['top'] * scale_y)
                 width = round(crop_box['width'] * scale_x)
                 height = round(crop_box['height'] * scale_y)
-                # st.markdown(f'<div class="normal-text">Application de l\'échelle et arrondi (sur image originale) - left: {left}, top: {top}, width: {width}, height: {height}</div>', unsafe_allow_html=True)
-                # Vérifier la taille minimale (après arrondi)
                 if width < 224 or height < 224:
                     st.markdown('<div class="normal-text">Erreur : Le cadre de recadrage doit faire au moins 224 pixels en largeur et en hauteur. Veuillez recadrer une zone plus grande.</div>', unsafe_allow_html=True)
                 else:
-                    # Recadrer l'image originale
                     cropped_image = original_image.crop((left, top, left + width, top + height))
-                    # st.markdown(f'<div class="normal-text">Recadrage effectué - cropped_image.size: {cropped_image.size}</div>', unsafe_allow_html=True)
                     if isinstance(cropped_image, Image.Image):
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(cropped_image, model)
@@ -339,11 +371,10 @@ elif st.session_state.screen == "Reframe":
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
+        st.session_state.screen = "Accueil"  # Changé de "Accueil" (inchangé ici) pour cohérence
         st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
-        # st.markdown(f'<div class="normal-text">Récupération de l\'image pour affichage - cropped_image.size: {st.session_state.cropped_image.size}</div>', unsafe_allow_html=True)
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
         if result == "probably benign mole":
             st.markdown(f'<div class="normal-text" style="color: {color};">Result: {result}</div>', unsafe_allow_html=True)
@@ -358,9 +389,51 @@ elif st.session_state.screen == "Result":
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
         col_btn = st.columns([1, 1])
         with col_btn[0]:
-            if st.button("Select/take photo", key="photo"):
-                st.session_state.screen = "Photo"
-                st.rerun()
+            # Changé de st.button("Select/take photo", key="photo") à st.file_uploader
+            st.markdown("""
+            <style>
+            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
+                visibility: hidden;
+                position: relative;
+            }
+            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
+                content: "Take/select photo";
+                visibility: visible;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #4A90E2;
+                color: #F5F5F5;
+                font-family: 'Roboto', sans-serif;
+                font-size: 18px;
+                border-radius: 5px;
+            }
+            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
+                background-color: #3A7AC2;
+            }
+            [data-testid="stFileUploaderDropzone"] {
+                background-color: transparent;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
+            if uploaded_file is not None:
+                try:
+                    image = Image.open(uploaded_file)
+                    if not isinstance(image, Image.Image):
+                        st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
+                    else:
+                        image = ImageOps.exif_transpose(image)
+                        st.session_state.original_image = image
+                        st.session_state.screen = "Reframe"
+                        st.rerun()
+                except Exception as e:
+                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
         with col_btn[1]:
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
