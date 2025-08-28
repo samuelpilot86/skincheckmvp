@@ -94,7 +94,7 @@ warning_html = f'''
     <table class="instructions-table">
       <tr>
         <td><div class="warning">⚠</div></td>
-        <td><div class="normal-text">This app prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
+        <td><div class="warning-text">This prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
       </tr>
     </table>
 '''
@@ -269,7 +269,6 @@ elif st.session_state.screen == "Result":
             st.markdown(f'<div style="background-color: #FFA500; color: white; padding: 10px; border-radius: 5px; text-align: center;">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">No need to worry, melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="normal-text">This app prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div>', unsafe_allow_html=True)
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
