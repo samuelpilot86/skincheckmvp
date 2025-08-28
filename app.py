@@ -148,7 +148,7 @@ elif st.session_state.screen == "Photo":
         
             // Run initially with a slight delay
             console.log('Scheduling initial button update');
-            setTimeout(updateUploaderButton, 100);
+            setTimeout(updateUploaderButton, 2000);
         
             // Observe DOM changes
             console.log('Starting MutationObserver');
