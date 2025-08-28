@@ -248,24 +248,24 @@ elif st.session_state.screen == "Result":
         st.rerun()
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
-        st.image(st.session_state.image, caption="Analysis result:", use_container_width=True)
-        st.markdown(f'<div class="normal-text">This should be a {result} mole (probability: {prob*100:.1f}%). Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
+        st.image(st.session_state.image, caption="", use_container_width=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
+        if result = "Benign":
+            st.markdown(f'<div class="normal-text">This should be a benign mole. </div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="normal-text">No need to worry, melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
+
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 3, 1])
-        with col2:
-            st.markdown('<div class="button-container">', unsafe_allow_html=True)
-            col_btn = st.columns([1, 1, 1])
-            with col_btn[0]:
-                if st.button("Take a photo"):
-                    st.session_state.screen = "Photo"
-                    st.rerun()
-            with col_btn[1]:
-                if st.button("Browse phone photos"):
-                    st.session_state.screen = "Browse"
-                    st.rerun()
-            with col_btn[2]:
-                if st.button("Select demo example"):
-                    st.session_state.screen = "Examples"
-                    st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
+        col_btn = st.columns([1, 1])
+        with col_btn[0]:
+            if st.button("Select/take photo", key="photo"):
+                st.session_state.screen = "Photo"
+                st.rerun()
+        with col_btn[1]:
+            if st.button("Select demo example", key="demo"):
+                st.session_state.screen = "Examples"
+                st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
