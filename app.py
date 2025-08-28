@@ -2,17 +2,17 @@ import numpy as np
 from PIL import Image, ImageOps
 import os
 import base64
-os.environ["CUDA_VISIBLE_DEVICES"] = "" 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   
-os.environ["OMP_NUM_THREADS"] = "8"    
-os.environ["TF_FORCE_CPU_ONLY"] = "1"   
-import tensorflow as tf   
-import streamlit as st 
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["OMP_NUM_THREADS"] = "8"
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
+import tensorflow as tf
+import streamlit as st
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, load_model, preprocess_image, predict_user_image
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
-# Charger le modèle 
+# Charger le modèle
 model = load_model()
 
 # Interface Streamlit
@@ -22,14 +22,14 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Création du logo et titre dans une variable HTML - définition en amont pour pouvoir la réutiliser dans plusieurs pages
+# Création du logo et titre dans une variable HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
     try:
         logo_data = base64.b64encode(open(logo_path, "rb").read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_data}" alt="Logo" width="46" height="auto">'
     except Exception as e:
-        st.write(f"Erreur lors du chargement de l'image : {e}")
+        st.markdown(f"**Erreur lors du chargement du logo : {e}**")
         logo_html = ""
 else:
     logo_html = ""
@@ -53,11 +53,10 @@ if os.path.exists(reframed_mole_path):
         reframed_mole_data = base64.b64encode(open(reframed_mole_path, "rb").read()).decode()
         reframed_mole_html = f'<img src="data:image/jpg;base64,{reframed_mole_data}" alt="" width="150" height="auto">'
     except Exception as e:
-        st.write(f"Erreur lors du chargement de l'image : {e}")
+        st.markdown(f"**Erreur lors du chargement de l'image d'exemple : {e}**")
         reframed_mole_html = ""
 else:
     reframed_mole_html = ""
-
 reframe_instructions_html = f'''
     <table class="instructions-table">
       <tr>
@@ -70,6 +69,7 @@ reframe_instructions_html = f'''
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
+
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
@@ -85,7 +85,7 @@ if st.session_state.screen == "Accueil":
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
-  
+
 elif st.session_state.screen == "Photo":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
@@ -95,20 +95,24 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
     if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        if not image:
-            st.error("Erreur : L'image téléchargée est invalide.")
-        else:
-            image = ImageOps.exif_transpose(image)
-            st.session_state.image = image
-            st.session_state.screen = "Reframe"
-            st.rerun()
+        try:
+            image = Image.open(uploaded_file)
+            if not image:
+                st.markdown("**Erreur : L'image téléchargée est invalide.**")
+            else:
+                image = ImageOps.exif_transpose(image)
+                st.session_state.image = image
+                st.session_state.screen = "Reframe"
+                st.rerun()
+        except Exception as e:
+            st.markdown(f"**Erreur lors de l'ouverture de l'image : {e}**")
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
+   
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
@@ -117,15 +121,15 @@ elif st.session_state.screen == "Examples":
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode()
         except FileNotFoundError:
-            st.write(f"Erreur : Fichier {image_path} non trouvé.")
+            st.markdown(f"**Erreur : Fichier {image_path} non trouvé.**")
             return None
         except Exception as e:
-            st.write(f"Erreur lors du chargement de {image_path} : {e}")
+            st.markdown(f"**Erreur lors du chargement de {image_path} : {e}**")
             return None
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
-        st.write("Erreur : Certaines images n'ont pas pu être encodées en base64.")
+        st.markdown("**Erreur : Certaines images n'ont pas pu être encodées en base64.**")
     else:
         col1, col2 = st.columns(2)
         with col1:
@@ -133,32 +137,39 @@ elif st.session_state.screen == "Examples":
             clicked_benign = clickable_images([f"data:image/jpeg;base64,{b}" for b in benign_base64], titles=["", "", ""], div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"}, img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"})
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
-                image = Image.open(img_path)
-                if not image:
-                    st.error(f"Erreur : L'image {img_path} est invalide.")
-                else:
-                    with st.spinner("Analysis in progress..."):
-                        result, prob, color = predict_user_image(image)
-                    st.session_state.screen = "Result"
-                    st.session_state.image = img_path
-                    st.session_state.result = (result, prob, color)
-                    st.rerun()
+                try:
+                    image = Image.open(img_path)
+                    if not image:
+                        st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
+                    else:
+                        with st.spinner("Analysis in progress..."):
+                            result, prob, color = predict_user_image(image)
+                        st.session_state.screen = "Result"
+                        st.session_state.image = img_path
+                        st.session_state.result = (result, prob, color)
+                        st.rerun()
+                except Exception as e:
+                    st.markdown(f"**Erreur lors de l'ouverture de {img_path} : {e}**")
+       
         with col2:
             st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images([f"data:image/jpeg;base64,{m}" for m in melanoma_base64], titles=["", "", ""], div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"}, img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"})
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
-                image = Image.open(img_path)
-                if not image:
-                    st.error(f"Erreur : L'image {img_path} est invalide.")
-                else:
-                    with st.spinner("Analysis in progress..."):
-                        result, prob, color = predict_user_image(image)
-                    st.session_state.screen = "Result"
-                    st.session_state.image = img_path
-                    st.session_state.result = (result, prob, color)
-                    st.rerun()
-               
+                try:
+                    image = Image.open(img_path)
+                    if not image:
+                        st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
+                    else:
+                        with st.spinner("Analysis in progress..."):
+                            result, prob, color = predict_user_image(image)
+                        st.session_state.screen = "Result"
+                        st.session_state.image = img_path
+                        st.session_state.result = (result, prob, color)
+                        st.rerun()
+                except Exception as e:
+                    st.markdown(f"**Erreur lors de l'ouverture de {img_path} : {e}**")
+              
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
@@ -166,7 +177,6 @@ elif st.session_state.screen == "Reframe":
         st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
-        # Redimensionner l'image pour une largeur maximale de 390px tout en conservant les proportions
         width, height = image.size
         if width > 390:
             new_width = 390
@@ -174,26 +184,23 @@ elif st.session_state.screen == "Reframe":
             image_resized = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         else:
             image_resized = image
-
-        # Déterminer l'aspect ratio selon l'orientation de l'image redimensionnée
         width, height = image_resized.size
-        if height > width:  # Portrait
-            aspect_ratio = (3, 4)  # 4 hauteur pour 3 largeur
-        else:  # Paysage
-            aspect_ratio = (4, 3)  # 3 hauteur pour 4 largeur
-        
+        aspect_ratio = (3, 4) if height > width else (4, 3)
+       
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-        
-        # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
+       
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
-        
+       
         if st.button("Analyze", key="analyze"):
-            with st.spinner("Analysis in progress..."):
-                result, prob, color = predict_user_image(cropped_image)
-            st.session_state.screen = "Result"
-            st.session_state.image = cropped_image
-            st.session_state.result = (result, prob, color)
-            st.rerun()
+            if cropped_image is not None and isinstance(cropped_image, Image.Image):
+                with st.spinner("Analysis in progress..."):
+                    result, prob, color = predict_user_image(cropped_image)
+                st.session_state.screen = "Result"
+                st.session_state.image = cropped_image
+                st.session_state.result = (result, prob, color)
+                st.rerun()
+            else:
+                st.markdown("**Erreur : L'image recadrée n'est pas valide. Veuillez valider le recadrage.**")
 
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
