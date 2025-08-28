@@ -212,12 +212,11 @@ elif st.session_state.screen == "Reframe":
         else:  # Paysage
             aspect_ratio = (4, 3)  # 3 hauteur pour 4 largeur
         
-        st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes half the space</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="normal-text"> </div>', unsafe_allow_html=True)
         # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
-        # Afficher l'image originale redimensionnée (pas la recadrée en direct)
-        st.markdown(f'<div class="normal-text">Original size: {image_resized.size[0]} x {image_resized.size[1]}</div>', unsafe_allow_html=True)
-
+        
         if st.button("Analyze", key="analyze"):
             with st.spinner("Analysis in progress..."):
                 result, prob, color = predict_user_image(cropped_image)
