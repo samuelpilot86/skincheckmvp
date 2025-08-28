@@ -126,46 +126,14 @@ elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="normal-text">Click Browse files to select or take a photo.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp.</div>', unsafe_allow_html=True)
    
     # File uploader stylisé
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
-   
-    # Script JavaScript pour modifier le texte du bouton
-    st.markdown("""
-    <script>
-        console.log('JavaScript: Script loaded at ' + new Date().toISOString());
-
-        function updateUploaderButton() {
-            console.log('JavaScript: Running updateUploaderButton at ' + new Date().toISOString());
-            let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-            if (uploaderButton) {
-                console.log('JavaScript: Button found, setting text to "Select/take photo"');
-                uploaderButton.innerText = 'Select/take photo';
-            } else {
-                console.log('JavaScript: Button not found with selector [data-testid="stBaseButton-secondary"]');
-            }
-        }
-
-        // Run immediately
-        updateUploaderButton();
-
-        // Fallback with delay
-        setTimeout(updateUploaderButton, 500);
-
-        // Fallback for Streamlit re-renders
-        console.log('JavaScript: Starting MutationObserver');
-        const observer = new MutationObserver(updateUploaderButton);
-        const uploaderContainer = document.querySelector('[data-testid="stFileUploader"]');
-        if (uploaderContainer) {
-            console.log('JavaScript: File uploader container found');
-            observer.observe(uploaderContainer, { childList: true, subtree: true });
-        } else {
-            console.log('JavaScript: File uploader container not found');
-        }
-    </script>
-    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">**Achieving both zoom and sharpness is only possible on phones equipped with zooming lenses, such as latest iPhone Pros.</div>', unsafe_allow_html=True)
    
     if uploaded_file is not None:
         try:
