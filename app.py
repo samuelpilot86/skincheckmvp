@@ -140,6 +140,7 @@ elif st.session_state.screen == "Photo":
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
     st_javascript("""
+        alert('Le timeout va se lancer');
         setTimeout(function() {
             alert('Début du script de renommage du bouton');
             // Cible le bouton avec data-testid="stBaseButton-secondary"
