@@ -78,7 +78,7 @@ reframed_mole_path = os.path.join("images", "FramedMole.jpg")
 if os.path.exists(reframed_mole_path):
     try:
         reframed_mole_data = base64.b64encode(open(reframed_mole_path, "rb").read()).decode()
-        reframed_mole_html = f'<img src="data:image/jpeg;base64,{reframed_mole_data}" alt="Exemple de recadrage" style="width: 100px; height: auto; display: block; margin: 10px auto;">'
+        reframed_mole_html = f'<img src="data:image/jpeg;base64,{reframed_mole_data}" style="width: 100px !important; height: auto; display: block; margin: 10px auto;">'
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors du chargement de l\'image d\'exemple : {e}</div>', unsafe_allow_html=True)
         reframed_mole_html = ""
@@ -301,7 +301,7 @@ elif st.session_state.screen == "Examples":
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"  # Changé de "Photo" à "Accueil"
+        st.session_state.screen = "Accueil"  
         st.rerun()
     if 'original_image' in st.session_state:
         original_image = st.session_state.original_image
