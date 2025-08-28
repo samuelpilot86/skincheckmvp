@@ -44,6 +44,7 @@
     align-items: center;
     width: 100%;
     margin-top: 0 !important;
+    margin-bottom: 50px;
 }
 
 /* Titre de l'app "SkinCheck" */
@@ -86,7 +87,7 @@
     border: none !important;
     border-collapse: collapse;
     margin-top: 16px !important;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     border-color: #F5F5F5 !important;
 }
 
