@@ -15,7 +15,7 @@ def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
         return K.mean(loss, axis=-1)
     return focal_loss_fixed_internal
 
-# Classe MelanomaRecall avec from_config amélioré
+# Classe MelanomaRecall
 class MelanomaRecall(tf.keras.metrics.Metric):
     def __init__(self, melanoma_index, name='melanoma_recall', **kwargs):
         super(MelanomaRecall, self).__init__(name=name, **kwargs)
@@ -42,7 +42,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_index']}
         return cls(melanoma_index=melanoma_index, **filtered_config)
 
-# Classe NevusSpecificity avec from_config amélioré
+# Classe NevusSpecificity
 class NevusSpecificity(tf.keras.metrics.Metric):
     def __init__(self, nevus_index, name='nevus_specificity', **kwargs):
         super(NevusSpecificity, self).__init__(name=name, **kwargs)
@@ -69,7 +69,7 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         filtered_config = {k: v for k, v in config.items() if k not in ['nevus_index']}
         return cls(nevus_index=nevus_index, **filtered_config)
 
-# Classe CombinedMetric avec from_config corrigé
+# Classe CombinedMetric
 class CombinedMetric(tf.keras.metrics.Metric):
     def __init__(self, melanoma_recall, nevus_specificity, name='combined_metric', alpha=0.55, **kwargs):
         super(CombinedMetric, self).__init__(name=name, **kwargs)
@@ -97,7 +97,7 @@ class CombinedMetric(tf.keras.metrics.Metric):
         filtered_config = {k: v for k, v in config.items() if k not in ['melanoma_recall_config', 'nevus_specificity_config']}
         return cls(melanoma_recall=melanoma_recall, nevus_specificity=nevus_specificity, **filtered_config)
 
-# Classe ThresholdOptimizer (inclus pour compatibilité)
+# Classe ThresholdOptimizer
 class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def __init__(self, validation_data, class_to_idx, target_recall=0.85, target_specificity=0.70):
         super(ThresholdOptimizer, self).__init__()
@@ -115,23 +115,7 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def from_config(cls, config):
         return cls(**config)
 
-# Charger le modèle
-@st.cache_resource
-def load_model():
-    try:
-        custom_objects = {
-            'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
-            'MelanomaRecall': MelanomaRecall,
-            'NevusSpecificity': NevusSpecificity,
-            'CombinedMetric': CombinedMetric,
-            'ThresholdOptimizer': ThresholdOptimizer
-        }
-        model = tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
-        st.markdown("**Modèle chargé avec succès.**")
-        return model
-    except Exception as e:
-        st.markdown(f"**Erreur lors du chargement du modèle : {e}**")
-        return None
+
 
 # Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
@@ -141,25 +125,25 @@ def preprocess_image(image, target_size=(224, 224)):
         img_array = np.array(img) / 255.0
         return img_array
     except Exception as e:
-        st.markdown(f"**Erreur de prétraitement : {e}**")
+        st.markdown(f'<div class="normal-text">Erreur de prétraitement : {e}</div>', unsafe_allow_html=True)
         return None
 
-# Fonction de prédiction modifiée pour accepter le modèle comme argument
+# Fonction de prédiction
 def predict_user_image(image, model):
     if model is None:
-        st.markdown("**Erreur : Le modèle n'a pas été chargé correctement.**")
+        st.markdown('<div class="normal-text">Erreur : Le modèle n\'a pas été chargé correctement.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
     
     img_array = preprocess_image(image)
     if img_array is None:
-        st.markdown("**Erreur : L'image n'a pas pu être prétraitée. Vérifiez le format ou la validité de l'image.**")
+        st.markdown('<div class="normal-text">Erreur : L\'image n\'a pas pu être prétraitée. Vérifiez le format ou la validité de l\'image.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
     
     img_array = np.expand_dims(img_array, axis=0)
     try:
-        st.markdown("**Prédiction en cours...**")
+        st.markdown('<div class="normal-text">Prédiction en cours...</div>', unsafe_allow_html=True)
         prediction = model.predict(img_array)
-        st.markdown(f"**Prédiction brute : {prediction}**")
+        st.markdown(f'<div class="normal-text">Prédiction brute : {prediction}</div>', unsafe_allow_html=True)
         threshold = 0.487
         probability = prediction[0][0] * 100
         if probability >= threshold * 100:
@@ -167,5 +151,5 @@ def predict_user_image(image, model):
         else:
             return "Benign", (100 - probability), "green"
     except Exception as e:
-        st.markdown(f"**Erreur lors de la prédiction : {e}**")
+        st.markdown(f'<div class="normal-text">Erreur lors de la prédiction : {e}</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
