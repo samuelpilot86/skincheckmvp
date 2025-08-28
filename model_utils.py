@@ -1,6 +1,7 @@
 import tensorflow as tf
 import keras.backend as K
 import streamlit as st
+import numpy as np
 
 # Fonction focal_loss_fixed
 def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
@@ -143,9 +144,8 @@ def preprocess_image(image, target_size=(224, 224)):
         st.markdown(f"**Erreur de prétraitement : {e}**")
         return None
 
-# Fonction de prédiction
-def predict_user_image(image):
-    global model
+# Fonction de prédiction modifiée pour accepter le modèle comme argument
+def predict_user_image(image, model):
     if model is None:
         st.markdown("**Erreur : Le modèle n'a pas été chargé correctement.**")
         return "Erreur : Impossible de traiter l'image.", None, None
