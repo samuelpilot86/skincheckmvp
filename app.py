@@ -232,7 +232,7 @@ elif st.session_state.screen == "Result":
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.image, caption="Analysis result:", use_container_width=True)
-        st.markdown(f'<div class="normal-text">This should be a {result} mole (probability: {round(prob*100),1}%). Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="normal-text">This should be a {result} mole (probability: {(prob*100).1f}%). Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         st.markdown(f'<div style="background-color: {color}; color: white; padding: 10px; border-radius: 5px; text-align: center;">{result}</div>', unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1, 3, 1])
