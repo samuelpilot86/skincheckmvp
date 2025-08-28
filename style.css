@@ -80,7 +80,7 @@
     border-collapse: collapse;
     margin-top: 16px !important;
     margin-bottom: 20px;
-    border-color: transparent !important;;
+    border-color: #F5F5F5 !important;;
 }
 .header-table td {
     border: none;
