@@ -14,6 +14,7 @@ from streamlit_cropper import st_cropper
 
 st.markdown("""
 <script>
+    console.log('Test JavaScript : Le script s\'exécute !');
     alert('JavaScript fonctionne !');
 </script>
 """, unsafe_allow_html=True)
