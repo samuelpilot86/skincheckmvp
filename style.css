@@ -85,7 +85,8 @@
 .header-table tr {
     border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
     padding: 0;
-}.header-table td {
+}
+.header-table td {
     border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
     padding: 0;
 }
@@ -101,6 +102,26 @@
 .empty-cell {
     width: 46px;
     padding-left: 10px;
+}
+
+/* Instructions de l'écran Reframe
+
+.instructions-table {
+    width: 100%;
+    height: auto; /* Ajuste à la hauteur du contenu */
+    border: none !important;
+    border-collapse: collapse;
+    margin-top: 16px !important;
+    margin-bottom: 20px;
+    border-color: #F5F5F5 !important;
+}
+.instructions-table tr {
+    border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
+    padding: 0 0;
+}
+.instructions-table td {
+    border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
+    padding: 0 0;
 }
 
 /* Textes (normal...) */
