@@ -141,7 +141,7 @@ elif st.session_state.screen == "Photo":
             if not isinstance(image, Image.Image):
                 st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
             else:
-                image = ImageOps.exif_transexo_transpose(image)
+                image = ImageOps.exif_transpose(image)
                 st.session_state.image = image
                 st.session_state.screen = "Reframe"
                 st.rerun()
