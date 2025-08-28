@@ -130,6 +130,9 @@
     font-weight: 400; /* Regular */
     font-size: 18px;
     color: #333333;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
 }
 .bottom-note {
     font-family: 'Roboto', sans-serif;
