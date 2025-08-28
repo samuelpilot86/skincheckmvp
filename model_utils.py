@@ -161,3 +161,23 @@ def predict_user_image(image, model):
     if img_array is None:
         st.markdown('<div class="normal-text">Erreur : L\'image n\'a pas pu être prétraitée. Vérifiez le format ou la validité de l\'image.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
+    
+    try:
+        # Ajouter une dimension batch pour la prédiction
+        img_array = np.expand_dims(img_array, axis=0)  # Shape: (1, 224, 224, 3)
+        st.markdown('<div class="normal-text">Débogage : Lancement de la prédiction...</div>', unsafe_allow_html=True)
+        
+        # Effectuer la prédiction
+        predictions = model.predict(img_array)
+        prob = predictions[0][0]  # Probabilité pour la classe 0 (par exemple, mélanome)
+        
+        # Déterminer le résultat en fonction d'un seuil (par exemple, 0.5)
+        threshold = 0.487
+        result = "Melanoma" if prob >= threshold else "Benign"
+        color = "#FF6B6B" if prob >= threshold else "#7ED321"  # Rouge pour mélanome, vert pour bénin
+        
+        st.markdown(f'<div class="normal-text">Débogage : Prédiction terminée. Probabilité : {prob:.2f}, Résultat : {result}</div>', unsafe_allow_html=True)
+        return result, prob, color
+    except Exception as e:
+        st.markdown(f'<div class="normal-text">Erreur lors de la prédiction : {e}</div>', unsafe_allow_html=True)
+        return "Erreur : Impossible de faire la prédiction.", None, None
