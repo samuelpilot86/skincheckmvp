@@ -139,17 +139,17 @@ elif st.session_state.screen == "Photo":
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
     st_javascript("""
-        alert('Script de renommage lancé')
+        alert('Script de renommage lancé');
         document.addEventListener('DOMContentLoaded', function() {
             // Cible le bouton du file uploader (généralement un <button> ou <span> dans le conteneur)
             const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] .upload-label');
             if (uploadButton) {
                 uploadButton.textContent = 'Take/select photo';
                 console.log('Bouton renommé en : Take/select photo');
-                alert('Bouton renommé en : Take/select photo')
+                alert('Bouton renommé en : Take/select photo');
             } else {
                 console.log('Bouton non trouvé');
-                alert('Bouton non trouvé')
+                alert('Bouton non trouvé');
             }
         });
     """)
