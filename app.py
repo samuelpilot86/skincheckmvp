@@ -115,7 +115,7 @@ if 'screen' not in st.session_state:
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Réduit de 20px à 5px pour rapprocher les boutons
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
     
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
