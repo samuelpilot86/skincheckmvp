@@ -12,6 +12,12 @@ from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, Comb
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
+st.markdown("""
+<script>
+    alert('JavaScript fonctionne !');
+</script>
+""", unsafe_allow_html=True)
+
 # Charger le modèle
 @st.cache_resource
 def load_model():
