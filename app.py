@@ -88,6 +88,18 @@ reframe_instructions_html = f'''
     </table>
 '''
 
+# Création de l'avertissement "prototype non validée médicalement"
+
+warning_html = f'''
+    <table class="instructions-table">
+      <tr>
+        <td><div class="warning">⚠</div></td>
+        <td><div class="normal-text">This app prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
+      </tr>
+    </table>
+'''
+
+
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
@@ -253,10 +265,11 @@ elif st.session_state.screen == "Result":
         if result == "probably benign mole":
             st.markdown(f'<div class="normal-text">This should be a benign mole. </div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
-        elif result == "possible melanoma":
+        else:
             st.markdown(f'<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">No need to worry, melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
-
+        st.markdown(f'<div class="normal-text">This app prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div>', unsafe_allow_html=True)
+        st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
         col_btn = st.columns([1, 1])
