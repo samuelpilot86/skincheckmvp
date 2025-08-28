@@ -247,7 +247,7 @@ elif st.session_state.screen == "Reframe":
         aspect_ratio = (3, 4) if new_height > new_width else (4, 3)
         st.markdown(f'<div class="normal-text">Calcul du ratio d\'aspect - aspect_ratio: {aspect_ratio}</div>', unsafe_allow_html=True)
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-        crop_box = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
+        crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
         if crop_box:
             st.markdown(f'<div class="normal-text">Crop box récupéré (sur image redimensionnée) - crop_box: left={crop_box["left"]}, top={crop_box["top"]}, width={crop_box["width"]}, height={crop_box["height"]}</div>', unsafe_allow_html=True)
         if st.button("Analyze", key="analyze"):
