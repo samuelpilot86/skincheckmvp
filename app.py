@@ -51,7 +51,7 @@ reframed_mole_path = os.path.join("images", "FramedMole.jpg")
 if os.path.exists(reframed_mole_path):
     try:
         reframed_mole_data = base64.b64encode(open(reframed_mole_path, "rb").read()).decode()
-        reframed_mole_html = f'<img src="data:image/jpg;base64,{reframed_mole_data}" alt="" width="100" height="auto">'
+        reframed_mole_html = f'<img src="data:image/jpg;base64,{reframed_mole_data}" alt="" width="150" height="auto">'
     except Exception as e:
         st.write(f"Erreur lors du chargement de l'image : {e}")
         reframed_mole_html = ""
@@ -59,7 +59,7 @@ else:
     reframed_mole_html = ""
 
 reframe_instructions_html = f'''
-    <table>
+    <table class="header-table">
       <tr>
         <td><div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div></td>
         <td>{reframed_mole_html}</td>
