@@ -12,14 +12,7 @@ from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, Comb
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
-from streamlit_javascript import st_javascript; st_javascript("alert('JavaScript fonctionne !');console.log('Test');")
-
-st.markdown("""
-<script>
-    console.log('Test JavaScript : Le script s\'exécute !');
-    alert('JavaScript fonctionne !');
-</script>
-""", unsafe_allow_html=True)
+from streamlit_javascript import st_javascript; 
 
 # Charger le modèle
 @st.cache_resource
@@ -141,6 +134,21 @@ elif st.session_state.screen == "Photo":
         st.rerun()
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
+    
+    # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
+    st_javascript("""
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cible le bouton du file uploader (généralement un <button> ou <span> dans le conteneur)
+            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] .upload-label');
+            if (uploadButton) {
+                uploadButton.textContent = 'Take/select photo';
+                console.log('Bouton renommé en : Take/select photo');
+            } else {
+                console.log('Bouton non trouvé');
+            }
+        });
+    """)
+    
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
     st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**Achieving both zoom and sharpness is only possible on phones equipped with zooming lenses, such as latest iPhone Pros.</div>', unsafe_allow_html=True)
@@ -151,7 +159,6 @@ elif st.session_state.screen == "Photo":
                 st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
             else:
                 image = ImageOps.exif_transpose(image)
-                # st.markdown(f'<div class="normal-text">Image uploadée et transposée - original_image.size: {image.size}</div>', unsafe_allow_html=True)
                 st.session_state.original_image = image
                 st.session_state.screen = "Reframe"
                 st.rerun()
