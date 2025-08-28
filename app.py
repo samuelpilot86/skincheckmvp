@@ -139,8 +139,8 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
-    script-js = """let attempts = 0; const maxAttempts = 10; const interval = setInterval(function() {attempts++; alert('Tentative ' + attempts + ' de renommage du bouton'); const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] .stButton, [data-testid="stFileUploader"] input[type="file"] + *'); if (uploadButton) {uploadButton.textContent = 'Take/select photo'; alert('Bouton renommé en : Take/select photo');                clearInterval(interval);  } else {                alert('Bouton non trouvé à la tentative ' + attempts);            }            if (attempts >= maxAttempts) {                clearInterval(interval);                alert('Arrêt après ' + maxAttempts + ' tentatives');            }        }, 500);"""
-    st_javascript(script-js)
+    script_js = """let attempts = 0; const maxAttempts = 10; const interval = setInterval(function() {attempts++; alert('Tentative ' + attempts + ' de renommage du bouton'); const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] .stButton, [data-testid="stFileUploader"] input[type="file"] + *'); if (uploadButton) {uploadButton.textContent = 'Take/select photo'; alert('Bouton renommé en : Take/select photo');                clearInterval(interval);  } else {                alert('Bouton non trouvé à la tentative ' + attempts);            }            if (attempts >= maxAttempts) {                clearInterval(interval);                alert('Arrêt après ' + maxAttempts + ' tentatives');            }        }, 500);"""
+    st_javascript(script_js)
     
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
