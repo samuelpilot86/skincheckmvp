@@ -120,7 +120,7 @@ if st.session_state.screen == "Accueil":
     # Solution CSS pour styliser le bouton de st.file_uploader et rendre l'arrière-plan transparent
     st.markdown("""
     <style>
-    /* Styliser le bouton de st.file_uploader en "Take/select photo" */
+    /* Styliser le bouton de st.file_uploader pour correspondre à st.button */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
         visibility: hidden;
         position: relative;
@@ -139,8 +139,14 @@ if st.session_state.screen == "Accueil":
         background-color: #4A90E2;
         color: #F5F5F5;
         font-family: 'Roboto', sans-serif;
+        font-weight: 400;
         font-size: 18px;
+        padding: 10px 20px;
+        border: none;
         border-radius: 5px;
+        cursor: pointer;
+        margin: 10px auto;
+        max-width: 200px; /* Harmoniser la largeur */
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
@@ -149,92 +155,16 @@ if st.session_state.screen == "Accueil":
     [data-testid="stFileUploaderDropzone"] {
         background-color: transparent;
     }
+    /* Centrer le bouton Select demo example */
+    .stButton > button {
+        margin: 10px auto;
+        max-width: 200px;
+        display: block;
+    }
     </style>
     """, unsafe_allow_html=True)
     
-    col_btn = st.columns([1, 1])
-    with col_btn[0]:
-        uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_accueil")
-        if uploaded_file is not None:
-            try:
-                image = Image.open(uploaded_file)
-                if not isinstance(image, Image.Image):
-                    st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
-                else:
-                    image = ImageOps.exif_transpose(image)
-                    st.session_state.original_image = image
-                    st.session_state.screen = "Reframe"
-                    st.rerun()
-            except Exception as e:
-                st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-    with col_btn[1]:
-        if st.button("Select demo example", key="demo"):
-            st.session_state.screen = "Examples"
-            st.rerun()
-    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-    st.markdown(warning_html, unsafe_allow_html=True)
-    st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
-
-elif st.session_state.screen == "Photo":
-    st_javascript("alert('Ecran photo affiché');")
-    st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()
-    st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
-    
-    # Solution CSS pour renommer le bouton de st.file_uploader en "Take/select photo"
-    # et modifier l'arrière-plan de la section stFileUploaderDropzone
-    st.markdown("""
-    <style>
-    /* Renommer le bouton "Browse files" en "Take/select photo" */
-    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
-        visibility: hidden;
-        position: relative;
-    }
-    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
-        content: "Take/select photo";
-        visibility: visible;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #4A90E2;
-        color: #F5F5F5;
-        font-family: 'Roboto', sans-serif;
-        font-size: 18px;
-        border-radius: 5px;
-    }
-    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
-        background-color: #3A7AC2;
-    }
-    /* Option 1 : Rendre l'arrière-plan de la section transparent */
-    [data-testid="stFileUploaderDropzone"] {
-        background-color: transparent;
-    }
-    /* Option 2 : Changer l'arrière-plan en bleu #4A90E2 (décommentez pour utiliser) */
-    /*
-    [data-testid="stFileUploaderDropzone"] {
-        background-color: #4A90E2;
-    }
-    */
-    /* Option 3 : Réduire la taille à 0 (décommentez pour tester, mais attention : cela peut masquer le bouton) */
-    /*
-    [data-testid="stFileUploaderDropzone"] {
-        display: none; /* ou width: 0; height: 0; overflow: hidden; */
-    }
-    */
-    </style>
-    """, unsafe_allow_html=True)
-    
-    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
-    st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="bottom-note">**Achieving both zoom and sharpness is only possible on phones equipped with zooming lenses, such as latest iPhone Pros.</div>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_accueil")
     if uploaded_file is not None:
         try:
             image = Image.open(uploaded_file)
@@ -247,6 +177,14 @@ elif st.session_state.screen == "Photo":
                 st.rerun()
         except Exception as e:
             st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
+    
+    if st.button("Select demo example", key="demo"):
+        st.session_state.screen = "Examples"
+        st.rerun()
+    
+    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+    st.markdown(warning_html, unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
@@ -371,7 +309,7 @@ elif st.session_state.screen == "Reframe":
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"  # Changé de "Accueil" (inchangé ici) pour cohérence
+        st.session_state.screen = "Accueil"
         st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
@@ -387,57 +325,72 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-        col_btn = st.columns([1, 1])
-        with col_btn[0]:
-            # Changé de st.button("Select/take photo", key="photo") à st.file_uploader
-            st.markdown("""
-            <style>
-            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
-                visibility: hidden;
-                position: relative;
-            }
-            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
-                content: "Take/select photo";
-                visibility: visible;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #4A90E2;
-                color: #F5F5F5;
-                font-family: 'Roboto', sans-serif;
-                font-size: 18px;
-                border-radius: 5px;
-            }
-            [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
-                background-color: #3A7AC2;
-            }
-            [data-testid="stFileUploaderDropzone"] {
-                background-color: transparent;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
-            if uploaded_file is not None:
-                try:
-                    image = Image.open(uploaded_file)
-                    if not isinstance(image, Image.Image):
-                        st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
-                    else:
-                        image = ImageOps.exif_transpose(image)
-                        st.session_state.original_image = image
-                        st.session_state.screen = "Reframe"
-                        st.rerun()
-                except Exception as e:
-                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-        with col_btn[1]:
-            if st.button("Select demo example", key="demo"):
-                st.session_state.screen = "Examples"
-                st.rerun()
+        
+        # Solution CSS pour styliser le bouton de st.file_uploader et rendre l'arrière-plan transparent
+        st.markdown("""
+        <style>
+        /* Styliser le bouton de st.file_uploader pour correspondre à st.button */
+        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
+            visibility: hidden;
+            position: relative;
+        }
+        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
+            content: "Take/select photo";
+            visibility: visible;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #4A90E2;
+            color: #F5F5F5;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px auto;
+            max-width: 200px; /* Harmoniser la largeur */
+        }
+        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
+            background-color: #3A7AC2;
+        }
+        /* Rendre l'arrière-plan de la section transparent */
+        [data-testid="stFileUploaderDropzone"] {
+            background-color: transparent;
+        }
+        /* Centrer le bouton Select demo example */
+        .stButton > button {
+            margin: 10px auto;
+            max-width: 200px;
+            display: block;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
+        if uploaded_file is not None:
+            try:
+                image = Image.open(uploaded_file)
+                if not isinstance(image, Image.Image):
+                    st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
+                else:
+                    image = ImageOps.exif_transpose(image)
+                    st.session_state.original_image = image
+                    st.session_state.screen = "Reframe"
+                    st.rerun()
+            except Exception as e:
+                st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
+        
+        if st.button("Select demo example", key="demo"):
+            st.session_state.screen = "Examples"
+            st.rerun()
+        
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
