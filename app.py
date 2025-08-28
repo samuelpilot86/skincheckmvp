@@ -139,16 +139,7 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
-    st_javascript("""
-        alert('Début du script de renommage du bouton');
-        const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-        if (uploadButton) {
-            uploadButton.textContent = 'Take/select photo';
-            alert('Bouton renommé en : Take/select photo');
-        } else {
-            alert('Bouton non trouvé avec le sélecteur [data-testid="stBaseButton-secondary"]');
-        }
-    """)
+    st_javascript("const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]'); uploadButton.textContent = 'Take/select photo';")
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
     st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
