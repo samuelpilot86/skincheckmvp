@@ -201,8 +201,7 @@ elif st.session_state.screen == "Reframe":
             aspect_ratio = (4, 3)  # 3 hauteur pour 4 largeur
         
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-        #st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>', unsafe_allow_html=True)
-        #st.markdown(f'<div class="normal-text"> </div>', unsafe_allow_html=True)
+        
         # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
         
@@ -219,11 +218,6 @@ elif st.session_state.screen == "Result":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    if os.path.exists(logo_path):
-        st.image(logo_path, use_container_width=False, width=46, output_format="PNG", channels="RGB", caption="")
-    st.markdown('<div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Should I show this mole to my dermatologist?</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.image, caption="Analysis result:", use_container_width=True)
