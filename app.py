@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image, ImageOps  # Importation explicite
+from PIL import Image, ImageOps
 import os
 import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -85,7 +85,7 @@ reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
         <td>
-            <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>
+            <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space. Ensure the frame is at least 224 pixels wide and tall.</div>
         </td>
         <td>
             {reframed_mole_html}
@@ -132,7 +132,6 @@ elif st.session_state.screen == "Photo":
         st.rerun()
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
-    # File uploader stylisé
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
     st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**Achieving both zoom and sharpness is only possible on phones equipped with zooming lenses, such as latest iPhone Pros.</div>', unsafe_allow_html=True)
@@ -195,7 +194,7 @@ elif st.session_state.screen == "Examples":
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
-                        st.session_state.image = image  # Stocke l'image PIL pour cohérence
+                        st.session_state.cropped_image = image  # Pas de recadrage pour les démos
                         st.session_state.result = (result, prob, color)
                         st.rerun()
                 except Exception as e:
@@ -218,7 +217,7 @@ elif st.session_state.screen == "Examples":
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
-                        st.session_state.image = image  # Stocke l'image PIL pour cohérence
+                        st.session_state.cropped_image = image  # Pas de recadrage pour les démos
                         st.session_state.result = (result, prob, color)
                         st.rerun()
                 except Exception as e:
@@ -262,7 +261,7 @@ elif st.session_state.screen == "Reframe":
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(cropped_image, model)
                         st.session_state.screen = "Result"
-                        st.session_state.image = cropped_image
+                        st.session_state.cropped_image = cropped_image
                         st.session_state.result = (result, prob, color)
                         st.rerun()
                     else:
@@ -275,9 +274,9 @@ elif st.session_state.screen == "Result":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    if 'result' in st.session_state:
+    if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
-        st.image(st.session_state.image, caption="", use_container_width=True)
+        st.image(st.session_state.cropped_image, caption="", use_container_width=True)
         if result == "probably benign mole":
             st.markdown(f'<div class="normal-text" style="color: {color};">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">This should be a benign mole.</div>', unsafe_allow_html=True)
@@ -299,3 +298,5 @@ elif st.session_state.screen == "Result":
                 st.session_state.screen = "Examples"
                 st.rerun()
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
