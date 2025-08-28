@@ -48,6 +48,7 @@ six==1.17.0
 smmap==5.0.2
 streamlit==1.48.1
 streamlit-cropper==0.3.1
+streamlit-javascript==0.1.5
 st-clickable-images==0.0.3
 tenacity==9.1.2
 tensorboard==2.20.0
