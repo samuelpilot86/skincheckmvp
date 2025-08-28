@@ -96,31 +96,22 @@ elif st.session_state.screen == "Photo":
     uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        image = ImageOps.exif_transpose(image)
-        st.session_state.image = image
-        st.session_state.screen = "Reframe"
-        st.rerun()
+        if not image:
+            st.error("Erreur : L'image téléchargée est invalide.")
+        else:
+            image = ImageOps.exif_transpose(image)
+            st.session_state.image = image
+            st.session_state.screen = "Reframe"
+            st.rerun()
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    
-    # Définition des chemins des images fixes
     base_dir = os.path.join(os.getcwd(), "examples")
-    benign_images = [
-        os.path.join(base_dir, "benignmole1.jpg"),
-        os.path.join(base_dir, "benignmole2.jpg"),
-        os.path.join(base_dir, "benignmole3.jpg")
-    ]
-    melanoma_images = [
-        os.path.join(base_dir, "melanoma1.jpg"),
-        os.path.join(base_dir, "melanoma2.jpg"),
-        os.path.join(base_dir, "melanoma3.jpg")
-    ]
-
-    # Conversion des images en base64
+    benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
+    melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
@@ -131,51 +122,42 @@ elif st.session_state.screen == "Examples":
         except Exception as e:
             st.write(f"Erreur lors du chargement de {image_path} : {e}")
             return None
-
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
-
-    # Vérification des données
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
         st.write("Erreur : Certaines images n'ont pas pu être encodées en base64.")
     else:
-        # Affichage des en-têtes et images cliquables avec fond blanc cassé
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
-            clicked_benign = clickable_images(
-                [f"data:image/jpeg;base64,{b}" for b in benign_base64],
-                titles=["", "", ""],  # Vides pour éviter les légendes
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
-            )
+            clicked_benign = clickable_images([f"data:image/jpeg;base64,{b}" for b in benign_base64], titles=["", "", ""], div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"}, img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"})
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
                 image = Image.open(img_path)
-                with st.spinner("Analysis in progress..."):
-                    result, prob, color = predict_user_image(image)
-                st.session_state.screen = "Result"
-                st.session_state.image = img_path
-                st.session_state.result = (result, prob, color)
-                st.rerun()
-        
+                if not image:
+                    st.error(f"Erreur : L'image {img_path} est invalide.")
+                else:
+                    with st.spinner("Analysis in progress..."):
+                        result, prob, color = predict_user_image(image)
+                    st.session_state.screen = "Result"
+                    st.session_state.image = img_path
+                    st.session_state.result = (result, prob, color)
+                    st.rerun()
         with col2:
             st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
-            clicked_melanoma = clickable_images(
-                [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
-                titles=["", "", ""],  # Vides pour éviter les légendes
-                div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"},
-                img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"}
-            )
+            clicked_melanoma = clickable_images([f"data:image/jpeg;base64,{m}" for m in melanoma_base64], titles=["", "", ""], div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"}, img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"})
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
                 image = Image.open(img_path)
-                with st.spinner("Analysis in progress..."):
-                    result, prob, color = predict_user_image(image)
-                st.session_state.screen = "Result"
-                st.session_state.image = img_path
-                st.session_state.result = (result, prob, color)
-                st.rerun()
+                if not image:
+                    st.error(f"Erreur : L'image {img_path} est invalide.")
+                else:
+                    with st.spinner("Analysis in progress..."):
+                        result, prob, color = predict_user_image(image)
+                    st.session_state.screen = "Result"
+                    st.session_state.image = img_path
+                    st.session_state.result = (result, prob, color)
+                    st.rerun()
                
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
