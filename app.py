@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image, ImageOps  # Importation explicite
 import os
 import base64
-os.environ["CUDA_VISIBLE_DEVICES"] = "" 
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
 os.environ["TF_FORCE_CPU_ONLY"] = "1"
@@ -136,16 +136,14 @@ elif st.session_state.screen == "Photo":
     st.markdown("""
     <script>
         // Trouver le bouton du file_uploader
-        let uploaderButton = document.querySelector('[data-testid="stFileUploader"] button');
+        let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
         if (uploaderButton) {
             uploaderButton.innerText = 'Select/take photo';
-            // Afficher un message de débogage dans l'interface
             let debugDiv = document.createElement('div');
             debugDiv.className = 'normal-text';
             debugDiv.innerText = 'Débogage : Texte du bouton du file_uploader modifié en "Select/take photo"';
             document.body.appendChild(debugDiv);
         } else {
-            // Afficher un message d'erreur dans l'interface
             let debugDiv = document.createElement('div');
             debugDiv.className = 'normal-text';
             debugDiv.innerText = 'Débogage : Bouton du file_uploader non trouvé';
