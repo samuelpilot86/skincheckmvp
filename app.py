@@ -196,8 +196,15 @@ elif st.session_state.screen == "Reframe":
         st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
+        # Déterminer l'aspect ratio selon l'orientation
+        width, height = image.size
+        if height > width:  # Portrait
+            aspect_ratio = 4 / 3  # 4 hauteur pour 3 largeur
+        else:  # Paysage
+            aspect_ratio = 3 / 4  # 3 hauteur pour 4 largeur
+
         from streamlit_cropper import st_cropper
-        cropped_image = st_cropper(image, realtime_update=True, box_color='#4A90E2', aspect_ratio=None)  # Rectangle déplaçable
+        cropped_image = st_cropper(image, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio)
         st.image(cropped_image, caption="Frame the picture so that the mole takes half the space", use_container_width=True)
         st.markdown(f'<div class="normal-text">Current size: {cropped_image.size[0]} x {cropped_image.size[1]}</div>', unsafe_allow_html=True)
         if st.button("Analyze", key="analyze"):
