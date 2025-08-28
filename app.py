@@ -208,19 +208,17 @@ elif st.session_state.screen == "Reframe":
         # Déterminer l'aspect ratio selon l'orientation de l'image redimensionnée
         width, height = image_resized.size
         if height > width:  # Portrait
-            aspect_ratio = (3, 4)  # 3 largeur pour 4 hauteur
+            aspect_ratio = (4, 3)  # 4 hauteur pour 3 largeur
         else:  # Paysage
-            aspect_ratio = (4, 3)  # 4 largeur pour 3 hauteur
+            aspect_ratio = (3, 4)  # 3 hauteur pour 4 largeur
 
         from streamlit_cropper import st_cropper
-        cropped_image = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio)
-        # Redimensionner l'image recadrée pour l'affichage si nécessaire
-        if cropped_image.size[0] > 390:
-            crop_width, crop_height = cropped_image.size
-            new_crop_height = int(crop_height * (390 / crop_width))
-            cropped_image = cropped_image.resize((390, new_crop_height), Image.Resampling.LANCZOS)
-        st.image(cropped_image, caption="Frame the picture so that the mole takes half the space", use_container_width=False, width=390)
-        st.markdown(f'<div class="normal-text">Current size: {cropped_image.size[0]} x {cropped_image.size[1]}</div>', unsafe_allow_html=True)
+        # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
+        cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
+        # Afficher l'image originale redimensionnée (pas la recadrée en direct)
+        st.image(image_resized, caption="Move the frame to crop the picture so that the mole takes half the space", use_container_width=False, width=390)
+        st.markdown(f'<div class="normal-text">Original size: {image_resized.size[0]} x {image_resized.size[1]}</div>', unsafe_allow_html=True)
+
         if st.button("Analyze", key="analyze"):
             with st.spinner("Analysis in progress..."):
                 result, prob, color = predict_user_image(cropped_image)
