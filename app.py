@@ -134,27 +134,37 @@ elif st.session_state.screen == "Photo":
    
     # Script JavaScript pour modifier le texte du bouton
     st.markdown("""
-        <script>
-            function updateUploaderButton() {
-                console.log('Running updateUploaderButton');
-                let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-                if (uploaderButton) {
-                    console.log('Button found, updating text to "Select/take photo"');
-                    uploaderButton.innerText = 'Select/take photo';
-                } else {
-                    console.log('Button not found');
-                }
+    <script>
+        console.log('JavaScript: Script loaded at ' + new Date().toISOString());
+
+        function updateUploaderButton() {
+            console.log('JavaScript: Running updateUploaderButton at ' + new Date().toISOString());
+            let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
+            if (uploaderButton) {
+                console.log('JavaScript: Button found, setting text to "Select/take photo"');
+                uploaderButton.innerText = 'Select/take photo';
+            } else {
+                console.log('JavaScript: Button not found with selector [data-testid="stBaseButton-secondary"]');
             }
-        
-            // Run initially with a slight delay
-            console.log('Scheduling initial button update');
-            setTimeout(updateUploaderButton, 2000);
-        
-            // Observe DOM changes
-            console.log('Starting MutationObserver');
-            const observer = new MutationObserver(updateUploaderButton);
-            observer.observe(document.body, { childList: true, subtree: true });
-        </script>
+        }
+
+        // Run immediately
+        updateUploaderButton();
+
+        // Fallback with delay
+        setTimeout(updateUploaderButton, 500);
+
+        // Fallback for Streamlit re-renders
+        console.log('JavaScript: Starting MutationObserver');
+        const observer = new MutationObserver(updateUploaderButton);
+        const uploaderContainer = document.querySelector('[data-testid="stFileUploader"]');
+        if (uploaderContainer) {
+            console.log('JavaScript: File uploader container found');
+            observer.observe(uploaderContainer, { childList: true, subtree: true });
+        } else {
+            console.log('JavaScript: File uploader container not found');
+        }
+    </script>
     """, unsafe_allow_html=True)
    
     if uploaded_file is not None:
@@ -163,7 +173,7 @@ elif st.session_state.screen == "Photo":
             if not isinstance(image, Image.Image):
                 st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
             else:
-                image = ImageOps.exif_transpose(image)
+                image = ImageOps.exif_transexo_transpose(image)
                 st.session_state.image = image
                 st.session_state.screen = "Reframe"
                 st.rerun()
