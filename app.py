@@ -166,7 +166,7 @@ if st.session_state.screen == "Accueil":
     }
     /* Styliser et décaler le bouton Select demo example à droite de 25px */
     .stButton {
-        margin-left: 25px; /* Décalage de 25px à droite */
+        margin-left: 23px; /* Décalage de 25px à droite */
     }
     .stButton > button {
         background-color: #4A90E2;
@@ -413,7 +413,7 @@ elif st.session_state.screen == "Result":
         }
         /* Styliser et décaler le bouton Select demo example à droite de 25px */
         .stButton {
-            margin-left: 25px; /* Décalage de 25px à droite */
+            margin-left: 23px; /* Décalage de 25px à droite */
         }
         .stButton > button {
             background-color: #4A90E2;
