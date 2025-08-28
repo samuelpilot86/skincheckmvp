@@ -14,6 +14,8 @@ from streamlit_cropper import st_cropper
 
 from streamlit_javascript import st_javascript; 
 
+st_javascript("alert('JavaScript fonctionne !');")
+
 # Charger le modèle
 @st.cache_resource
 def load_model():
