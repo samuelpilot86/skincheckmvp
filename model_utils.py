@@ -132,14 +132,20 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
 # Charger le modèle
 @st.cache_resource
 def load_model():
-    custom_objects = {
-        'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
-        'MelanomaRecall': MelanomaRecall,
-        'NevusSpecificity': NevusSpecificity,
-        'CombinedMetric': CombinedMetric,
-        'ThresholdOptimizer': ThresholdOptimizer
-    }
-    return tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+    try:
+        custom_objects = {
+            'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
+            'MelanomaRecall': MelanomaRecall,
+            'NevusSpecificity': NevusSpecificity,
+            'CombinedMetric': CombinedMetric,
+            'ThresholdOptimizer': ThresholdOptimizer
+        }
+        model = tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
+        st.write("Modèle chargé avec succès.")
+        return model
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+        return None
 
 # Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
@@ -156,13 +162,18 @@ def preprocess_image(image, target_size=(224, 224)):
 def predict_user_image(image):
     img_array = preprocess_image(image)
     if img_array is None:
+        st.error("Erreur : L'image n'a pas pu être prétraitée. Vérifiez le format ou la validité de l'image.")
         return "Erreur : Impossible de traiter l'image.", None, None
     img_array = np.expand_dims(img_array, axis=0)
-    prediction = model.predict(img_array)
-    threshold = 0.487
-    probability = prediction[0][0] * 100
-    if probability >= threshold * 100:
-        return "Melanoma", probability, "red"
-    else:
-        return "Benign", (100 - probability), "green"
+    try:
+        prediction = model.predict(img_array)
+        threshold = 0.487
+        probability = prediction[0][0] * 100
+        if probability >= threshold * 100:
+            return "Melanoma", probability, "red"
+        else:
+            return "Benign", (100 - probability), "green"
+    except Exception as e:
+        st.error(f"Erreur lors de la prédiction : {e}")
+        return "Erreur : Impossible de traiter l'image.", None, None
 
