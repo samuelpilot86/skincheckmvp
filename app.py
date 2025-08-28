@@ -143,7 +143,7 @@ elif st.session_state.screen == "Examples":
                         st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
                     else:
                         with st.spinner("Analysis in progress..."):
-                            result, prob, color = predict_user_image(image)
+                            result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
                         st.session_state.image = img_path
                         st.session_state.result = (result, prob, color)
@@ -162,7 +162,7 @@ elif st.session_state.screen == "Examples":
                         st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
                     else:
                         with st.spinner("Analysis in progress..."):
-                            result, prob, color = predict_user_image(image)
+                            result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
                         st.session_state.image = img_path
                         st.session_state.result = (result, prob, color)
@@ -194,7 +194,7 @@ elif st.session_state.screen == "Reframe":
         if st.button("Analyze", key="analyze"):
             if cropped_image is not None and isinstance(cropped_image, Image.Image):
                 with st.spinner("Analysis in progress..."):
-                    result, prob, color = predict_user_image(cropped_image)
+                    result, prob, color = predict_user_image(cropped_image, model)
                 st.session_state.screen = "Result"
                 st.session_state.image = cropped_image
                 st.session_state.result = (result, prob, color)
