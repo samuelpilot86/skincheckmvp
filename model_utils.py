@@ -2,6 +2,7 @@ import tensorflow as tf
 import keras.backend as K
 import streamlit as st
 import numpy as np
+from PIL import Image  # Ajout de l'importation explicite
 
 # Fonction focal_loss_fixed
 def focal_loss_fixed(gamma=1.0, alpha=0.9, class_weights=None):
@@ -115,13 +116,34 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
     def from_config(cls, config):
         return cls(**config)
 
-
+# Charger le modèle avec chemin vérifié
+@st.cache_resource
+def load_model():
+    model_path = os.path.join(os.getcwd(), "skin_lesion_model_binary.keras")
+    st.markdown(f'<div class="normal-text">Tentative de chargement du modèle depuis : {model_path}</div>', unsafe_allow_html=True)
+    try:
+        custom_objects = {
+            'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
+            'MelanomaRecall': MelanomaRecall,
+            'NevusSpecificity': NevusSpecificity,
+            'CombinedMetric': CombinedMetric,
+            'ThresholdOptimizer': ThresholdOptimizer
+        }
+        model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
+        st.markdown('<div class="normal-text">Modèle chargé avec succès.</div>', unsafe_allow_html=True)
+        return model
+    except Exception as e:
+        st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
+        return None
 
 # Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
     try:
+        st.markdown('<div class="normal-text">Débogage : Conversion de l\'image en RGB...</div>', unsafe_allow_html=True)
         img = image.convert('RGB')
+        st.markdown('<div class="normal-text">Débogage : Redimensionnement de l\'image...</div>', unsafe_allow_html=True)
         img = img.resize(target_size, Image.Resampling.LANCZOS)
+        st.markdown('<div class="normal-text">Débogage : Conversion en tableau numpy...</div>', unsafe_allow_html=True)
         img_array = np.array(img) / 255.0
         return img_array
     except Exception as e:
@@ -134,22 +156,8 @@ def predict_user_image(image, model):
         st.markdown('<div class="normal-text">Erreur : Le modèle n\'a pas été chargé correctement.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
     
+    st.markdown('<div class="normal-text">Débogage : Préparation de l\'image pour la prédiction...</div>', unsafe_allow_html=True)
     img_array = preprocess_image(image)
     if img_array is None:
         st.markdown('<div class="normal-text">Erreur : L\'image n\'a pas pu être prétraitée. Vérifiez le format ou la validité de l\'image.</div>', unsafe_allow_html=True)
-        return "Erreur : Impossible de traiter l'image.", None, None
-    
-    img_array = np.expand_dims(img_array, axis=0)
-    try:
-        st.markdown('<div class="normal-text">Prédiction en cours...</div>', unsafe_allow_html=True)
-        prediction = model.predict(img_array)
-        st.markdown(f'<div class="normal-text">Prédiction brute : {prediction}</div>', unsafe_allow_html=True)
-        threshold = 0.487
-        probability = prediction[0][0] * 100
-        if probability >= threshold * 100:
-            return "Melanoma", probability, "red"
-        else:
-            return "Benign", (100 - probability), "green"
-    except Exception as e:
-        st.markdown(f'<div class="normal-text">Erreur lors de la prédiction : {e}</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
