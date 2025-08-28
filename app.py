@@ -138,9 +138,11 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
     
-    # Solution CSS pour renommer uniquement le bouton de st.file_uploader en "Take/select photo"
+    # Solution CSS pour renommer le bouton de st.file_uploader en "Take/select photo"
+    # et modifier l'arrière-plan de la section stFileUploaderDropzone
     st.markdown("""
     <style>
+    /* Renommer le bouton "Browse files" en "Take/select photo" */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
         visibility: hidden;
         position: relative;
@@ -165,6 +167,22 @@ elif st.session_state.screen == "Photo":
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
+    /* Option 1 : Rendre l'arrière-plan de la section transparent */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: transparent;
+    }
+    /* Option 2 : Changer l'arrière-plan en bleu #4A90E2 (décommentez pour utiliser) */
+    /*
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: #4A90E2;
+    }
+    */
+    /* Option 3 : Réduire la taille à 0 (décommentez pour tester, mais attention : cela peut masquer le bouton) */
+    /*
+    [data-testid="stFileUploaderDropzone"] {
+        display: none; /* ou width: 0; height: 0; overflow: hidden; */
+    }
+    */
     </style>
     """, unsafe_allow_html=True)
     
@@ -183,15 +201,6 @@ elif st.session_state.screen == "Photo":
                 st.rerun()
         except Exception as e:
             st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-elif st.session_state.screen == "Examples":
-    st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()
-    st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
-    base_dir = os.path.join(os.getcwd(), "examples")
-    benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
-    melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
 
     def image_to_base64(image_path):
         try:
