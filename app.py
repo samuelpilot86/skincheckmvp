@@ -29,7 +29,7 @@ if os.path.exists(logo_path):
         logo_data = base64.b64encode(open(logo_path, "rb").read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_data}" alt="Logo" width="46" height="auto">'
     except Exception as e:
-        st.markdown(f"**Erreur lors du chargement du logo : {e}**")
+        st.markdown(f'<div class="normal-text">Erreur lors du chargement du logo : {e}</div>', unsafe_allow_html=True)
         logo_html = ""
 else:
     logo_html = ""
@@ -53,7 +53,7 @@ if os.path.exists(reframed_mole_path):
         reframed_mole_data = base64.b64encode(open(reframed_mole_path, "rb").read()).decode()
         reframed_mole_html = f'<img src="data:image/jpg;base64,{reframed_mole_data}" alt="" width="150" height="auto">'
     except Exception as e:
-        st.markdown(f"**Erreur lors du chargement de l'image d'exemple : {e}**")
+        st.markdown(f'<div class="normal-text">Erreur lors du chargement de l\'image d\'exemple : {e}</div>', unsafe_allow_html=True)
         reframed_mole_html = ""
 else:
     reframed_mole_html = ""
@@ -98,14 +98,14 @@ elif st.session_state.screen == "Photo":
         try:
             image = Image.open(uploaded_file)
             if not image:
-                st.markdown("**Erreur : L'image téléchargée est invalide.**")
+                st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
             else:
                 image = ImageOps.exif_transpose(image)
                 st.session_state.image = image
                 st.session_state.screen = "Reframe"
                 st.rerun()
         except Exception as e:
-            st.markdown(f"**Erreur lors de l'ouverture de l'image : {e}**")
+            st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
@@ -121,15 +121,15 @@ elif st.session_state.screen == "Examples":
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode()
         except FileNotFoundError:
-            st.markdown(f"**Erreur : Fichier {image_path} non trouvé.**")
+            st.markdown(f'<div class="normal-text">Erreur : Fichier {image_path} non trouvé.</div>', unsafe_allow_html=True)
             return None
         except Exception as e:
-            st.markdown(f"**Erreur lors du chargement de {image_path} : {e}**")
+            st.markdown(f'<div class="normal-text">Erreur lors du chargement de {image_path} : {e}</div>', unsafe_allow_html=True)
             return None
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
-        st.markdown("**Erreur : Certaines images n'ont pas pu être encodées en base64.**")
+        st.markdown('<div class="normal-text">Erreur : Certaines images n\'ont pas pu être encodées en base64.</div>', unsafe_allow_html=True)
     else:
         col1, col2 = st.columns(2)
         with col1:
@@ -140,7 +140,7 @@ elif st.session_state.screen == "Examples":
                 try:
                     image = Image.open(img_path)
                     if not image:
-                        st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
+                        st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
@@ -149,7 +149,7 @@ elif st.session_state.screen == "Examples":
                         st.session_state.result = (result, prob, color)
                         st.rerun()
                 except Exception as e:
-                    st.markdown(f"**Erreur lors de l'ouverture de {img_path} : {e}**")
+                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
        
         with col2:
             st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
@@ -159,7 +159,7 @@ elif st.session_state.screen == "Examples":
                 try:
                     image = Image.open(img_path)
                     if not image:
-                        st.markdown(f"**Erreur : L'image {img_path} est invalide.**")
+                        st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
@@ -168,7 +168,7 @@ elif st.session_state.screen == "Examples":
                         st.session_state.result = (result, prob, color)
                         st.rerun()
                 except Exception as e:
-                    st.markdown(f"**Erreur lors de l'ouverture de {img_path} : {e}**")
+                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
               
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
@@ -200,7 +200,7 @@ elif st.session_state.screen == "Reframe":
                 st.session_state.result = (result, prob, color)
                 st.rerun()
             else:
-                st.markdown("**Erreur : L'image recadrée n'est pas valide. Veuillez valider le recadrage.**")
+                st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
