@@ -135,11 +135,19 @@ elif st.session_state.screen == "Photo":
     # Script JavaScript pour modifier le texte du bouton
     st.markdown("""
     <script>
-        // Trouver le bouton du file_uploader
-        let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-        if (uploaderButton) {
-            uploaderButton.innerText = 'Select/take photo';
+        function updateUploaderButton() {
+            let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
+            if (uploaderButton) {
+                uploaderButton.innerText = 'Select/take photo';
+            }
         }
+
+        // Run on DOM load
+        document.addEventListener('DOMContentLoaded', updateUploaderButton);
+
+        // Observe DOM changes for Streamlit re-renders
+        const observer = new MutationObserver(updateUploaderButton);
+        observer.observe(document.body, { childList: true, subtree: true });
     </script>
     """, unsafe_allow_html=True)
    
