@@ -30,6 +30,8 @@ def load_model():
         return model
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
+        import os
+        st.markdown(f'<div class="normal-text">Répertoire de travail actuel : {os.getcwd()}</div>', unsafe_allow_html=True)
         return None
 
 model = load_model()
