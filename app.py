@@ -12,9 +12,7 @@ from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, Comb
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
-from streamlit_javascript import st_javascript; 
-
-st_javascript("alert('JavaScript fonctionne !');")
+from streamlit_javascript import st_javascript;
 
 # Charger le modèle
 @st.cache_resource
@@ -114,8 +112,8 @@ if 'screen' not in st.session_state:
 
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
+    st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
     
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
@@ -218,7 +216,8 @@ if st.session_state.screen == "Accueil":
     
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-    st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
