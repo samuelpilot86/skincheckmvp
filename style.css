@@ -270,8 +270,8 @@
     padding: 10px !important;
 }
 
-/* Masquer la zone de glisser-déposer et ses instructions */
-[data-testid="stFileUploaderDropzone"] {
+/* Masquer uniquement les instructions de glisser-déposer */
+[data-testid="stFileUploaderDropzoneInstructions"] {
     display: none !important;
 }
 
@@ -285,10 +285,17 @@
     border-radius: 5px !important;
     padding: 10px 20px !important;
     width: 100% !important;
+    text-align: center !important;
+    cursor: pointer !important;
 }
 
 [data-testid="stBaseButton-secondary"]:hover {
     background-color: #3A7AC2 !important;
+}
+
+/* Masquer l'input natif du file_uploader */
+[data-testid="stFileUploaderDropzoneInput"] {
+    display: none !important;
 }
 
 /* Style pour le bouton personnalisé de file_uploader (non utilisé ici, conservé pour compatibilité) */
