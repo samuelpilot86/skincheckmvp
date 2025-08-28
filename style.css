@@ -111,6 +111,10 @@
     margin-bottom: 20px;
     border-color: #F5F5F5 !important;
 }
+.instructions-table td {
+    border: none;
+    padding: 0;
+}
 
 /* Textes (normal...) */
 .normal-text {
