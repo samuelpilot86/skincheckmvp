@@ -208,15 +208,14 @@ elif st.session_state.screen == "Reframe":
         # Déterminer l'aspect ratio selon l'orientation de l'image redimensionnée
         width, height = image_resized.size
         if height > width:  # Portrait
-            aspect_ratio = (4, 3)  # 4 hauteur pour 3 largeur
+            aspect_ratio = (3, 4)  # 4 hauteur pour 3 largeur
         else:  # Paysage
-            aspect_ratio = (3, 4)  # 3 hauteur pour 4 largeur
-
-        from streamlit_cropper import st_cropper
+            aspect_ratio = (4, 3)  # 3 hauteur pour 4 largeur
+        
+        st.markdown(f'<div class="normal-text">Move the frame to crop the picture so that the mole takes half the space</div>', unsafe_allow_html=True)
         # Stocker les coordonnées du recadrage (st_cropper retourne l'image recadrée uniquement après validation)
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
         # Afficher l'image originale redimensionnée (pas la recadrée en direct)
-        st.image(image_resized, caption="Move the frame to crop the picture so that the mole takes half the space", use_container_width=False, width=390)
         st.markdown(f'<div class="normal-text">Original size: {image_resized.size[0]} x {image_resized.size[1]}</div>', unsafe_allow_html=True)
 
         if st.button("Analyze", key="analyze"):
