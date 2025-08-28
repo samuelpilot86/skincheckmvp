@@ -196,15 +196,29 @@ elif st.session_state.screen == "Reframe":
         st.rerun()
     if 'image' in st.session_state:
         image = st.session_state.image
-        # Déterminer l'aspect ratio selon l'orientation
+        # Redimensionner l'image pour une largeur maximale de 390px tout en conservant les proportions
         width, height = image.size
+        if width > 390:
+            new_width = 390
+            new_height = int(height * (new_width / width))
+            image_resized = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        else:
+            image_resized = image
+
+        # Déterminer l'aspect ratio selon l'orientation de l'image redimensionnée
+        width, height = image_resized.size
         if height > width:  # Portrait
             aspect_ratio = (4, 3)  # 4 hauteur pour 3 largeur
         else:  # Paysage
             aspect_ratio = (3, 4)  # 3 hauteur pour 4 largeur
 
         from streamlit_cropper import st_cropper
-        cropped_image = st_cropper(image, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio)
+        cropped_image = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio)
+        # Redimensionner l'image recadrée pour l'affichage si nécessaire
+        if cropped_image.size[0] > 390:
+            crop_width, crop_height = cropped_image.size
+            new_crop_height = int(crop_height * (390 / crop_width))
+            cropped_image = cropped_image.resize((390, new_crop_height), Image.Resampling.LANCZOS)
         st.image(cropped_image, caption="Frame the picture so that the mole takes half the space", use_container_width=False, width=390)
         st.markdown(f'<div class="normal-text">Current size: {cropped_image.size[0]} x {cropped_image.size[1]}</div>', unsafe_allow_html=True)
         if st.button("Analyze", key="analyze"):
