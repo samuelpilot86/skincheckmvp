@@ -104,6 +104,12 @@
     padding-left: 10px;
 }
 
+/* Masquage du File Uploader */
+
+[data-testid="stFileUploader"] {
+    display: none !important;
+}
+
 /* Instructions de l'écran Reframe */
 
 .instructions-table {
