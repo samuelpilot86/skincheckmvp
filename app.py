@@ -134,22 +134,27 @@ elif st.session_state.screen == "Photo":
    
     # Script JavaScript pour modifier le texte du bouton
     st.markdown("""
-    <script>
-        function updateUploaderButton() {
-            let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-            if (uploaderButton) {
-                uploaderButton.innerText = 'Select/take photo';
+        <script>
+            function updateUploaderButton() {
+                console.log('Running updateUploaderButton');
+                let uploaderButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
+                if (uploaderButton) {
+                    console.log('Button found, updating text to "Select/take photo"');
+                    uploaderButton.innerText = 'Select/take photo';
+                } else {
+                    console.log('Button not found');
+                }
             }
-        }
-        setTimeout(updateUploaderButton, 100);
-
-        // Run on DOM load
-        document.addEventListener('DOMContentLoaded', updateUploaderButton);
-
-        // Observe DOM changes for Streamlit re-renders
-        const observer = new MutationObserver(updateUploaderButton);
-        observer.observe(document.body, { childList: true, subtree: true });
-    </script>
+        
+            // Run initially with a slight delay
+            console.log('Scheduling initial button update');
+            setTimeout(updateUploaderButton, 100);
+        
+            // Observe DOM changes
+            console.log('Starting MutationObserver');
+            const observer = new MutationObserver(updateUploaderButton);
+            observer.observe(document.body, { childList: true, subtree: true });
+        </script>
     """, unsafe_allow_html=True)
    
     if uploaded_file is not None:
