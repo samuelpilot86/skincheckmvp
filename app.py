@@ -149,6 +149,8 @@ elif st.session_state.screen == "Examples":
         st.session_state.screen = "Accueil"
         st.rerun()
 
+    st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
+
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
