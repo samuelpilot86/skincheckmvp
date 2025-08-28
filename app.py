@@ -126,8 +126,8 @@ elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="normal-text">Click below to select a photo or take one (phone only).</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Take photos of your suspect moles with your phone's photo app, then click "Browse files".</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp.</div>', unsafe_allow_html=True)
    
     # File uploader stylisé
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
