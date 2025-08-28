@@ -138,8 +138,47 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
     
+    # Solution CSS pour renommer le bouton "Browse files" en "Take/select photo"
+    st.markdown("""
+    <style>
+    [data-testid="stBaseButton-secondary"] {
+        visibility: hidden;
+        position: relative;
+    }
+    [data-testid="stBaseButton-secondary"]::before {
+        content: "Take/select photo";
+        visibility: visible;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4A90E2;
+        color: #F5F5F5;
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+    [data-testid="stBaseButton-secondary"]:hover::before {
+        background-color: #3A7AC2;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
-    st_javascript("const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]'); uploadButton.textContent = 'Take/select photo';")
+    st_javascript("""
+        alert('Début du script de renommage du bouton');
+        const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
+        if (uploadButton) {
+            uploadButton.textContent = "Take/select photo";
+            alert('Bouton renommé en : Take/select photo');
+        } else {
+            alert('Bouton non trouvé avec le sélecteur [data-testid="stBaseButton-secondary"]');
+        }
+    """)
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
     st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
