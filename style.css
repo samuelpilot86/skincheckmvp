@@ -4,45 +4,48 @@
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    /* Pas de background-color pour laisser le fond par défaut (#FFFFFF) */
 }
+
+/* Conteneur principal */
 .appview-container {
-    margin: 0 !important; /* Supprime toute marge supérieure par défaut */
+    margin: 0 !important;
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    /* Pas de background-color pour laisser le fond par défaut */
 }
-.block-container { /* Un conteneur de Streamlit que j'ai besoin de redimensionner */
-    max-width: 390px !important; /* Limite stricte à 390px */
-    padding-top: 27px !important; /*Garder ce commentaire - l'ajustement de ce padding permet 1) de bien positionner le titre, 2) de cacher la barre grise*/
-    background-color: #F5F5F5 !important; /* Applique le blanc cassé à la bande */
+
+.block-container {
+    max-width: 390px !important;
+    padding-top: 27px !important;
+    background-color: #F5F5F5 !important;
     border: none !important;
     box-shadow: none !important;
-    margin: 0 auto !important; /* Centre le conteneur */
-    position: relative; /* Assure un contexte de positionnement */
-    top: 0; /* Réinitialise la position verticale */
-    width: 100%; /* S'adapte à la largeur de l'écran, mais limité par max-width */
+    margin: 0 auto !important;
+    position: relative;
+    top: 0;
+    width: 100%;
 }
+
 /* Conteneur principal pour responsivité */
 .main-container {
-    width: 390px !important; /* Largeur fixe à 390px */
-    max-height: 644px; /* Hauteur maximale comme un iPhone 13 moins 200 pixels */
-    position: relative; /* Pour le positionnement */
-    margin: 0 auto; /* Centre l'app horizontalement */
-    overflow-y: auto; /* Scroll si contenu dépasse la hauteur */
+    width: 390px !important;
+    max-height: 644px;
+    position: relative;
+    margin: 0 auto;
+    overflow-y: auto;
     font-family: 'Roboto', sans-serif;
     padding: 0;
-    border: none; /* Supprime toutes les bordures */
-    display: block; /* Réinitialise à block */
+    border: none;
+    display: block;
 }
 
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
     align-items: center;
-    width: 100%; /* Occupe toute la largeur disponible */
-    margin-top: 0 !important; /* Supprime toute marge supérieure */
+    width: 100%;
+    margin-top: 0 !important;
 }
+
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
@@ -50,19 +53,22 @@
     font-size: 28px;
     text-align: center;
     margin: 0;
-    padding-top: 10px !important; /* Décalage vers le bas pour afficher le titre en entier */
-    line-height: 1.2; /* Ajuste la hauteur de ligne pour éviter le débordement */
-    white-space: normal; /* Permet le retour à la ligne si nécessaire */
-    overflow: visible; /* Évite la troncature */
-    position: relative; /* Contexte pour le positionnement */
-    top: 0; /* Aligne avec le haut de .block-container après padding */
+    padding-top: 10px !important;
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+    position: relative;
+    top: 0;
 }
+
 .skin {
     color: #4A90E2;
 }
+
 .check {
     color: #7ED321;
 }
+
 /* Sous-titre */
 .subtitle {
     font-family: 'Roboto', sans-serif;
@@ -72,96 +78,91 @@
     text-align: center;
     margin-top: 5px;
 }
+
 /* Styles pour le tableau d'en-tête */
 .header-table {
     width: 100%;
-    height: auto; /* Ajuste à la hauteur du contenu */
+    height: auto;
     border: none !important;
     border-collapse: collapse;
     margin-top: 16px !important;
     margin-bottom: 20px;
     border-color: #F5F5F5 !important;
 }
+
 .header-table tr {
-    border: none; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
+    border: none;
     padding: 0;
 }
+
 .header-table td {
-    border: none; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
+    border: none;
     padding: 0;
 }
+
 .logo-cell {
     width: 46px;
     padding-right: 10px;
 }
+
 .title-cell {
-    width: auto; /* Laisse le titre prendre l'espace disponible */
+    width: auto;
     text-align: center;
-    flex-grow: 1; /* Permet au titre de s'étendre */
+    flex-grow: 1;
 }
+
 .empty-cell {
     width: 46px;
     padding-left: 10px;
 }
 
-/* Masquage du File Uploader */
-
-/* Rendre le file_uploader invisible mais interactif */
-[data-testid="stFileUploader"] {
-    opacity: 0 !important; /* Invisible mais cliquable */
-    position: absolute !important; /* Sort du flux pour éviter l'espace */
-    width: 0 !important;
-    height: 0 !important;
-}
-
-/* S'assurer que le bouton interne reste accessible */
-[data-testid="stFileUploader"] button {
-    opacity: 1 !important; /* Garde le bouton cliquable */
-}
-
 /* Instructions de l'écran Reframe */
-
 .instructions-table {
     width: 100%;
-    height: auto; /* Ajuste à la hauteur du contenu */
+    height: auto;
     border: none !important;
     border-collapse: collapse;
     margin-top: 16px !important;
     margin-bottom: 20px;
     border-color: #F5F5F5 !important;
 }
+
 .instructions-table tr {
-    border: none !important; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
+    border: none !important;
     padding: 0 0;
 }
+
 .instructions-table td {
-    border: none !important; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
+    border: none !important;
     padding: 0 0;
 }
 
 /* Textes (normal...) */
 .normal-text {
     font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-size: 18px;
     color: #333333;
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 .bottom-note {
     font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-size: 12px;
     color: #333333;
 }
+
 .warning-text {
     font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-size: 18px;
     color: #FFA500;
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 /* Styles pour les titres de colonne */
 .column-title {
     font-family: 'Roboto', sans-serif;
@@ -173,10 +174,9 @@
 }
 
 /* Signe warning */
-
 .warning {
     font-family: 'universal', sans-serif;
-    font-weight: 600; /* Regular */
+    font-weight: 600;
     font-size: 40px;
     color: #FFA500;
     margin-right: 20px;
@@ -185,32 +185,31 @@
 /* Styles pour centrer les images dans st-clickable-images */
 .st-clickable-image {
     text-align: center;
-    margin: 5px auto; /* Centrage horizontal avec espacement */
-    max-width: 100%; /* S'adapte à la colonne */
+    margin: 5px auto;
+    max-width: 100%;
 }
 
 .st-clickable-image img {
-    display: inline-block; /* Permet le centrage */
-    max-width: 150px; /* Limite la taille pour mobile */
-    height: auto; /* Conserve les proportions */
-    cursor: pointer; /* Indique que l'image est cliquable */
-    background-color: #F5F5F5; /* Fond blanc cassé pour harmoniser */
+    display: inline-block;
+    max-width: 150px;
+    height: auto;
+    cursor: pointer;
+    background-color: #F5F5F5;
 }
 
 /* Media query pour ajuster les colonnes sur petits écrans */
 @media only screen and (max-width: 768px) {
     .block-container {
-        max-width: 390px !important; /* Limite stricte sur mobile */
-        padding-top: 20px !important; /* Ajuste le padding pour mobile */
+        max-width: 390px !important;
+        padding-top: 20px !important;
     }
     .main-container {
-        width: 390px !important; /* Limite stricte sur mobile */
-        max-height: 100%; /* Ajuste la hauteur */
+        width: 390px !important;
+        max-height: 100%;
     }
     .st-clickable-image img {
-        max-width: 120px; /* Réduit la taille pour petits écrans */
+        max-width: 120px;
     }
-    /* Force les colonnes à s'empiler sur petits écrans */
     .stHorizontalBlock {
         flex-direction: column !important;
     }
@@ -223,8 +222,9 @@
 /* Boutons */
 .stButton {
     text-align: center;
-    margin-bottom: 10px; /* Espacement entre l'image et le bouton */
+    margin-bottom: 10px;
 }
+
 .stButton > button {
     background-color: #4A90E2;
     color: #F5F5F5;
@@ -240,29 +240,58 @@
     top: 0;
     left: 0;
 }
+
 .stButton > button:hover {
-    background-color: #3A7AC2; /* Bleu légèrement plus foncé au hover */
+    background-color: #3A7AC2;
 }
-/* Icônes dans les boutons (simulées avec texte pour l'instant) */
-.button-icon {
-    color: #F5F5F5; /* Blanc cassé */
-}
+
 /* Fond pour la prise et le recadrage de photos */
 .photo-section {
     background-color: #333333;
     color: #F5F5F5;
     font-family: 'Roboto', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-size: 24px;
     padding: 20px;
 }
+
 /* Ajustement pour les conteneurs de boutons */
 .button-container {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Espacement entre les boutons */
+    gap: 10px;
 }
-/* Style pour le bouton personnalisé de file_uploader */
+
+/* Style pour le file_uploader */
+[data-testid="stFileUploader"] {
+    background-color: #F5F5F5 !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 10px !important;
+}
+
+/* Masquer le texte "Drag and drop" */
+[data-testid="stFileUploader"] .uploadedFileData {
+    visibility: hidden !important;
+}
+
+/* Style du bouton du file_uploader */
+[data-testid="stFileUploader"] button {
+    background-color: #4A90E2 !important;
+    color: #F5F5F5 !important;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 18px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 10px 20px !important;
+    width: 100% !important;
+}
+
+[data-testid="stFileUploader"] button:hover {
+    background-color: #3A7AC2 !important;
+}
+
+/* Style pour le bouton personnalisé de file_uploader (non utilisé ici, conservé pour compatibilité) */
 .custom-file-upload {
     display: inline-block;
     padding: 10px 20px;
@@ -276,21 +305,25 @@
     cursor: pointer;
     text-align: center;
 }
+
 .custom-file-upload:hover {
     background-color: #3A7AC2;
 }
+
 #file-uploader input[type="file"] {
-    display: none; /* Masque le bouton natif */
+    display: none;
 }
+
 /* Styles pour st_cropper dans Reframe */
 .stCropper {
-    max-width: 390px !important; /* Limite stricte à 390px */
-    width: 390px !important; /* Force la largeur */
-    max-height: 400px !important; /* Limite la hauteur pour éviter le débordement */
+    max-width: 390px !important;
+    width: 390px !important;
+    max-height: 400px !important;
     overflow: hidden !important;
 }
+
 .stCropper canvas {
-    max-width: 390px !important; /* Limite stricte à 390px */
-    width: 390px !important; /* Force la largeur */
-    object-fit: contain !important; /* Ajuste l'image pour tenir dans le conteneur */
+    max-width: 390px !important;
+    width: 390px !important;
+    object-fit: contain !important;
 }
