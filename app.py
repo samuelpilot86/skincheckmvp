@@ -59,7 +59,7 @@ else:
     reframed_mole_html = ""
 
 reframe_instructions_html = f'''
-    <table class="instructions-table">
+    <table class="header-table">
       <tr>
         <td><div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div></td>
         <td>{reframed_mole_html}</td>
