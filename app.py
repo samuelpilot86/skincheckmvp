@@ -138,14 +138,14 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
     
-    # Solution CSS pour renommer le bouton "Browse files" en "Take/select photo"
+    # Solution CSS pour renommer uniquement le bouton de st.file_uploader en "Take/select photo"
     st.markdown("""
     <style>
-    [data-testid="stBaseButton-secondary"] {
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
         visibility: hidden;
         position: relative;
     }
-    [data-testid="stBaseButton-secondary"]::before {
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
         content: "Take/select photo";
         visibility: visible;
         position: absolute;
@@ -162,23 +162,11 @@ elif st.session_state.screen == "Photo":
         font-size: 18px;
         border-radius: 5px;
     }
-    [data-testid="stBaseButton-secondary"]:hover::before {
+    [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
     </style>
     """, unsafe_allow_html=True)
-    
-    # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
-    st_javascript("""
-        alert('Début du script de renommage du bouton');
-        const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
-        if (uploadButton) {
-            uploadButton.textContent = "Take/select photo";
-            alert('Bouton renommé en : Take/select photo');
-        } else {
-            alert('Bouton non trouvé avec le sélecteur [data-testid="stBaseButton-secondary"]');
-        }
-    """)
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
     st.markdown('<div class="bottom-note">*On a phone, the same button also allows to take a photo.</div>', unsafe_allow_html=True)
@@ -195,7 +183,6 @@ elif st.session_state.screen == "Photo":
                 st.rerun()
         except Exception as e:
             st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
