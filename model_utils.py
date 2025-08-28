@@ -177,7 +177,7 @@ def predict_user_image(image, model):
         color = "#FF6B6B" if prob >= threshold else "#7ED321"  # Rouge pour mélanome, vert pour bénin
         
         st.markdown(f'<div class="normal-text">Débogage : Prédiction terminée. Probabilité : {prob:.2f}, Résultat : {result}</div>', unsafe_allow_html=True)
-        return result, prob, color
+        return result, round(prob, 3), color
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors de la prédiction : {e}</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de faire la prédiction.", None, None
