@@ -130,6 +130,7 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Photo":
+    st_javascript(alert('Ecran photo affiché');)
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
