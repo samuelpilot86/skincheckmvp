@@ -129,13 +129,27 @@ elif st.session_state.screen == "Photo":
         st.rerun()
     st.markdown('<div class="normal-text">Click below to select a photo or take one (phone only).</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")  # Invisible mais actif
+    
+    # File uploader invisible mais actif
+    uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
+    
+    # Bouton personnalisé
+    st.markdown('<div class="button-container">', unsafe_allow_html=True)
     if st.button("Select/take photo", key="custom_photo"):
         st.markdown("""
         <script>
-            document.querySelector('[data-testid="stFileUploader"] button').click();
+            // Vérifier si le bouton du file_uploader existe
+            const uploaderButton = document.querySelector('[data-testid="stFileUploader"] button');
+            if (uploaderButton) {
+                uploaderButton.click();
+                console.log("Clic sur le bouton du file_uploader effectué");
+            } else {
+                console.log("Bouton du file_uploader non trouvé");
+            }
         </script>
         """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
     if uploaded_file is not None:
         try:
             image = Image.open(uploaded_file)
