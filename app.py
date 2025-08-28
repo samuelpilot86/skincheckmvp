@@ -208,9 +208,9 @@ elif st.session_state.screen == "Reframe":
         # Déterminer l'aspect ratio selon l'orientation de l'image redimensionnée
         width, height = image_resized.size
         if height > width:  # Portrait
-            aspect_ratio = (4, 3)  # 4 hauteur pour 3 largeur
+            aspect_ratio = (3, 4)  # 3 largeur pour 4 hauteur
         else:  # Paysage
-            aspect_ratio = (3, 4)  # 3 hauteur pour 4 largeur
+            aspect_ratio = (4, 3)  # 4 largeur pour 3 hauteur
 
         from streamlit_cropper import st_cropper
         cropped_image = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio)
