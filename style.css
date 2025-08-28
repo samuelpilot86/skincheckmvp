@@ -82,8 +82,11 @@
     margin-bottom: 20px;
     border-color: #F5F5F5 !important;
 }
-.header-table td {
-    border: none;
+.header-table tr {
+    border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
+    padding: 0;
+}.header-table td {
+    border: none; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
     padding: 0;
 }
 .logo-cell {
@@ -98,26 +101,6 @@
 .empty-cell {
     width: 46px;
     padding-left: 10px;
-}
-
-/* Tableau d'instructions de reframe */
-
-.instructions-table {
-    width: 100%;
-    height: auto; /* Ajuste à la hauteur du contenu */
-    border: none !important;
-    border-collapse: collapse;
-    margin-top: 16px !important;
-    margin-bottom: 20px;
-    border-color: #F5F5F5 !important;
-}
-.instructions-table tr {
-    border: none;
-    padding: 0;
-}
-.instructions-table td {
-    border: none;
-    padding: 0;
 }
 
 /* Textes (normal...) */
