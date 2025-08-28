@@ -99,6 +99,13 @@
     width: 46px;
     padding-left: 10px;
 }
+
+/* Tableau d'instructions de reframe */
+
+.instructions-table {
+    border: none !important;
+}
+
 /* Textes (normal...) */
 .normal-text {
     font-family: 'Roboto', sans-serif;
