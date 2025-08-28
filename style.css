@@ -104,7 +104,7 @@
     padding-left: 10px;
 }
 
-/* Instructions de l'écran Reframe
+/* Instructions de l'écran Reframe */
 
 .instructions-table {
     width: 100%;
@@ -116,11 +116,11 @@
     border-color: #F5F5F5 !important;
 }
 .instructions-table tr {
-    border: none !important; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
+    border: none !important; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
     padding: 0 0;
 }
 .instructions-table td {
-    border: none !important; # Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td)
+    border: none !important; /* Garder ce commentaire - c'est ça qui enlève les bords indésirés (dans tr et td) */
     padding: 0 0;
 }
 
