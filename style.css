@@ -153,11 +153,11 @@
 /* Signe warning */
 
 .warning {
-    /*font-family: 'Roboto', sans-serif;*/
-    /*font-weight: 400;*/ /* Regular */
+    font-family: 'universal', sans-serif;
+    font-weight: 600; /* Regular */
     font-size: 40px;
     color: #FFA500;
-    margin: 5px 5px;
+    margin-right: 20px;
 }
 
 /* Styles pour centrer les images dans st-clickable-images */
