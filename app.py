@@ -142,26 +142,15 @@ elif st.session_state.screen == "Photo":
     st_javascript("""
         setTimeout(function() {
             alert('Début du script de renommage du bouton');
-            // Cible tout élément textuel potentiel dans le conteneur stFileUploader
-            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] div, [data-testid="stFileUploader"] [class*="Button"], [data-testid="stFileUploader"] [class*="button"], input[type="file"] + *');
+            // Cible le bouton avec data-testid="stBaseButton-secondary"
+            const uploadButton = document.querySelector('[data-testid="stBaseButton-secondary"]');
             if (uploadButton) {
                 uploadButton.textContent = 'Take/select photo';
                 alert('Bouton renommé en : Take/select photo');
             } else {
-                // Débogage : lister les éléments enfants pour inspecter la structure
-                const container = document.querySelector('[data-testid="stFileUploader"]');
-                let debugInfo = 'Bouton non trouvé. Structure du conteneur : ';
-                if (container) {
-                    const children = container.querySelectorAll('*');
-                    children.forEach(child => {
-                        debugInfo += child.tagName + ' (classes: ' + child.className + '), ';
-                    });
-                } else {
-                    debugInfo = 'Conteneur stFileUploader non trouvé';
-                }
-                alert(debugInfo);
+                alert('Bouton non trouvé avec le sélecteur [data-testid="stBaseButton-secondary"]');
             }
-        }, 2000); // Délai de 2 secondes pour attendre le rendu du DOM
+        }, 3000); // Délai de 3 secondes pour attendre le rendu du DOM
     """)
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
