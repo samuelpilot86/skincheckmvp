@@ -149,6 +149,17 @@
     text-align: center;
     padding: 10px;
 }
+
+/* Signe warning $>
+
+.warning {
+    /*font-family: 'Roboto', sans-serif;*/
+    /*font-weight: 400;*/ /* Regular */
+    font-size: 40px;
+    color: #FFA500;
+    margin: 5px 5px;
+}
+
 /* Styles pour centrer les images dans st-clickable-images */
 .st-clickable-image {
     text-align: center;
