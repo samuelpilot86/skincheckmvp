@@ -23,6 +23,7 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         self.melanoma_index = melanoma_index
         self.true_positives = self.add_weight(name='tp', initializer='zeros')
         self.possible_positives = self.add_weight(name='pp', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -32,11 +33,14 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         possible_pos = tf.reduce_sum(tf.cast(true_melanoma, tf.float32))
         self.true_positives.assign_add(true_pos)
         self.possible_positives.assign_add(possible_pos)
+
     def result(self):
         return self.true_positives / (self.possible_positives + K.epsilon())
+
     def reset_states(self):
         self.true_positives.assign(0.)
         self.possible_positives.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         melanoma_index = config.get('melanoma_index', 0)
@@ -50,6 +54,7 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         self.nevus_index = nevus_index
         self.true_negatives = self.add_weight(name='tn', initializer='zeros')
         self.possible_negatives = self.add_weight(name='pn', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -59,11 +64,14 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         possible_neg = tf.reduce_sum(tf.cast(true_nevus, tf.float32))
         self.true_negatives.assign_add(true_neg)
         self.possible_negatives.assign_add(possible_neg)
+
     def result(self):
         return self.true_negatives / (self.possible_negatives + K.epsilon())
+
     def reset_states(self):
         self.true_negatives.assign(0.)
         self.possible_negatives.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         nevus_index = config.get('nevus_index', 1)
@@ -78,6 +86,7 @@ class CombinedMetric(tf.keras.metrics.Metric):
         self.nevus_specificity = nevus_specificity
         self.alpha = alpha
         self.combined_value = self.add_weight(name='combined_value', initializer='zeros')
+
     def update_state(self, y_true, y_pred, sample_weight=None):
         self.melanoma_recall.update_state(y_true, y_pred, sample_weight)
         self.nevus_specificity.update_state(y_true, y_pred, sample_weight)
@@ -85,12 +94,15 @@ class CombinedMetric(tf.keras.metrics.Metric):
         specificity_value = self.nevus_specificity.result()
         combined = self.alpha * recall_value + (1 - self.alpha) * specificity_value
         self.combined_value.assign(combined)
+
     def result(self):
         return self.combined_value
+
     def reset_states(self):
         self.melanoma_recall.reset_states()
         self.nevus_specificity.reset_states()
         self.combined_value.assign(0.)
+
     @classmethod
     def from_config(cls, config):
         melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
@@ -108,10 +120,13 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
         self.target_specificity = target_specificity
         self.best_threshold = 0.5
         self.best_loss = float('inf')
+
     def on_epoch_end(self, epoch, logs=None):
         pass
+
     def on_train_end(self, logs=None):
         pass
+
     @classmethod
     def from_config(cls, config):
         return cls(**config)
@@ -120,7 +135,7 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
 @st.cache_resource
 def load_model():
     model_path = os.path.join(os.getcwd(), "skin_lesion_model_binary.keras")
-    st.markdown(f'<div class="normal-text">Tentative de chargement du modèle depuis : {model_path}</div>', unsafe_allow_html=True)
+    # st.markdown(f'<div class="normal-text">Tentative de chargement du modèle depuis : {model_path}</div>', unsafe_allow_html=True)
     try:
         custom_objects = {
             'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
@@ -130,7 +145,7 @@ def load_model():
             'ThresholdOptimizer': ThresholdOptimizer
         }
         model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
-        st.markdown('<div class="normal-text">Modèle chargé avec succès.</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Modèle chargé avec succès.</div>', unsafe_allow_html=True)
         return model
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
@@ -139,11 +154,11 @@ def load_model():
 # Fonction de prétraitement
 def preprocess_image(image, target_size=(224, 224)):
     try:
-        st.markdown('<div class="normal-text">Débogage : Conversion de l\'image en RGB...</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Débogage : Conversion de l\'image en RGB...</div>', unsafe_allow_html=True)
         img = image.convert('RGB')
-        st.markdown('<div class="normal-text">Débogage : Redimensionnement de l\'image...</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Débogage : Redimensionnement de l\'image...</div>', unsafe_allow_html=True)
         img = img.resize(target_size, Image.Resampling.LANCZOS)
-        st.markdown('<div class="normal-text">Débogage : Conversion en tableau numpy...</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Débogage : Conversion en tableau numpy...</div>', unsafe_allow_html=True)
         img_array = np.array(img) / 255.0
         return img_array
     except Exception as e:
@@ -153,30 +168,30 @@ def preprocess_image(image, target_size=(224, 224)):
 # Fonction de prédiction
 def predict_user_image(image, model):
     if model is None:
-        st.markdown('<div class="normal-text">Erreur : Le modèle n\'a pas été chargé correctement.</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Erreur : Le modèle n\'a pas été chargé correctement.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
-    
-    st.markdown('<div class="normal-text">Débogage : Préparation de l\'image pour la prédiction...</div>', unsafe_allow_html=True)
+
+    # st.markdown('<div class="normal-text">Débogage : Préparation de l\'image pour la prédiction...</div>', unsafe_allow_html=True)
     img_array = preprocess_image(image)
     if img_array is None:
-        st.markdown('<div class="normal-text">Erreur : L\'image n\'a pas pu être prétraitée. Vérifiez le format ou la validité de l\'image.</div>', unsafe_allow_html=True)
+        # st.markdown('<div class="normal-text">Erreur : L\'image n\'a pas pu être prétraitée. Vérifiez le format ou la validité de l\'image.</div>', unsafe_allow_html=True)
         return "Erreur : Impossible de traiter l'image.", None, None
-    
+
     try:
         # Ajouter une dimension batch pour la prédiction
         img_array = np.expand_dims(img_array, axis=0)  # Shape: (1, 224, 224, 3)
-        st.markdown('<div class="normal-text">Débogage : Lancement de la prédiction...</div>', unsafe_allow_html=True)
-        
+        # st.markdown('<div class="normal-text">Débogage : Lancement de la prédiction...</div>', unsafe_allow_html=True)
+
         # Effectuer la prédiction
         predictions = model.predict(img_array)
         prob = predictions[0][0]  # Probabilité pour la classe 0 (par exemple, mélanome)
-        
+
         # Déterminer le résultat en fonction d'un seuil (par exemple, 0.5)
         threshold = 0.487
         result = "Melanoma" if prob >= threshold else "Benign"
         color = "#FF6B6B" if prob >= threshold else "#7ED321"  # Rouge pour mélanome, vert pour bénin
-        
-        st.markdown(f'<div class="normal-text">Débogage : Prédiction terminée. Probabilité : {prob:.2f}, Résultat : {result}</div>', unsafe_allow_html=True)
+
+        # st.markdown(f'<div class="normal-text">Débogage : Prédiction terminée. Probabilité : {prob:.2f}, Résultat : {result}</div>', unsafe_allow_html=True)
         return result, prob, color
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors de la prédiction : {e}</div>', unsafe_allow_html=True)
