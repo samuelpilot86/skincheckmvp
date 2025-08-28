@@ -140,18 +140,25 @@ elif st.session_state.screen == "Photo":
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
     st_javascript("""
-        setTimeout(function() {
+        let attempts = 0;
+        const maxAttempts = 10; // Tenter pendant 5 secondes (10 * 500ms)
+        const interval = setInterval(function() {
+            attempts++;
+            alert('Tentative ' + attempts + ' de renommage du bouton');
             // Cible le bouton ou label du file uploader avec un sélecteur élargi
-            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] .stButton');
+            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] .stButton, [data-testid="stFileUploader"] input[type="file"] + *');
             if (uploadButton) {
                 uploadButton.textContent = 'Take/select photo';
-                console.log('Bouton renommé en : Take/select photo');
                 alert('Bouton renommé en : Take/select photo');
+                clearInterval(interval); // Arrêter l'intervalle une fois le bouton trouvé
             } else {
-                console.log('Bouton non trouvé');
-                alert('Bouton non trouvé');
+                alert('Bouton non trouvé à la tentative ' + attempts);
             }
-        }, 1000); // Délai de 1 seconde pour attendre le rendu du DOM
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                alert('Arrêt après ' + maxAttempts + ' tentatives');
+            }
+        }, 500); // Vérifier toutes les 500ms
     """)
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
