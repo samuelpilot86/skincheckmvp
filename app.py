@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps  # Importation explicite
 import os
 import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -13,8 +13,6 @@ from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
 # Charger le modèle
-@st.cache_resource
-# Charger le modèle avec chemin vérifié
 @st.cache_resource
 def load_model():
     model_path = os.path.join(os.getcwd(), "skin_lesion_model_binary.keras")
@@ -132,7 +130,7 @@ elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-   
+  
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
@@ -170,7 +168,7 @@ elif st.session_state.screen == "Examples":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-       
+      
         with col2:
             st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images([f"data:image/jpeg;base64,{m}" for m in melanoma_base64], titles=["", "", ""], div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap", "background-color": "#F5F5F5"}, img_style={"margin": "5px", "cursor": "pointer", "max-width": "150px", "height": "auto", "background-color": "#F5F5F5"})
@@ -189,7 +187,7 @@ elif st.session_state.screen == "Examples":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-              
+             
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
@@ -206,11 +204,11 @@ elif st.session_state.screen == "Reframe":
             image_resized = image
         width, height = image_resized.size
         aspect_ratio = (3, 4) if height > width else (4, 3)
-       
+      
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-       
+      
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
-       
+      
         if st.button("Analyze", key="analyze"):
             if cropped_image is not None and isinstance(cropped_image, Image.Image):
                 with st.spinner("Analysis in progress..."):
@@ -221,7 +219,6 @@ elif st.session_state.screen == "Reframe":
                 st.rerun()
             else:
                 st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if st.button("←", key="back"):
