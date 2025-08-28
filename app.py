@@ -12,7 +12,7 @@ from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, Comb
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
-# Charger le modèle
+# Charger le modèle 
 model = load_model()
 
 # Interface Streamlit
