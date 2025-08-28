@@ -13,7 +13,6 @@ from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
 # Charger le modèle
-@st.cache_resource
 model = load_model()
 
 # Interface Streamlit
