@@ -127,9 +127,15 @@ elif st.session_state.screen == "Photo":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-    st.markdown('<div class="normal-text">Click \'Browse files\' to select a photo or take one (phone only).</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Click below to select a photo or take one (phone only).</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
+    uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")  # Invisible mais actif
+    if st.button("Select/take photo", key="custom_photo"):
+        st.markdown("""
+        <script>
+            document.querySelector('[data-testid="stFileUploader"] button').click();
+        </script>
+        """, unsafe_allow_html=True)
     if uploaded_file is not None:
         try:
             image = Image.open(uploaded_file)
@@ -174,7 +180,7 @@ elif st.session_state.screen == "Examples":
     else:
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown('<div class="column-title">Benign moles</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Benign moles:</div>', unsafe_allow_html=True)
             clicked_benign = clickable_images(
                 [f"data:image/jpeg;base64,{b}" for b in benign_base64],
                 titles=["", "", ""],
@@ -200,7 +206,7 @@ elif st.session_state.screen == "Examples":
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
 
         with col2:
-            st.markdown('<div class="column-title">Melanomas</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title" >Melanomas:</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images(
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],
