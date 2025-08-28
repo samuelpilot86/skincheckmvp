@@ -21,7 +21,6 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         self.melanoma_index = melanoma_index
         self.true_positives = self.add_weight(name='tp', initializer='zeros')
         self.possible_positives = self.add_weight(name='pp', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -31,14 +30,11 @@ class MelanomaRecall(tf.keras.metrics.Metric):
         possible_pos = tf.reduce_sum(tf.cast(true_melanoma, tf.float32))
         self.true_positives.assign_add(true_pos)
         self.possible_positives.assign_add(possible_pos)
-
     def result(self):
         return self.true_positives / (self.possible_positives + K.epsilon())
-
     def reset_states(self):
         self.true_positives.assign(0.)
         self.possible_positives.assign(0.)
-
     @classmethod
     def from_config(cls, config):
         melanoma_index = config.get('melanoma_index', 0)
@@ -52,7 +48,6 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         self.nevus_index = nevus_index
         self.true_negatives = self.add_weight(name='tn', initializer='zeros')
         self.possible_negatives = self.add_weight(name='pn', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         y_true = tf.cast(tf.argmax(y_true, axis=1), tf.float32)
         y_pred = tf.cast(tf.argmax(y_pred, axis=1), tf.float32)
@@ -62,14 +57,11 @@ class NevusSpecificity(tf.keras.metrics.Metric):
         possible_neg = tf.reduce_sum(tf.cast(true_nevus, tf.float32))
         self.true_negatives.assign_add(true_neg)
         self.possible_negatives.assign_add(possible_neg)
-
     def result(self):
         return self.true_negatives / (self.possible_negatives + K.epsilon())
-
     def reset_states(self):
         self.true_negatives.assign(0.)
         self.possible_negatives.assign(0.)
-
     @classmethod
     def from_config(cls, config):
         nevus_index = config.get('nevus_index', 1)
@@ -84,7 +76,6 @@ class CombinedMetric(tf.keras.metrics.Metric):
         self.nevus_specificity = nevus_specificity
         self.alpha = alpha
         self.combined_value = self.add_weight(name='combined_value', initializer='zeros')
-
     def update_state(self, y_true, y_pred, sample_weight=None):
         self.melanoma_recall.update_state(y_true, y_pred, sample_weight)
         self.nevus_specificity.update_state(y_true, y_pred, sample_weight)
@@ -92,15 +83,12 @@ class CombinedMetric(tf.keras.metrics.Metric):
         specificity_value = self.nevus_specificity.result()
         combined = self.alpha * recall_value + (1 - self.alpha) * specificity_value
         self.combined_value.assign(combined)
-
     def result(self):
         return self.combined_value
-
     def reset_states(self):
         self.melanoma_recall.reset_states()
         self.nevus_specificity.reset_states()
         self.combined_value.assign(0.)
-
     @classmethod
     def from_config(cls, config):
         melanoma_recall = MelanomaRecall.from_config({'melanoma_index': 0, 'name': 'melanoma_recall'})
@@ -118,13 +106,10 @@ class ThresholdOptimizer(tf.keras.callbacks.Callback):
         self.target_specificity = target_specificity
         self.best_threshold = 0.5
         self.best_loss = float('inf')
-
     def on_epoch_end(self, epoch, logs=None):
         pass
-
     def on_train_end(self, logs=None):
         pass
-
     @classmethod
     def from_config(cls, config):
         return cls(**config)
@@ -141,10 +126,10 @@ def load_model():
             'ThresholdOptimizer': ThresholdOptimizer
         }
         model = tf.keras.models.load_model('skin_lesion_model_binary.keras', custom_objects=custom_objects)
-        st.write("Modèle chargé avec succès.")
+        st.markdown("**Modèle chargé avec succès.**")
         return model
     except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
+        st.markdown(f"**Erreur lors du chargement du modèle : {e}**")
         return None
 
 # Fonction de prétraitement
@@ -155,18 +140,26 @@ def preprocess_image(image, target_size=(224, 224)):
         img_array = np.array(img) / 255.0
         return img_array
     except Exception as e:
-        st.error(f"Erreur de prétraitement : {e}")
+        st.markdown(f"**Erreur de prétraitement : {e}**")
         return None
 
 # Fonction de prédiction
 def predict_user_image(image):
+    global model
+    if model is None:
+        st.markdown("**Erreur : Le modèle n'a pas été chargé correctement.**")
+        return "Erreur : Impossible de traiter l'image.", None, None
+    
     img_array = preprocess_image(image)
     if img_array is None:
-        st.error("Erreur : L'image n'a pas pu être prétraitée. Vérifiez le format ou la validité de l'image.")
+        st.markdown("**Erreur : L'image n'a pas pu être prétraitée. Vérifiez le format ou la validité de l'image.**")
         return "Erreur : Impossible de traiter l'image.", None, None
+    
     img_array = np.expand_dims(img_array, axis=0)
     try:
+        st.markdown("**Prédiction en cours...**")
         prediction = model.predict(img_array)
+        st.markdown(f"**Prédiction brute : {prediction}**")
         threshold = 0.487
         probability = prediction[0][0] * 100
         if probability >= threshold * 100:
@@ -174,6 +167,5 @@ def predict_user_image(image):
         else:
             return "Benign", (100 - probability), "green"
     except Exception as e:
-        st.error(f"Erreur lors de la prédiction : {e}")
+        st.markdown(f"**Erreur lors de la prédiction : {e}**")
         return "Erreur : Impossible de traiter l'image.", None, None
-
