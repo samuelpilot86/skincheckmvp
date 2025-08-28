@@ -106,8 +106,17 @@
 
 /* Masquage du File Uploader */
 
+/* Rendre le file_uploader invisible mais interactif */
 [data-testid="stFileUploader"] {
-    display: none !important;
+    opacity: 0 !important; /* Invisible mais cliquable */
+    position: absolute !important; /* Sort du flux pour éviter l'espace */
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* S'assurer que le bouton interne reste accessible */
+[data-testid="stFileUploader"] button {
+    opacity: 1 !important; /* Garde le bouton cliquable */
 }
 
 /* Instructions de l'écran Reframe */
