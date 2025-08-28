@@ -141,6 +141,7 @@ elif st.session_state.screen == "Photo":
                 uploaderButton.innerText = 'Select/take photo';
             }
         }
+        setTimeout(updateUploaderButton, 100);
 
         // Run on DOM load
         document.addEventListener('DOMContentLoaded', updateUploaderButton);
