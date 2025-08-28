@@ -115,12 +115,12 @@ if 'screen' not in st.session_state:
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Take a photo of your mole* or choose an existing file. An artificial intelligence will try to determine if you should show it to a dermatologist.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Réduit de 20px à 5px pour rapprocher les boutons
     
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
     <style>
-    /* Conteneur pour aligner les boutons verticalement et centrer */
+    /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
     .button-container-accueil {
         display: flex;
         flex-direction: column;
@@ -128,23 +128,12 @@ if st.session_state.screen == "Accueil":
         gap: 10px;
         max-width: 200px;
         margin: 0 auto;
+        margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
     }
-    /* Réduire la taille de la section stFileUploaderDropzone à 0 tout en conservant le bouton */
-    [data-testid="stFileUploaderDropzone"] {
-        height: 0;
-        overflow: hidden;
-        position: relative;
-    }
-    /* Positionner le bouton en dehors de la section pour le rendre visible */
+    /* Styliser le bouton de st.file_uploader */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
-        visibility: visible !important; /* Forcer la visibilité */
+        visibility: hidden;
         position: relative;
-        top: 0;
-        left: 0;
-        width: auto;
-        height: auto;
-        margin: 0;
-        padding: 0;
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
         content: "Take/select photo";
@@ -152,7 +141,7 @@ if st.session_state.screen == "Accueil":
         position: absolute;
         top: 0;
         left: 0;
-        width: 200px; /* Largeur fixe pour harmonisation */
+        width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
@@ -166,14 +155,15 @@ if st.session_state.screen == "Accueil":
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin: 10px auto;
+        margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+        max-width: 200px;
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
-    /* Masquer les instructions de glisser-déposer pour éviter les interférences */
-    [data-testid="stFileUploaderDropzoneInstructions"] {
-        display: none;
+    /* Rendre l'arrière-plan de la section transparent */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: transparent;
     }
     /* Styliser et centrer le bouton Select demo example */
     .stButton > button {
@@ -186,12 +176,20 @@ if st.session_state.screen == "Accueil":
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin: 10px auto;
+        margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
         max-width: 200px;
         display: block;
     }
     .stButton > button:hover {
         background-color: #3A7AC2;
+    }
+    /* Réduire le padding-top du block-container pour rapprocher les boutons du haut */
+    .block-container {
+        padding-top: 10px !important; /* Réduit de 27px à 10px */
+    }
+    /* Ajuster la marge du header-container pour rapprocher les boutons */
+    .header-container {
+        margin-top: 10px !important; /* Réduit de 20px à 10px */
     }
     </style>
     """, unsafe_allow_html=True)
@@ -365,7 +363,7 @@ elif st.session_state.screen == "Result":
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
-        /* Conteneur pour aligner les boutons verticalement et centrer */
+        /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
         .button-container-result {
             display: flex;
             flex-direction: column;
@@ -373,23 +371,12 @@ elif st.session_state.screen == "Result":
             gap: 10px;
             max-width: 200px;
             margin: 0 auto;
+            margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
         }
-        /* Réduire la taille de la section stFileUploaderDropzone à 0 tout en conservant le bouton */
-        [data-testid="stFileUploaderDropzone"] {
-            height: 0;
-            overflow: hidden;
-            position: relative;
-        }
-        /* Positionner le bouton en dehors de la section pour le rendre visible */
+        /* Styliser le bouton de st.file_uploader */
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
-            visibility: visible !important;
+            visibility: hidden;
             position: relative;
-            top: 0;
-            left: 0;
-            width: auto;
-            height: auto;
-            margin: 0;
-            padding: 0;
         }
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
             content: "Take/select photo";
@@ -397,7 +384,7 @@ elif st.session_state.screen == "Result":
             position: absolute;
             top: 0;
             left: 0;
-            width: 200px;
+            width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
@@ -411,14 +398,15 @@ elif st.session_state.screen == "Result":
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px auto;
+            margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
+            max-width: 200px;
         }
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
             background-color: #3A7AC2;
         }
-        /* Masquer les instructions de glisser-déposer pour éviter les interférences */
-        [data-testid="stFileUploaderDropzoneInstructions"] {
-            display: none;
+        /* Rendre l'arrière-plan de la section transparent */
+        [data-testid="stFileUploaderDropzone"] {
+            background-color: transparent;
         }
         /* Styliser et centrer le bouton Select demo example */
         .stButton > button {
@@ -431,12 +419,20 @@ elif st.session_state.screen == "Result":
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px auto;
+            margin: 0 auto; /* Supprime la marge verticale pour le rapprocher */
             max-width: 200px;
             display: block;
         }
         .stButton > button:hover {
             background-color: #3A7AC2;
+        }
+        /* Réduire le padding-top du block-container pour rapprocher les boutons du haut */
+        .block-container {
+            padding-top: 10px !important; /* Réduit de 27px à 10px */
+        }
+        /* Ajuster la marge du header-container pour rapprocher les boutons */
+        .header-container {
+            margin-top: 10px !important; /* Réduit de 20px à 10px */
         }
         </style>
         """, unsafe_allow_html=True)
