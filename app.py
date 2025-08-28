@@ -3,8 +3,8 @@ from PIL import Image, ImageOps  # Importation explicite
 import os
 import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3" 
-os.environ["OMP_NUM_THREADS"] = "8"   
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["OMP_NUM_THREADS"] = "8"
 os.environ["TF_FORCE_CPU_ONLY"] = "1"
 import tensorflow as tf
 import streamlit as st
@@ -16,7 +16,10 @@ from streamlit_cropper import st_cropper
 @st.cache_resource
 def load_model():
     model_path = os.path.join(os.getcwd(), "skin_lesion_model_binary.keras")
-    # st.markdown(f'<div class="normal-text">Tentative de chargement du modèle depuis : {model_path}</div>', unsafe_allow_html=True)
+    if not os.path.exists(model_path):
+        st.markdown(f'<div class="normal-text">Erreur : Le fichier modèle {model_path} n\'existe pas.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="normal-text">Répertoire de travail actuel : {os.getcwd()}</div>', unsafe_allow_html=True)
+        return None
     try:
         custom_objects = {
             'focal_loss_fixed': focal_loss_fixed(gamma=1.0, alpha=0.9),
@@ -26,7 +29,6 @@ def load_model():
             'ThresholdOptimizer': ThresholdOptimizer
         }
         model = tf.keras.models.load_model(model_path, custom_objects=custom_objects)
-        # st.markdown('<div class="normal-text">Modèle chargé avec succès.</div>', unsafe_allow_html=True)
         return model
     except Exception as e:
         st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
@@ -89,7 +91,6 @@ reframe_instructions_html = f'''
 '''
 
 # Création de l'avertissement "prototype non validée médicalement"
-
 warning_html = f'''
     <table class="instructions-table">
       <tr>
@@ -98,7 +99,6 @@ warning_html = f'''
       </tr>
     </table>
 '''
-
 
 # Navigation et mode
 if 'screen' not in st.session_state:
@@ -119,7 +119,6 @@ if st.session_state.screen == "Accueil":
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-
     st.markdown('<div class="bottom-note">*to French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Photo":
@@ -130,25 +129,30 @@ elif st.session_state.screen == "Photo":
     st.markdown('<div class="normal-text">Click below to select a photo or take one (phone only).</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Ensure the photo is perfectly sharp and as zoomed in as possible.</div>', unsafe_allow_html=True)
     
-    # File uploader invisible mais actif
+    # File uploader stylisé
     uploaded_file = st.file_uploader("", type=["jpg", "png"], key="file_uploader")
     
-    # Bouton personnalisé
-    st.markdown('<div class="button-container">', unsafe_allow_html=True)
-    if st.button("Select/take photo", key="custom_photo"):
-        st.markdown("""
-        <script>
-            // Vérifier si le bouton du file_uploader existe
-            const uploaderButton = document.querySelector('[data-testid="stFileUploader"] button');
-            if (uploaderButton) {
-                uploaderButton.click();
-                console.log("Clic sur le bouton du file_uploader effectué");
-            } else {
-                console.log("Bouton du file_uploader non trouvé");
-            }
-        </script>
-        """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Script JavaScript pour modifier le texte du bouton
+    st.markdown("""
+    <script>
+        // Trouver le bouton du file_uploader
+        let uploaderButton = document.querySelector('[data-testid="stFileUploader"] button');
+        if (uploaderButton) {
+            uploaderButton.innerText = 'Select/take photo';
+            // Afficher un message de débogage dans l'interface
+            let debugDiv = document.createElement('div');
+            debugDiv.className = 'normal-text';
+            debugDiv.innerText = 'Débogage : Texte du bouton du file_uploader modifié en "Select/take photo"';
+            document.body.appendChild(debugDiv);
+        } else {
+            // Afficher un message d'erreur dans l'interface
+            let debugDiv = document.createElement('div');
+            debugDiv.className = 'normal-text';
+            debugDiv.innerText = 'Débogage : Bouton du file_uploader non trouvé';
+            document.body.appendChild(debugDiv);
+        }
+    </script>
+    """, unsafe_allow_html=True)
     
     if uploaded_file is not None:
         try:
@@ -168,13 +172,11 @@ elif st.session_state.screen == "Examples":
     if st.button("←", key="back"):
         st.session_state.screen = "Accueil"
         st.rerun()
-
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
-
     base_dir = os.path.join(os.getcwd(), "examples")
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
-
+    
     def image_to_base64(image_path):
         try:
             with open(image_path, "rb") as image_file:
@@ -185,10 +187,10 @@ elif st.session_state.screen == "Examples":
         except Exception as e:
             st.markdown(f'<div class="normal-text">Erreur lors du chargement de {image_path} : {e}</div>', unsafe_allow_html=True)
             return None
-
+    
     benign_base64 = [image_to_base64(img) for img in benign_images if image_to_base64(img) is not None]
     melanoma_base64 = [image_to_base64(img) for img in melanoma_images if image_to_base64(img) is not None]
-
+    
     if len(benign_base64) != 3 or len(melanoma_base64) != 3:
         st.markdown('<div class="normal-text">Erreur : Certaines images n\'ont pas pu être encodées en base64.</div>', unsafe_allow_html=True)
     else:
@@ -204,12 +206,10 @@ elif st.session_state.screen == "Examples":
             if clicked_benign is not None and clicked_benign >= 0:
                 img_path = benign_images[clicked_benign]
                 try:
-                    # st.markdown(f'<div class="normal-text">Débogage : Tentative d\'ouverture de {img_path}...</div>', unsafe_allow_html=True)
                     image = Image.open(img_path)
                     if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
-                        # st.markdown(f'<div class="normal-text">Débogage : Image {img_path} ouverte avec succès.</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -218,9 +218,9 @@ elif st.session_state.screen == "Examples":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-
+        
         with col2:
-            st.markdown('<div class="column-title" >Melanomas:</div>', unsafe_allow_html=True)
+            st.markdown('<div class="column-title">Melanomas:</div>', unsafe_allow_html=True)
             clicked_melanoma = clickable_images(
                 [f"data:image/jpeg;base64,{m}" for m in melanoma_base64],
                 titles=["", "", ""],
@@ -230,12 +230,10 @@ elif st.session_state.screen == "Examples":
             if clicked_melanoma is not None and clicked_melanoma >= 0:
                 img_path = melanoma_images[clicked_melanoma]
                 try:
-                    # st.markdown(f'<div class="normal-text">Débogage : Tentative d\'ouverture de {img_path}...</div>', unsafe_allow_html=True)
                     image = Image.open(img_path)
                     if not isinstance(image, Image.Image):
                         st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                     else:
-                        # st.markdown(f'<div class="normal-text">Débogage : Image {img_path} ouverte avec succès.</div>', unsafe_allow_html=True)
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(image, model)
                         st.session_state.screen = "Result"
@@ -261,11 +259,11 @@ elif st.session_state.screen == "Reframe":
             image_resized = image
         width, height = image_resized.size
         aspect_ratio = (3, 4) if height > width else (4, 3)
-
+        
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-
+        
         cropped_image = st_cropper(image_resized, realtime_update=False, box_color='#4A90E2', aspect_ratio=aspect_ratio)
-
+        
         if st.button("Analyze", key="analyze"):
             if cropped_image is not None and isinstance(cropped_image, Image.Image):
                 with st.spinner("Analysis in progress..."):
@@ -287,7 +285,7 @@ elif st.session_state.screen == "Result":
         st.image(st.session_state.image, caption="", use_container_width=True)
         if result == "probably benign mole":
             st.markdown(f'<div style="background-color: #7ED321; color: white; padding: 10px; border-radius: 5px; text-align: center;">Result: {result}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="normal-text">This should be a benign mole. </div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="normal-text">This should be a benign mole.</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div style="background-color: #FFA500; color: white; padding: 10px; border-radius: 5px; text-align: center;">Result: {result}</div>', unsafe_allow_html=True)
