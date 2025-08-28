@@ -127,7 +127,7 @@ elif st.session_state.screen == "Photo":
         st.session_state.screen = "Accueil"
         st.rerun()
     st.markdown('<div class="normal-text">Click Browse files to select a photo*.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">Photos must be zoomed in while perfectly sharp**.</div>', unsafe_allow_html=True)
    
     # File uploader stylisé
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
