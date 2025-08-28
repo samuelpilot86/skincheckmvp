@@ -69,7 +69,7 @@ title_html = f'''
 </div>
 '''
 
-# Création des instructions de recadrage
+# Création des instructions de recadrage (ajout de la mention pour la taille minimale)
 reframed_mole_path = os.path.join("images", "FramedMole.jpg")
 if os.path.exists(reframed_mole_path):
     try:
@@ -85,7 +85,7 @@ reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
         <td>
-            <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>
+            <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space. Ensure the frame is at least 224 pixels wide and tall.</div>
         </td>
         <td>
             {reframed_mole_html}
@@ -246,32 +246,26 @@ elif st.session_state.screen == "Reframe":
                 # Calculer le facteur d'échelle
                 scale_x = original_width / new_width
                 scale_y = original_height / new_height
-                # Appliquer l'échelle au box
-                left = crop_box['left'] * scale_x
-                top = crop_box['top'] * scale_y
-                width = crop_box['width'] * scale_x
-                height = crop_box['height'] * scale_y
-                # Vérifier la taille minimale
+                # Appliquer l'échelle et arrondir pour éviter les incohérences de flottants
+                left = round(crop_box['left'] * scale_x)
+                top = round(crop_box['top'] * scale_y)
+                width = round(crop_box['width'] * scale_x)
+                height = round(crop_box['height'] * scale_y)
+                # Vérifier la taille minimale (après arrondi)
                 if width < 224 or height < 224:
                     st.markdown('<div class="normal-text">Erreur : Le cadre de recadrage doit faire au moins 224 pixels en largeur et en hauteur. Veuillez recadrer une zone plus grande.</div>', unsafe_allow_html=True)
-                    #On met la largeur et la hauteur au minimum en respectant le format 4/3
-                    if width < height:
-                        width = 224
-                        height = 299 #(4/3 de 224)
-                    else:
-                        width = 299 #(4/3 de 224)
-                        height = 224
-                # Recadrer l'image originale
-                cropped_image = original_image.crop((left, top, left + width, top + height))
-                if isinstance(cropped_image, Image.Image):
-                    with st.spinner("Analysis in progress..."):
-                        result, prob, color = predict_user_image(cropped_image, model)
-                    st.session_state.screen = "Result"
-                    st.session_state.cropped_image = cropped_image
-                    st.session_state.result = (result, prob, color)
-                    st.rerun()
                 else:
-                    st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
+                    # Recadrer l'image originale
+                    cropped_image = original_image.crop((left, top, left + width, top + height))
+                    if isinstance(cropped_image, Image.Image):
+                        with st.spinner("Analysis in progress..."):
+                            result, prob, color = predict_user_image(cropped_image, model)
+                        st.session_state.screen = "Result"
+                        st.session_state.cropped_image = cropped_image
+                        st.session_state.result = (result, prob, color)
+                        st.rerun()
+                    else:
+                        st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
 
