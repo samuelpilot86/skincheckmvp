@@ -12,6 +12,8 @@ from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, Comb
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 
+from streamlit_javascript import st_javascript; st_javascript("alert('JavaScript fonctionne !');console.log('Test');")
+
 st.markdown("""
 <script>
     console.log('Test JavaScript : Le script s\'exécute !');
