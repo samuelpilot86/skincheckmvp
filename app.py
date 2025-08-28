@@ -140,10 +140,9 @@ elif st.session_state.screen == "Photo":
     
     # Script JavaScript via streamlit_javascript pour renommer le bouton "Browse..." en "Take/select photo"
     st_javascript("""
-        alert('Script de renommage lancé');
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cible le bouton du file uploader (généralement un <button> ou <span> dans le conteneur)
-            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] .upload-label');
+        setTimeout(function() {
+            // Cible le bouton ou label du file uploader avec un sélecteur élargi
+            const uploadButton = document.querySelector('[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] span, [data-testid="stFileUploader"] label, [data-testid="stFileUploader"] .stButton');
             if (uploadButton) {
                 uploadButton.textContent = 'Take/select photo';
                 console.log('Bouton renommé en : Take/select photo');
@@ -152,7 +151,7 @@ elif st.session_state.screen == "Photo":
                 console.log('Bouton non trouvé');
                 alert('Bouton non trouvé');
             }
-        });
+        }, 1000); // Délai de 1 seconde pour attendre le rendu du DOM
     """)
     
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader")
