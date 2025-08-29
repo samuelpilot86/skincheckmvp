@@ -185,7 +185,7 @@
 
 /* Style pour les boîtes de résultats, imitant les boutons */
 .result-box {
-    width: 390px !important; /* Correspond à la largeur de .block-container */
+    width: 100% !important; /* Correspond à la largeur de .block-container */
     padding: 10px 20px; /* Même padding que les boutons */
     border-radius: 5px; /* Bordures arrondies comme les boutons */
     text-align: center; /* Centrer le texte */
