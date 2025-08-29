@@ -345,6 +345,7 @@ elif st.session_state.screen == "Reframe":
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Result":
+    st.markdown(title_html, unsafe_allow_html=True)
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
