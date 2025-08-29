@@ -183,6 +183,33 @@
     margin-right: 20px;
 }
 
+/* Style pour les boîtes de résultats, imitant les boutons */
+.result-box {
+    width: 390px !important; /* Correspond à la largeur de .block-container */
+    padding: 10px 20px; /* Même padding que les boutons */
+    border-radius: 5px; /* Bordures arrondies comme les boutons */
+    text-align: center; /* Centrer le texte */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 18px; /* Même taille que le texte normal */
+    margin: 5px 0; /* Espacement vertical léger */
+    box-sizing: border-box; /* Inclure padding dans la largeur */
+    display: block; /* Assurer un comportement de bloc */
+    cursor: default; /* Pas interactif */
+}
+
+/* Variante pour les résultats positifs (bénin) */
+.result-box.benin {
+    background-color: #7ED321; /* Vert doux */
+    color: #F5F5F5; /* Contraste avec le fond vert */
+}
+
+/* Variante pour les avertissements ou résultats négatifs (mélanome) */
+.result-box.warning {
+    background-color: #FFA500; /* Orange subtil */
+    color: #F5F5F5; /* Contraste avec le fond orange */
+}
+
 /* Styles pour centrer les images dans st-clickable-images */
 .st-clickable-image {
     text-align: center;
