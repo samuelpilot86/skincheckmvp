@@ -115,7 +115,7 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
-   
+  
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
     <style>
@@ -202,7 +202,7 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
-   
+  
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
@@ -213,18 +213,22 @@ if st.session_state.screen == "Accueil":
                 if not isinstance(image, Image.Image):
                     st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
                 else:
-                    image = ImageOps.exif_transpose(image)
+                    # Tourner l'image en paysage si elle est en portrait
+                    width, height = image.size
+                    if height > width:
+                        image = image.rotate(90, expand=True)
+                    image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                     st.session_state.original_image = image
                     st.session_state.screen = "Reframe"
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-       
+      
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-   
+  
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
@@ -237,7 +241,7 @@ elif st.session_state.screen == "Examples":
     # Définir les listes d'images
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
-    
+   
     # Vérifier si les listes sont définies
     if not benign_images or not melanoma_images:
         st.markdown('<div class="normal-text">Erreur : Les listes d\'images de démonstration ne sont pas définies.</div>', unsafe_allow_html=True)
@@ -273,6 +277,11 @@ elif st.session_state.screen == "Examples":
                         if not isinstance(image, Image.Image):
                             st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                         else:
+                            # Tourner l'image en paysage si elle est en portrait
+                            width, height = image.size
+                            if height > width:
+                                image = image.rotate(90, expand=True)
+                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
@@ -296,6 +305,11 @@ elif st.session_state.screen == "Examples":
                         if not isinstance(image, Image.Image):
                             st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                         else:
+                            # Tourner l'image en paysage si elle est en portrait
+                            width, height = image.size
+                            if height > width:
+                                image = image.rotate(90, expand=True)
+                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
@@ -311,6 +325,11 @@ elif st.session_state.screen == "Reframe":
         original_image = st.session_state.original_image
         original_width, original_height = original_image.size
         
+        # Tourner l'image en paysage si elle est en portrait
+        if original_height > original_width:
+            original_image = original_image.rotate(90, expand=True)
+            original_width, original_height = original_image.size
+        
         # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
         if original_width > 390 or original_height > 320:
             # Calculer le facteur de redimensionnement basé sur la contrainte la plus restrictive
@@ -324,8 +343,8 @@ elif st.session_state.screen == "Reframe":
             image_resized = original_image
             new_width, new_height = original_width, original_height
         
-        # Déterminer l'aspect ratio en fonction des dimensions redimensionnées
-        aspect_ratio = (3, 4) if new_height > new_width else (4, 3)
+        # Forcer l'aspect ratio en paysage (4:3)
+        aspect_ratio = (4, 3)
         
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
@@ -357,19 +376,12 @@ elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
-        # Afficher l'image avec une hauteur maximale de 400px
-        st.markdown("""
-        <style>
-        /* Limiter la hauteur maximale de l'image dans Result */
-        .stImage > img {
-            max-height: 400px !important;
-            height: auto !important;
-            width: 100% !important;
-            object-fit: contain !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        st.image(st.session_state.cropped_image, caption="", use_container_width=True)
+        # Tourner l'image en paysage si elle est en portrait avant affichage
+        cropped_image = st.session_state.cropped_image
+        width, height = cropped_image.size
+        if height > width:
+            cropped_image = cropped_image.rotate(90, expand=True)
+        st.image(cropped_image, caption="", use_container_width=True)
         # Présenter les résultats dans une boîte stylisée
         if result == "probably benign mole":
             st.markdown(f'<div class="result-box benin">Result: {result}</div>', unsafe_allow_html=True)
@@ -382,7 +394,7 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-     
+    
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -469,7 +481,7 @@ elif st.session_state.screen == "Result":
         }
         </style>
         """, unsafe_allow_html=True)
-     
+    
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -480,18 +492,22 @@ elif st.session_state.screen == "Result":
                     if not isinstance(image, Image.Image):
                         st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
                     else:
-                        image = ImageOps.exif_transpose(image)
+                        # Tourner l'image en paysage si elle est en portrait
+                        width, height = image.size
+                        if height > width:
+                            image = image.rotate(90, expand=True)
+                        image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                         st.session_state.original_image = image
                         st.session_state.screen = "Reframe"
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-         
+        
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-     
+    
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
