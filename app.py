@@ -225,9 +225,6 @@ if st.session_state.screen == "Accueil":
 
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
     base_dir = os.path.join(os.getcwd(), "examples")
     # Définir les listes d'images
@@ -303,9 +300,6 @@ elif st.session_state.screen == "Examples":
 
 elif st.session_state.screen == "Reframe":
     st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"  
-        st.rerun()
     if 'original_image' in st.session_state:
         original_image = st.session_state.original_image
         original_width, original_height = original_image.size
@@ -345,9 +339,6 @@ elif st.session_state.screen == "Reframe":
 
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
