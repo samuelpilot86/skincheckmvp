@@ -144,7 +144,8 @@
     font-weight: 400;
     font-size: 18px;
     color: #333333;
-    text-justify: inter-word;
+    text-align: justify !important;
+    text-justify: inter-word !important;
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -154,7 +155,8 @@
     font-weight: 400;
     font-size: 12px;
     color: #333333;
-    text-justify: inter-word;
+    text-align: justify !important;
+    text-justify: inter-word !important;
 }
 
 .warning-text {
@@ -164,7 +166,8 @@
     color: #FFA500;
     margin-top: 5px;
     margin-bottom: 5px;
-    text-justify: inter-word;
+    text-align: justify !important;
+    text-justify: inter-word !important;
 }
 
 /* Styles pour les titres de colonne */
