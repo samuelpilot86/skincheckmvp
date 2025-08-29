@@ -357,6 +357,18 @@ elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
+        # Afficher l'image avec une hauteur maximale de 400px
+        st.markdown("""
+        <style>
+        /* Limiter la hauteur maximale de l'image dans Result */
+        .stImage > img {
+            max-height: 400px !important;
+            height: auto !important;
+            width: 100% !important;
+            object-fit: contain !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
         # Présenter les résultats dans une boîte stylisée
         if result == "probably benign mole":
@@ -370,7 +382,7 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-      
+     
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -457,7 +469,7 @@ elif st.session_state.screen == "Result":
         }
         </style>
         """, unsafe_allow_html=True)
-      
+     
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -474,12 +486,12 @@ elif st.session_state.screen == "Result":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-          
+         
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-      
+     
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
