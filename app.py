@@ -115,8 +115,8 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
-   
-    # Solution CSS pour styliser les boutons, réduire le vide, et aligner verticalement
+  
+    # Solution CSS pour styliser les boutons, réduire le vide, et ajouter la navigation par clic
     st.markdown("""
     <style>
     /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
@@ -181,6 +181,7 @@ if st.session_state.screen == "Accueil":
         min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
         height: auto; /* Suit la taille du bouton */
         padding: 0 !important; /* Supprimer le padding pour réduire l'espace */
+        margin: 0 !important; /* Supprimer les marges */
     }
     /* Réduire l'espace des instructions */
     [data-testid="stFileUploaderDropzoneInstructions"] {
@@ -216,9 +217,20 @@ if st.session_state.screen == "Accueil":
     .header-container {
         margin-top: 10px !important; /* Réduit de 20px à 10px */
     }
+    /* Script JavaScript pour naviguer vers Accueil au clic sur le titre ou le logo */
+    <script>
+        document.querySelector('.app-title').addEventListener('click', function() {
+            window.parent.postMessage({ type: 'SET_SESSION_STATE', key: 'screen', value: 'Accueil' }, '*');
+            window.parent.postMessage({ type: 'RERUN' }, '*');
+        });
+        document.querySelector('.logo-cell img').addEventListener('click', function() {
+            window.parent.postMessage({ type: 'SET_SESSION_STATE', key: 'screen', value: 'Accueil' }, '*');
+            window.parent.postMessage({ type: 'RERUN' }, '*');
+        });
+    </script>
     </style>
     """, unsafe_allow_html=True)
-   
+  
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
@@ -235,16 +247,16 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-       
+      
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-   
+  
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
     
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
