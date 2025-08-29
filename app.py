@@ -89,7 +89,7 @@ reframe_instructions_html = f'''
         <td>
             <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space. Ensure the frame is at least 224 pixels wide and tall.</div>
         </td>
-        <td>
+        <td style="margin-left: 10px">
             {reframed_mole_html}
         </td>
     </tr>
