@@ -351,18 +351,19 @@ elif st.session_state.screen == "Result":
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
+        # Présenter les résultats dans une boîte stylisée
         if result == "probably benign mole":
-            st.markdown(f'<div class="normal-text" style="color: {color};">Result: {result}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="result-box benin">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">This should be a benign mole.</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="normal-text" style="color: {color};">Result: {result}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="result-box warning">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">No need to worry, melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-        
+       
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -442,7 +443,7 @@ elif st.session_state.screen == "Result":
         }
         </style>
         """, unsafe_allow_html=True)
-        
+       
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -459,12 +460,12 @@ elif st.session_state.screen == "Result":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-            
+           
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-        
+       
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
