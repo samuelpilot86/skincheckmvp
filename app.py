@@ -129,12 +129,10 @@ if st.session_state.screen == "Accueil":
         margin: 0 auto;
         margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
     }
-    /* Styliser le bouton de st.file_uploader et minimiser l'espace du texte natif */
+    /* Styliser le bouton de st.file_uploader */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
         visibility: hidden;
         position: relative;
-        opacity: 0; /* Rendre le texte natif invisible */
-        font-size: 0; /* Réduire la taille de police à 0 pour minimiser l'espace */
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
         content: "Take/select photo";
@@ -162,15 +160,16 @@ if st.session_state.screen == "Accueil":
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
+    /* Réduire l'espace des instructions en diminuant leur taille de police */
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        display: none !important; /* Déjà masqué, mais ajout de font-size pour minimiser */
+        font-size: 0; /* Réduit la taille de police à 0 pour minimiser l'espace */
+    }
     /* Réduire la hauteur de la section pour minimiser l'espace */
     [data-testid="stFileUploaderDropzone"] {
         background-color: transparent;
         min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
         height: auto; /* Suit la taille du bouton */
-    }
-    /* Masquer les instructions de glisser-déposer */
-    [data-testid="stFileUploaderDropzoneInstructions"] {
-        display: none !important;
     }
     /* Styliser et décaler le bouton Select demo example à droite de 25px */
     .stButton {
@@ -346,10 +345,6 @@ elif st.session_state.screen == "Reframe":
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Result":
-    st.markdown(title_html, unsafe_allow_html=True)
-    if st.button("←", key="back"):
-        st.session_state.screen = "Accueil"
-        st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
@@ -370,112 +365,4 @@ elif st.session_state.screen == "Result":
         st.markdown("""
         <style>
         /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
-        .button-container-result {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            max-width: 225px; /* Ajusté pour inclure le décalage de 25px */
-            margin: 0 auto;
-            margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
-        }
-        /* Styliser le bouton de st.file_uploader et minimiser l'espace du texte natif */
-        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
-            visibility: hidden;
-            position: relative;
-            opacity: 0; /* Rendre le texte natif invisible */
-            font-size: 0; /* Réduire la taille de police à 0 pour minimiser l'espace */
-        }
-        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
-            content: "Take/select photo";
-            visibility: visible;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #4A90E2;
-            color: #F5F5F5;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            font-size: 18px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 auto;
-            max-width: 200px;
-        }
-        [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
-            background-color: #3A7AC2;
-        }
-        /* Réduire la hauteur de la section pour minimiser l'espace */
-        [data-testid="stFileUploaderDropzone"] {
-            background-color: transparent;
-            min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
-            height: auto; /* Suit la taille du bouton */
-        }
-        /* Masquer les instructions de glisser-déposer */
-        [data-testid="stFileUploaderDropzoneInstructions"] {
-            display: none !important;
-        }
-        /* Styliser et décaler le bouton Select demo example à droite de 25px */
-        .stButton {
-            margin-left: 23px; /* Décalage de 25px à droite */
-        }
-        .stButton > button {
-            background-color: #4A90E2;
-            color: #F5F5F5;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            font-size: 18px !important;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 auto;
-            max-width: 200px;
-            display: block;
-        }
-        .stButton > button:hover {
-            background-color: #3A7AC2;
-        }
-        /* Réduire le padding-top du block-container pour rapprocher les boutons du haut */
-        .block-container {
-            padding-top: 10px !important; /* Réduit de 27px à 10px */
-        }
-        /* Ajuster la marge du header-container pour rapprocher les boutons */
-        .header-container {
-            margin-top: 10px !important; /* Réduit de 20px à 10px */
-        }
-        </style>
-        """, unsafe_allow_html=True)
-      
-        # Conteneur pour les boutons
-        with st.container():
-            st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
-            if uploaded_file is not None:
-                try:
-                    image = Image.open(uploaded_file)
-                    if not isinstance(image, Image.Image):
-                        st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
-                    else:
-                        image = ImageOps.exif_transpose(image)
-                        st.session_state.original_image = image
-                        st.session_state.screen = "Reframe"
-                        st.rerun()
-                except Exception as e:
-                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-          
-            if st.button("Select demo example", key="demo"):
-                st.session_state.screen = "Examples"
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-      
-        st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
+        .button-container-result
