@@ -359,12 +359,14 @@
 .stCropper {
     max-width: 390px !important;
     width: 390px !important;
-    max-height: 400px !important;
+    max-height: 320px !important; /* Limiter la hauteur maximale à 320px */
+    height: auto !important; /* Adapter la hauteur automatiquement si l'image est plus petite */
     overflow: hidden !important;
 }
-
 .stCropper canvas {
     max-width: 390px !important;
     width: 390px !important;
+    max-height: 320px !important; /* Limiter la hauteur du canvas à 320px */
+    height: auto !important; /* Adapter la hauteur automatiquement */
     object-fit: contain !important;
 }
