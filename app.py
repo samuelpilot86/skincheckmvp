@@ -310,14 +310,23 @@ elif st.session_state.screen == "Reframe":
     if 'original_image' in st.session_state:
         original_image = st.session_state.original_image
         original_width, original_height = original_image.size
-        if original_width > 390:
-            new_width = 390
-            new_height = int(original_height * (new_width / original_width))
+        
+        # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
+        if original_width > 390 or original_height > 320:
+            # Calculer le facteur de redimensionnement basé sur la contrainte la plus restrictive
+            width_ratio = 390 / original_width
+            height_ratio = 320 / original_height
+            resize_ratio = min(width_ratio, height_ratio)  # Prendre le plus petit ratio pour respecter les deux contraintes
+            new_width = int(original_width * resize_ratio)
+            new_height = int(original_height * resize_ratio)
             image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         else:
             image_resized = original_image
             new_width, new_height = original_width, original_height
+        
+        # Déterminer l'aspect ratio en fonction des dimensions redimensionnées
         aspect_ratio = (3, 4) if new_height > new_width else (4, 3)
+        
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
         if st.button("Analyze", key="analyze"):
