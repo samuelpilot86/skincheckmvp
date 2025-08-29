@@ -114,8 +114,8 @@ if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
-    
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
+   
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
     <style>
@@ -129,10 +129,12 @@ if st.session_state.screen == "Accueil":
         margin: 0 auto;
         margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
     }
-    /* Styliser le bouton de st.file_uploader */
+    /* Styliser le bouton de st.file_uploader et minimiser l'espace du texte natif */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
         visibility: hidden;
         position: relative;
+        opacity: 0; /* Rendre le texte natif invisible */
+        font-size: 0; /* Réduire la taille de police à 0 pour minimiser l'espace */
     }
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
         content: "Take/select photo";
@@ -160,9 +162,15 @@ if st.session_state.screen == "Accueil":
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
-    /* Rendre l'arrière-plan de la section transparent */
+    /* Réduire la hauteur de la section pour minimiser l'espace */
     [data-testid="stFileUploaderDropzone"] {
         background-color: transparent;
+        min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
+        height: auto; /* Suit la taille du bouton */
+    }
+    /* Masquer les instructions de glisser-déposer */
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        display: none !important;
     }
     /* Styliser et décaler le bouton Select demo example à droite de 25px */
     .stButton {
@@ -195,7 +203,7 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
-    
+   
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
@@ -212,17 +220,17 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-        
+       
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-    
+   
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
-
+    
 elif st.session_state.screen == "Examples":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
@@ -339,6 +347,9 @@ elif st.session_state.screen == "Reframe":
 
 elif st.session_state.screen == "Result":
     st.markdown(title_html, unsafe_allow_html=True)
+    if st.button("←", key="back"):
+        st.session_state.screen = "Accueil"
+        st.rerun()
     if 'result' in st.session_state and 'cropped_image' in st.session_state:
         result, prob, color = st.session_state.result
         st.image(st.session_state.cropped_image, caption="", use_container_width=True)
@@ -354,7 +365,7 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-       
+      
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -368,10 +379,12 @@ elif st.session_state.screen == "Result":
             margin: 0 auto;
             margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
         }
-        /* Styliser le bouton de st.file_uploader */
+        /* Styliser le bouton de st.file_uploader et minimiser l'espace du texte natif */
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
             visibility: hidden;
             position: relative;
+            opacity: 0; /* Rendre le texte natif invisible */
+            font-size: 0; /* Réduire la taille de police à 0 pour minimiser l'espace */
         }
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]::before {
             content: "Take/select photo";
@@ -399,9 +412,15 @@ elif st.session_state.screen == "Result":
         [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
             background-color: #3A7AC2;
         }
-        /* Rendre l'arrière-plan de la section transparent */
+        /* Réduire la hauteur de la section pour minimiser l'espace */
         [data-testid="stFileUploaderDropzone"] {
             background-color: transparent;
+            min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
+            height: auto; /* Suit la taille du bouton */
+        }
+        /* Masquer les instructions de glisser-déposer */
+        [data-testid="stFileUploaderDropzoneInstructions"] {
+            display: none !important;
         }
         /* Styliser et décaler le bouton Select demo example à droite de 25px */
         .stButton {
@@ -434,7 +453,7 @@ elif st.session_state.screen == "Result":
         }
         </style>
         """, unsafe_allow_html=True)
-       
+      
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -451,12 +470,12 @@ elif st.session_state.screen == "Result":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-           
+          
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-       
+      
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
