@@ -115,8 +115,8 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
-  
-    # Solution CSS pour styliser les boutons, réduire le vide, et ajouter la navigation par clic
+   
+    # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
     <style>
     /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
@@ -128,21 +128,6 @@ if st.session_state.screen == "Accueil":
         max-width: 225px; /* Ajusté pour inclure le décalage de 25px */
         margin: 0 auto;
         margin-top: 0; /* Supprime la marge par défaut pour le rapprocher du haut */
-    }
-    /* Réduire la hauteur et l'espace du conteneur principal */
-    .st-emotion-cache-18kf3ut {
-        height: auto !important; /* Suivre le contenu */
-        margin-top: 0 !important; /* Supprimer toute marge supérieure */
-    }
-    /* Ajuster le conteneur vertical pour éliminer l'espace vide */
-    .stVerticalBlock {
-        padding-top: 0 !important; /* Supprimer le padding supérieur */
-        margin-top: 0 !important; /* Supprimer la marge supérieure */
-        min-height: 0 !important; /* Supprimer la hauteur minimale par défaut */
-    }
-    .stElementContainer {
-        padding-top: 0 !important; /* Supprimer le padding supérieur */
-        margin-top: 0 !important; /* Supprimer la marge supérieure */
     }
     /* Styliser le bouton de st.file_uploader */
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
@@ -175,18 +160,16 @@ if st.session_state.screen == "Accueil":
     [data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"]:hover::before {
         background-color: #3A7AC2;
     }
+    /* Réduire l'espace des instructions en diminuant leur taille de police */
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        display: none !important; /* Déjà masqué, mais ajout de font-size pour minimiser */
+        font-size: 0; /* Réduit la taille de police à 0 pour minimiser l'espace */
+    }
     /* Réduire la hauteur de la section pour minimiser l'espace */
     [data-testid="stFileUploaderDropzone"] {
         background-color: transparent;
         min-height: 0 !important; /* Supprime la hauteur minimale par défaut */
         height: auto; /* Suit la taille du bouton */
-        padding: 0 !important; /* Supprimer le padding pour réduire l'espace */
-        margin: 0 !important; /* Supprimer les marges */
-    }
-    /* Réduire l'espace des instructions */
-    [data-testid="stFileUploaderDropzoneInstructions"] {
-        display: none !important; /* Déjà masqué */
-        font-size: 0; /* Réduit la taille de police à 0 pour minimiser l'espace */
     }
     /* Styliser et décaler le bouton Select demo example à droite de 25px */
     .stButton {
@@ -217,20 +200,9 @@ if st.session_state.screen == "Accueil":
     .header-container {
         margin-top: 10px !important; /* Réduit de 20px à 10px */
     }
-    /* Script JavaScript pour naviguer vers Accueil au clic sur le titre ou le logo */
-    <script>
-        document.querySelector('.app-title').addEventListener('click', function() {
-            window.parent.postMessage({ type: 'SET_SESSION_STATE', key: 'screen', value: 'Accueil' }, '*');
-            window.parent.postMessage({ type: 'RERUN' }, '*');
-        });
-        document.querySelector('.logo-cell img').addEventListener('click', function() {
-            window.parent.postMessage({ type: 'SET_SESSION_STATE', key: 'screen', value: 'Accueil' }, '*');
-            window.parent.postMessage({ type: 'RERUN' }, '*');
-        });
-    </script>
     </style>
     """, unsafe_allow_html=True)
-  
+   
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
@@ -247,12 +219,12 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-      
+       
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-  
+   
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
