@@ -187,7 +187,7 @@ def predict_user_image(image, model):
         prob = predictions[0][0]  # Probabilité pour la classe 0 (par exemple, mélanome)
 
         # Déterminer le résultat en fonction d'un seuil (par exemple, 0.5)
-        threshold = 0.487
+        threshold = 0.487 # Amène à un recall de 82% et une spécificité de 73% sur le jeu de test. A 0,470, on serait à 84% et 68%.
         result = "possible melanoma" if prob >= threshold else "probably benign mole"
         color = "#FFA500" if prob >= threshold else "#7ED321"  # Orange pour mélanome, vert pour bénin
 
