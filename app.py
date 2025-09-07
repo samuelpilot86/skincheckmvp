@@ -403,12 +403,12 @@ elif st.session_state.screen == "Result":
         # Présenter les résultats dans une boîte stylisée
         if result == "probably benign mole":
             st.markdown(f'<div class="result-box benin">Result: {result}</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">This should be a benign mole.</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">Yet, if it is asymmetrical, has an irregular border, several colors, a diameter >6mm and/or has evolved recently, show it to a dermatologist.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="normal-text">This is probably a benign mole.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="normal-text">Yet, if it is Asymmetrical, has an irregular Border, several Colors, a Diameter >6mm and/or has Evolved recently (ABCDE criteria), show it to a dermatologist.</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="result-box warning">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">No need to worry, melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="normal-text">Melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
