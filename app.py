@@ -22,29 +22,31 @@ def display_back_button(target_screen):
     st.markdown(
         f"""
         <style>
-        #{button_key} button {{
-            background-color: #F0F0F0 !important; /* Fond légèrement plus clair que #F5F5F5 pour le distinguer */
+        #{button_key}_container button {{
+            background-color: #F0F0F0 !important; /* Fond personnalisé */
             border: none;
             padding: 8px;
             cursor: pointer;
-            margin-top: -10px; /* Ajustement pour aligner avec le haut */
+            margin-top: -10px;
+            width: 40px; /* Taille fixe pour éviter l'étirement */
+            height: 40px;
         }}
-        #{button_key} button img {{
-            width: 24px;
-            height: 24px;
-        }}
-        #{button_key} button:hover {{
-            background-color: #E0E0E0; /* Effet de survol discret */
+        #{button_key}_container button:hover {{
+            background-color: #E0E0E0 !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
-    col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
+    col1, col2 = st.columns([1, 9])
     with col1:
-        if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
-            st.session_state.screen = target_screen
-            st.rerun()
+        with st.container():
+            st.markdown(f'<div id="{button_key}_container">', unsafe_allow_html=True)
+            st.image(back_arrow_svg, width=24, use_container_width=False)  # Afficher l'icône SVG
+            if st.button("", key=button_key, help="Retour"):  # Bouton invisible
+                st.session_state.screen = target_screen
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
