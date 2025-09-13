@@ -15,28 +15,29 @@ from cryptography.fernet import Fernet
 
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
+    button_key = f"back_to_{target_screen}"
+    st.markdown(
+        f"""
+        <style>
+        #{button_key} button {{
+            background-color: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #4A90E2;
+            margin-top: -10px; /* Ajustement pour aligner avec le haut */
+        }}
+        #{button_key} button:hover {{
+            color: #3A7AC2;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
-        st.markdown(
-            """
-            <style>
-            .back-button {
-                background-color: transparent;
-                border: none;
-                padding: 8px;
-                cursor: pointer;
-                font-size: 24px;
-                color: #4A90E2;
-                margin-top: -10px; /* Ajustement pour aligner avec le haut */
-            }
-            .back-button:hover {
-                color: #3A7AC2;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-        if st.button("←", key=f"back_to_{target_screen}", help="Retour", class_="back-button"):
+        if st.button("←", key=button_key, help="Retour"):
             st.session_state.screen = target_screen
             st.rerun()
 
