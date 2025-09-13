@@ -6,13 +6,47 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
 os.environ["TF_FORCE_CPU_ONLY"] = "1"
-import tensorflow as tf 
+import tensorflow as tf
 import streamlit as st
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, preprocess_image, predict_user_image
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
-from streamlit_javascript import st_javascript
-from cryptography.fernet import Fernet  # Added for encryption
+from cryptography.fernet import Fernet
+
+# Icône SVG pour le bouton de retour (encodée en base64)
+back_arrow_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQxIDE2LjU5TDEwLjgzIDEybDQuNTgtNC41OUwxNCA2bC02IDYgNiA2eiIvPjwvc3ZnPg=='
+
+# Fonction pour afficher le bouton de retour
+def display_back_button(target_screen):
+    with st.container():
+        st.markdown(
+            """
+            <style>
+            /* S'assurer que le conteneur parent permet le positionnement absolu */
+            .back-button-container {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 1000;
+            }
+            </style>
+            <div class="back-button-container">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        # Utiliser st.button avec l'icône SVG
+        with st.container():
+            col = st.columns([1, 10])[0]  # Utiliser une petite colonne pour limiter la largeur
+            with col:
+                if st.button(
+                    "![Back](" + back_arrow_svg + ")",
+                    key=f"back_to_{target_screen}",
+                    help="Retour",
+                    use_container_width=True
+                ):
+                    st.session_state.screen = target_screen
+                    st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
@@ -49,12 +83,16 @@ def load_model():
         st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="normal-text">Répertoire de travail actuel : {os.getcwd()}</div>', unsafe_allow_html=True)
         return None
+
 model = load_model()
+
 # Interface Streamlit
 st.set_page_config(page_title="SkinCheck", layout="centered")
+
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # Création du logo et titre dans une variable HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
@@ -66,6 +104,7 @@ if os.path.exists(logo_path):
         logo_html = ""
 else:
     logo_html = ""
+
 title_html = f'''
 <div class="header-container">
     <table class="header-table">
@@ -78,6 +117,7 @@ title_html = f'''
     <div class="subtitle">Should I show this mole to my dermatologist?</div>
 </div>
 '''
+
 # Création des instructions de recadrage
 reframed_mole_path = os.path.join("images", "FramedMole.jpg")
 if os.path.exists(reframed_mole_path):
@@ -89,6 +129,7 @@ if os.path.exists(reframed_mole_path):
         reframed_mole_html = ""
 else:
     reframed_mole_html = ""
+
 reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
@@ -101,6 +142,7 @@ reframe_instructions_html = f'''
     </tr>
 </table>
 '''
+
 # Création de l'avertissement "prototype non validée médicalement"
 warning_html = f'''
 <table class="instructions-table">
@@ -110,15 +152,16 @@ warning_html = f'''
     </tr>
 </table>
 '''
+
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
+
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
- 
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
     <style>
@@ -205,7 +248,6 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
- 
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
@@ -220,7 +262,7 @@ if st.session_state.screen == "Accueil":
                     width, height = image.size
                     if height > width:
                         image = image.rotate(90, expand=True)
-                    image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
+                    image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                     # Encrypt the image before storing
                     encrypted_data, key, mode, size = encrypt_image(image)
                     st.session_state.encrypted_original = (encrypted_data, key, mode, size)
@@ -228,25 +270,25 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-     
+    
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
- 
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
-   
+
 elif st.session_state.screen == "Examples":
+    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
     base_dir = os.path.join(os.getcwd(), "examples")
     # Définir les listes d'images
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
-  
+ 
     # Vérifier si les listes sont définies
     if not benign_images or not melanoma_images:
         st.markdown('<div class="normal-text">Erreur : Les listes d\'images de démonstration ne sont pas définies.</div>', unsafe_allow_html=True)
@@ -286,12 +328,12 @@ elif st.session_state.screen == "Examples":
                             width, height = image.size
                             if height > width:
                                 image = image.rotate(90, expand=True)
-                            image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
+                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
                             st.session_state.result = (result, prob, color)
-                            # For demos, no encryption needed as not user data
+                            # For demos, no encryption needed
                             st.session_state.cropped_image = image  # Pas de recadrage pour les démos
                             st.rerun()
                     except Exception as e:
@@ -315,7 +357,7 @@ elif st.session_state.screen == "Examples":
                             width, height = image.size
                             if height > width:
                                 image = image.rotate(90, expand=True)
-                            image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
+                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
@@ -325,34 +367,36 @@ elif st.session_state.screen == "Examples":
                             st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Reframe":
+    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
     st.markdown(title_html, unsafe_allow_html=True)
     if 'encrypted_original' in st.session_state:
         encrypted_data, key, mode, size = st.session_state.encrypted_original
         original_image = decrypt_image(encrypted_data, key, mode, size)
         original_width, original_height = size
-       
+      
         # Tourner l'image en paysage si elle est en portrait (already handled before encryption, but re-check)
         if original_height > original_width:
             original_image = original_image.rotate(90, expand=True)
             original_width, original_height = original_image.size
-       
+      
         # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
         if original_width > 390 or original_height > 320:
             # Calculer le facteur de redimensionnement basé sur la contrainte la plus restrictive
             width_ratio = 390 / original_width
             height_ratio = 320 / original_height
-            resize_ratio = min(width_ratio, height_ratio) # Prendre le plus petit ratio pour respecter les deux contraintes
+            resize_ratio = min(width_ratio, height_ratio)  # Prendre le plus petit ratio pour respecter les deux contraintes
             new_width = int(original_width * resize_ratio)
             new_height = int(original_height * resize_ratio)
             image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         else:
             image_resized = original_image
             new_width, new_height = original_width, original_height
-       
+      
         # Forcer l'aspect ratio en paysage (4:3)
         aspect_ratio = (4, 3)
-       
+      
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
         if st.button("Analyze", key="analyze"):
@@ -382,7 +426,9 @@ elif st.session_state.screen == "Reframe":
                         st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Result":
+    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
     st.markdown(title_html, unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
@@ -393,7 +439,6 @@ elif st.session_state.screen == "Result":
             cropped_image = st.session_state.cropped_image
         else:
             cropped_image = None
-
         if cropped_image:
             # Tourner l'image en paysage si elle est en portrait avant affichage
             width, height = cropped_image.size
@@ -412,7 +457,7 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-   
+  
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -499,7 +544,7 @@ elif st.session_state.screen == "Result":
         }
         </style>
         """, unsafe_allow_html=True)
-   
+  
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -514,7 +559,7 @@ elif st.session_state.screen == "Result":
                         width, height = image.size
                         if height > width:
                             image = image.rotate(90, expand=True)
-                        image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
+                        image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
                         # Encrypt before storing
                         encrypted_data, key, mode, size = encrypt_image(image)
                         st.session_state.encrypted_original = (encrypted_data, key, mode, size)
@@ -522,14 +567,14 @@ elif st.session_state.screen == "Result":
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-       
+      
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-   
+  
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-        
+       
         # Delete encrypted data after display and results (for compliance)
         st.session_state.pop('encrypted_cropped', None)
         st.session_state.pop('encrypted_original', None)
