@@ -6,15 +6,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
 os.environ["TF_FORCE_CPU_ONLY"] = "1"
-import tensorflow as tf 
+import tensorflow as tf
 import streamlit as st
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, preprocess_image, predict_user_image
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
-
-# Icône SVG pour le bouton de retour (encodée en base64)
-back_arrow_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQxIDE2LjU5TDEwLjgzIDEybDQuNTgtNC41OUwxNCA2bC02IDYgNiA2eiIvPjwvc3ZnPg=='
 
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
@@ -22,31 +19,32 @@ def display_back_button(target_screen):
         st.markdown(
             """
             <style>
-            /* S'assurer que le conteneur parent permet le positionnement absolu */
             .back-button-container {
+                position: relative;
+                margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
+                z-index: 1000;
+            }
+            .back-button {
                 position: absolute;
                 top: 10px;
                 left: 10px;
-                z-index: 1000;
+                background-color: transparent;
+                border: none;
+                padding: 8px;
+                cursor: pointer;
+                font-size: 24px; /* Taille de la flèche Unicode */
+                color: #4A90E2; /* Couleur principale */
+            }
+            .back-button:hover {
+                color: #3A7AC2; /* Couleur au survol */
             }
             </style>
-            <div class="back-button-container">
-            </div>
             """,
             unsafe_allow_html=True
         )
-        # Utiliser st.button avec l'icône SVG
-        with st.container():
-            col = st.columns([1, 10])[0]  # Utiliser une petite colonne pour limiter la largeur
-            with col:
-                if st.button(
-                    "![Back](" + back_arrow_svg + ")",
-                    key=f"back_to_{target_screen}",
-                    help="Retour",
-                    use_container_width=True
-                ):
-                    st.session_state.screen = target_screen
-                    st.rerun()
+        if st.button("←", key=f"back_to_{target_screen}", help="Retour", class_="back-button"):
+            st.session_state.screen = target_screen
+            st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
