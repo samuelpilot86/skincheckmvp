@@ -28,7 +28,7 @@ def display_back_button(target_screen):
     st.markdown(
         f"""
         <style>
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
+        [data-testid="stBackButton"][data-key="{button_key}"] {{
             background-color: #F5F5F5 !important; /* Même couleur que l'arrière-plan */
             border: none;
             padding: 8px;
@@ -39,10 +39,10 @@ def display_back_button(target_screen):
             align-items: center;
             justify-content: center;
         }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
+        [data-testid="stBackButton"][data-key="{button_key}"]:hover {{
             background-color: #ECECEC !important; /* Effet de survol discret */
         }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
+        [data-testid="stBackButton"][data-key="{button_key}"] img {{
             width: 24px;
             height: 24px;
         }}
