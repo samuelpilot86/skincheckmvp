@@ -308,14 +308,18 @@
 }
 
 /* Style du bouton Back */
-[data-testid="stBaseButton-secondary"][data-key="back_to_Accueil"] {
+[data-testid="stBaseButton-secondary"][data-key="back_to_Accueil"] {{
     background-color: #333333 !important;
     color: #F5F5F5;
     padding: 10px 20px;
-}
-[data-testid="stBaseButton-secondary"]:hover {
+}}
+[data-testid="stBaseButton-secondary"]:hover {{
     background-color: #444444 !important;
-}
+}}
+[data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
+    width: 24px;
+    height: 24px;
+}}
 
 /* Masquer l'input natif du file_uploader */
 [data-testid="stFileUploaderDropzoneInput"] {
