@@ -307,6 +307,24 @@
     background-color: #3A7AC2 !important;
 }
 
+/* Style du bouton Back */
+[data-testid="stBackButton"] {
+    background-color: #444444 !important;
+    color: #F5F5F5 !important;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 18px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 10px 20px !important;
+    width: 100% !important;
+    text-align: center !important;
+    cursor: pointer !important;
+}
+
+[data-testid="stBackButton"]:hover {
+    background-color: #3A7AC2 !important;
+}
+
 /* Masquer l'input natif du file_uploader */
 [data-testid="stFileUploaderDropzoneInput"] {
     display: none !important;
