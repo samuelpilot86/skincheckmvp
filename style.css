@@ -308,21 +308,13 @@
 }
 
 /* Style du bouton Back */
-[data-testid="stBackButton"] {
-    background-color: #444444 !important;
-    color: #F5F5F5 !important;
-    font-family: 'Roboto', sans-serif !important;
-    font-size: 18px !important;
-    border: none !important;
-    border-radius: 5px !important;
-    padding: 10px 20px !important;
-    width: 100% !important;
-    text-align: center !important;
-    cursor: pointer !important;
+[data-testid="stBaseButton-secondary"][data-key="back_to_Accueil"] {
+    background-color: #333333 !important;
+    color: #F5F5F5;
+    padding: 10px 20px;
 }
-
-[data-testid="stBackButton"]:hover {
-    background-color: #3A7AC2 !important;
+[data-testid="stBaseButton-secondary"]:hover {
+    background-color: #444444 !important;
 }
 
 /* Masquer l'input natif du file_uploader */
