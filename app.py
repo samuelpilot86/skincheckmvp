@@ -22,31 +22,32 @@ def display_back_button(target_screen):
     st.markdown(
         f"""
         <style>
-        #{button_key}_container button {{
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
             background-color: #F0F0F0 !important; /* Fond personnalisé */
             border: none;
             padding: 8px;
             cursor: pointer;
             margin-top: -10px;
-            width: 40px; /* Taille fixe pour éviter l'étirement */
-            height: 40px;
+            width: 40px !important; /* Taille fixe */
+            height: 40px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
-        #{button_key}_container button:hover {{
-            background-color: #E0E0E0 !important;
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
+            background-color: #E0E0E0 !important; /* Effet de survol */
+        }}
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
+            width: 24px;
+            height: 24px;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
-    col1, col2 = st.columns([1, 9])
+    col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
-        with st.container():
-            st.markdown(f'<div id="{button_key}_container">', unsafe_allow_html=True)
-            st.image(back_arrow_svg, width=24, use_container_width=False)  # Afficher l'icône SVG
-            if st.button("", key=button_key, help="Retour"):  # Bouton invisible
-                st.session_state.screen = target_screen
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(f'<button data-key="{button_key}" data-testid="stBaseButton-secondary" style="background-color: #F0F0F0; border: none; padding: 8px; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><img src="{back_arrow_svg}" alt="Back"></button>', unsafe_allow_html=True)
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
