@@ -13,6 +13,9 @@ from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
 
+# SVG de la flèche "<" encodée en base64
+back_arrow_svg = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMTUuNDEgMTYuNTlMMTUuNDEgNy40MUwxMC44MyAxMmwtNC41OC00LjU5TDYgNmw2IDYgNi02eiIgZmlsbD0iIzc1NzU3NSIvPjwvc3ZnPg=="
+
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
     button_key = f"back_to_{target_screen}"
@@ -20,16 +23,15 @@ def display_back_button(target_screen):
         f"""
         <style>
         #{button_key} button {{
-            background-color: transparent;
+            background-color: #F5F5F5; /* Même couleur que l'arrière-plan */
             border: none;
             padding: 8px;
             cursor: pointer;
-            font-size: 24px;
-            color: #4A90E2;
             margin-top: -10px; /* Ajustement pour aligner avec le haut */
         }}
-        #{button_key} button:hover {{
-            color: #3A7AC2;
+        #{button_key} button img {{
+            width: 24px;
+            height: 24px;
         }}
         </style>
         """,
@@ -37,7 +39,7 @@ def display_back_button(target_screen):
     )
     col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
-        if st.button("←", key=button_key, help="Retour"):
+        if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
             st.session_state.screen = target_screen
             st.rerun()
 
