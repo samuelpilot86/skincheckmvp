@@ -259,6 +259,7 @@
     margin-bottom: 10px;
 }
 
+/* Boutons (à laisser pour les autres boutons, mais ne pas interférer avec #back_to_...) */
 .stButton > button {
     background-color: #4A90E2;
     color: #F5F5F5;
@@ -274,7 +275,6 @@
     top: 0;
     left: 0;
 }
-
 .stButton > button:hover {
     background-color: #3A7AC2;
 }
