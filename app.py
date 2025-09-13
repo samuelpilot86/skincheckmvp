@@ -23,7 +23,7 @@ def display_back_button(target_screen):
         f"""
         <style>
         #{button_key} button {{
-            background-color: #F0F0F0; /* Fond légèrement plus clair que #F5F5F5 pour le distinguer */
+            background-color: #F0F0F0 !important; /* Fond légèrement plus clair que #F5F5F5 pour le distinguer */
             border: none;
             padding: 8px;
             cursor: pointer;
