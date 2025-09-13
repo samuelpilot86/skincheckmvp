@@ -29,7 +29,7 @@ def display_back_button(target_screen):
         f"""
         <style>
         /* Style pour le bouton Retour */
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
+        .btn-return button[data-testid="stBaseButton-secondary"] {{
             background-color: #F5F5F5 !important; /* Fond assorti à l'arrière-plan */
             border: none;
             padding: 8px;
@@ -40,10 +40,10 @@ def display_back_button(target_screen):
             align-items: center;
             justify-content: center;
         }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
+        .btn-return button[data-testid="stBaseButton-secondary"]:hover {{
             background-color: #ECECEC !important; /* Effet de survol discret */
         }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
+        .btn-return button[data-testid="stBaseButton-secondary"] img {{
             width: 24px;
             height: 24px;
         }}
@@ -62,14 +62,16 @@ def display_back_button(target_screen):
         """,
         unsafe_allow_html=True
     )
-    col1, col2 = st.columns([1, 9])
+    col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
+        st.markdown('<div class="btn-return">', unsafe_allow_html=True)
         if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
             if len(st.session_state.screen_history) > 1:
                 st.session_state.screen_history.pop()
                 previous_screen = st.session_state.screen_history[-1]
                 st.session_state.screen = previous_screen
                 st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
                 
 # Helper functions for encryption/decryption
