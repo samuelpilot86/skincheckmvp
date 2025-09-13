@@ -249,7 +249,7 @@ if st.session_state.screen == "Accueil":
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_accueil")
+        uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="collapsed")
         if uploaded_file is not None:
             try:
                 image = Image.open(uploaded_file)
@@ -546,7 +546,7 @@ elif st.session_state.screen == "Result":
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
+            uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="collapsed")
             if uploaded_file is not None:
                 try:
                     image = Image.open(uploaded_file)
