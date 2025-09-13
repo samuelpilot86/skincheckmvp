@@ -25,12 +25,49 @@ if 'screen' not in st.session_state:
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
     button_key = f"back_to_{target_screen}"
-    col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
+    st.markdown(
+        f"""
+        <style>
+        /* Style pour le bouton Retour */
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
+            background-color: #F5F5F5 !important; /* Fond assorti à l'arrière-plan */
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
+            background-color: #ECECEC !important; /* Effet de survol discret */
+        }}
+        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
+            width: 24px;
+            height: 24px;
+        }}
+        /* Style pour les autres boutons (ex. Select demo example, Analyze) */
+        [data-testid="stBaseButton-secondary"][data-key="demo"],
+        [data-testid="stBaseButton-secondary"][data-key="analyze"] {{
+            background-color: #4A90E2 !important; /* Bleu par défaut */
+            color: #F5F5F5 !important;
+            padding: 10px 20px !important;
+        }}
+        [data-testid="stBaseButton-secondary"][data-key="demo"]:hover,
+        [data-testid="stBaseButton-secondary"][data-key="analyze"]:hover {{
+            background-color: #3A7AC2 !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    col1, col2 = st.columns([1, 9])
     with col1:
         if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
-            if len(st.session_state.screen_history) > 1:  # S'assurer qu'il y a un écran précédent
-                st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
-                previous_screen = st.session_state.screen_history[-1]  # Récupérer l'écran précédent
+            if len(st.session_state.screen_history) > 1:
+                st.session_state.screen_history.pop()
+                previous_screen = st.session_state.screen_history[-1]
                 st.session_state.screen = previous_screen
                 st.rerun()
 
