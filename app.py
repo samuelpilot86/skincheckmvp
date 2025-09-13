@@ -23,11 +23,10 @@ def display_back_button(target_screen):
         f"""
         <style>
         [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
-            background-color: #F0F0F0 !important; /* Fond personnalisé */
+            background-color: #F5F5F5 !important; /* Même couleur que l'arrière-plan */
             border: none;
             padding: 8px;
             cursor: pointer;
-            margin-top: -10px;
             width: 40px !important; /* Taille fixe */
             height: 40px !important;
             display: flex;
@@ -35,7 +34,7 @@ def display_back_button(target_screen):
             justify-content: center;
         }}
         [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
-            background-color: #E0E0E0 !important; /* Effet de survol */
+            background-color: #ECECEC !important; /* Effet de survol discret */
         }}
         [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
             width: 24px;
@@ -47,8 +46,10 @@ def display_back_button(target_screen):
     )
     col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
-        st.markdown(f'<button data-key="{button_key}" data-testid="stBaseButton-secondary" style="background-color: #F0F0F0; border: none; padding: 8px; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"><img src="{back_arrow_svg}" alt="Back"></button>', unsafe_allow_html=True)
-
+        if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):  # Revenir à st.button pour tester l'action
+            st.session_state.screen = target_screen
+            st.rerun()
+            
 # Helper functions for encryption/decryption
 def encrypt_image(image):
     key = Fernet.generate_key()
