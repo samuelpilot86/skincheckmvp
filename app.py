@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 import os
 import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3" 
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
 os.environ["TF_FORCE_CPU_ONLY"] = "1"
 import tensorflow as tf
@@ -16,6 +16,12 @@ from cryptography.fernet import Fernet
 # SVG de la flèche "<" encodée en base64
 back_arrow_svg = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBkPSJNMTUuNDEgMTYuNTlMMTUuNDEgNy40MUwxMC44MyAxMmwtNC41OC00LjU5TDYgNmw2IDYgNi02eiIgZmlsbD0iIzc1NzU3NSIvPjwvc3ZnPg=="
 
+# Initialiser l'historique des écrans
+if 'screen_history' not in st.session_state:
+    st.session_state.screen_history = ["Accueil"]
+if 'screen' not in st.session_state:
+    st.session_state.screen = "Accueil"
+    
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
     button_key = f"back_to_{target_screen}"
@@ -46,10 +52,14 @@ def display_back_button(target_screen):
     )
     col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
-        if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):  # Revenir à st.button pour tester l'action
-            st.session_state.screen = target_screen
-            st.rerun()
-            
+        if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
+            if len(st.session_state.screen_history) > 1:  # S'assurer qu'il y a un écran précédent
+                st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                previous_screen = st.session_state.screen_history[-1]  # Récupérer l'écran précédent
+                st.session_state.screen = previous_screen
+                st.rerun()
+
+                
 # Helper functions for encryption/decryption
 def encrypt_image(image):
     key = Fernet.generate_key()
@@ -163,8 +173,7 @@ if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)  # Espacement réduit pour positionner plus haut
-    # Solution CSS pour styliser les boutons et aligner verticalement
+    st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True)
     st.markdown("""
     <style>
     /* Conteneur pour aligner les boutons verticalement et centrer, positionné plus haut */
@@ -250,7 +259,6 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
-    # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="collapsed")
@@ -260,20 +268,19 @@ if st.session_state.screen == "Accueil":
                 if not isinstance(image, Image.Image):
                     st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
                 else:
-                    # Tourner l'image en paysage si elle est en portrait
                     width, height = image.size
                     if height > width:
                         image = image.rotate(90, expand=True)
-                    image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
-                    # Encrypt the image before storing
+                    image = ImageOps.exif_transpose(image)
                     encrypted_data, key, mode, size = encrypt_image(image)
                     st.session_state.encrypted_original = (encrypted_data, key, mode, size)
+                    st.session_state.screen_history.append("Reframe")  # Ajouter l'écran suivant à l'historique
                     st.session_state.screen = "Reframe"
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-    
         if st.button("Select demo example", key="demo"):
+            st.session_state.screen_history.append("Examples")  # Ajouter l'écran suivant à l'historique
             st.session_state.screen = "Examples"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
@@ -281,17 +288,14 @@ if st.session_state.screen == "Accueil":
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
-
+    
 elif st.session_state.screen == "Examples":
-    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
+    display_back_button("Accueil")  # À ajuster dans la fonction
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
     base_dir = os.path.join(os.getcwd(), "examples")
-    # Définir les listes d'images
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
     melanoma_images = [os.path.join(base_dir, "melanoma1.jpg"), os.path.join(base_dir, "melanoma2.jpg"), os.path.join(base_dir, "melanoma3.jpg")]
- 
-    # Vérifier si les listes sont définies
     if not benign_images or not melanoma_images:
         st.markdown('<div class="normal-text">Erreur : Les listes d\'images de démonstration ne sont pas définies.</div>', unsafe_allow_html=True)
     else:
@@ -326,17 +330,16 @@ elif st.session_state.screen == "Examples":
                         if not isinstance(image, Image.Image):
                             st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                         else:
-                            # Tourner l'image en paysage si elle est en portrait
                             width, height = image.size
                             if height > width:
                                 image = image.rotate(90, expand=True)
-                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
+                            image = ImageOps.exif_transpose(image)
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
+                            st.session_state.screen_history.append("Result")  # Ajouter l'écran suivant à l'historique
                             st.session_state.screen = "Result"
                             st.session_state.result = (result, prob, color)
-                            # For demos, no encryption needed
-                            st.session_state.cropped_image = image  # Pas de recadrage pour les démos
+                            st.session_state.cropped_image = image
                             st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
@@ -355,50 +358,41 @@ elif st.session_state.screen == "Examples":
                         if not isinstance(image, Image.Image):
                             st.markdown(f'<div class="normal-text">Erreur : L\'image {img_path} est invalide.</div>', unsafe_allow_html=True)
                         else:
-                            # Tourner l'image en paysage si elle est en portrait
                             width, height = image.size
                             if height > width:
                                 image = image.rotate(90, expand=True)
-                            image = ImageOps.exif_transpose(image)  # Ajuster l'orientation EXIF
+                            image = ImageOps.exif_transpose(image)
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
+                            st.session_state.screen_history.append("Result")  # Ajouter l'écran suivant à l'historique
                             st.session_state.screen = "Result"
                             st.session_state.result = (result, prob, color)
-                            # For demos, no encryption needed
-                            st.session_state.cropped_image = image  # Pas de recadrage pour les démos
+                            st.session_state.cropped_image = image
                             st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Reframe":
-    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
+    display_back_button("Accueil")  # À ajuster dans la fonction
     st.markdown(title_html, unsafe_allow_html=True)
     if 'encrypted_original' in st.session_state:
         encrypted_data, key, mode, size = st.session_state.encrypted_original
         original_image = decrypt_image(encrypted_data, key, mode, size)
         original_width, original_height = size
-      
-        # Tourner l'image en paysage si elle est en portrait (already handled before encryption, but re-check)
         if original_height > original_width:
             original_image = original_image.rotate(90, expand=True)
             original_width, original_height = original_image.size
-      
-        # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
         if original_width > 390 or original_height > 320:
-            # Calculer le facteur de redimensionnement basé sur la contrainte la plus restrictive
             width_ratio = 390 / original_width
             height_ratio = 320 / original_height
-            resize_ratio = min(width_ratio, height_ratio)  # Prendre le plus petit ratio pour respecter les deux contraintes
+            resize_ratio = min(width_ratio, height_ratio)
             new_width = int(original_width * resize_ratio)
             new_height = int(original_height * resize_ratio)
             image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         else:
             image_resized = original_image
             new_width, new_height = original_width, original_height
-      
-        # Forcer l'aspect ratio en paysage (4:3)
         aspect_ratio = (4, 3)
-      
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
         crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
         if st.button("Analyze", key="analyze"):
@@ -416,12 +410,11 @@ elif st.session_state.screen == "Reframe":
                     if isinstance(cropped_image, Image.Image):
                         with st.spinner("Analysis in progress..."):
                             result, prob, color = predict_user_image(cropped_image, model)
-                        # Encrypt cropped image for storage
                         encrypted_cropped, cropped_key, cropped_mode, cropped_size = encrypt_image(cropped_image)
                         st.session_state.encrypted_cropped = (encrypted_cropped, cropped_key, cropped_mode, cropped_size)
+                        st.session_state.screen_history.append("Result")  # Ajouter l'écran suivant à l'historique
                         st.session_state.screen = "Result"
                         st.session_state.result = (result, prob, color)
-                        # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
                         st.rerun()
                     else:
