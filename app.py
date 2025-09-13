@@ -15,28 +15,22 @@ from cryptography.fernet import Fernet
 
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
-    with st.container():
+    col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
+    with col1:
         st.markdown(
             """
             <style>
-            .back-button-container {
-                position: relative;
-                margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
-                z-index: 1000;
-            }
             .back-button {
-                position: absolute;
-                top: 10px;
-                left: 10px;
                 background-color: transparent;
                 border: none;
                 padding: 8px;
                 cursor: pointer;
-                font-size: 24px; /* Taille de la flèche Unicode */
-                color: #4A90E2; /* Couleur principale */
+                font-size: 24px;
+                color: #4A90E2;
+                margin-top: -10px; /* Ajustement pour aligner avec le haut */
             }
             .back-button:hover {
-                color: #3A7AC2; /* Couleur au survol */
+                color: #3A7AC2;
             }
             </style>
             """,
