@@ -25,31 +25,6 @@ if 'screen' not in st.session_state:
 # Fonction pour afficher le bouton de retour
 def display_back_button(target_screen):
     button_key = f"back_to_{target_screen}"
-    st.markdown(
-        f"""
-        <style>
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] {{
-            background-color: #F5F5F5 !important; /* Même couleur que l'arrière-plan */
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            width: 40px !important; /* Taille fixe */
-            height: 40px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"]:hover {{
-            background-color: #ECECEC !important; /* Effet de survol discret */
-        }}
-        [data-testid="stBaseButton-secondary"][data-key="{button_key}"] img {{
-            width: 24px;
-            height: 24px;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
     col1, col2 = st.columns([1, 9])  # Colonne étroite pour le bouton, large pour le contenu
     with col1:
         if st.button(f"![Back]({back_arrow_svg})", key=button_key, help="Retour"):
