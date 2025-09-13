@@ -39,6 +39,57 @@
     display: block;
 }
 
+/* Style pour le bouton de retour */
+.back-button-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.back-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-button img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Style pour le bouton Streamlit natif */
+.stButton.back-button-st {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.stButton.back-button-st > button {
+    background-color: transparent;
+    border: none;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: unset !important;
+    height: auto !important;
+}
+
+.stButton.back-button-st > button:hover {
+    background-color: transparent;
+}
+
+.stButton.back-button-st > button img {
+    width: 24px;
+    height: 24px;
+}
+
 /* Conteneur pour logo, titre et sous-titre */
 .header-container {
     align-items: center;
