@@ -23,7 +23,7 @@ def display_back_button(target_screen):
         f"""
         <style>
         #{button_key} button {{
-            background-color: #F5F5F5; /* Même couleur que l'arrière-plan */
+            background-color: #F0F0F0; /* Fond légèrement plus clair que #F5F5F5 pour le distinguer */
             border: none;
             padding: 8px;
             cursor: pointer;
@@ -32,6 +32,9 @@ def display_back_button(target_screen):
         #{button_key} button img {{
             width: 24px;
             height: 24px;
+        }}
+        #{button_key} button:hover {{
+            background-color: #E0E0E0; /* Effet de survol discret */
         }}
         </style>
         """,
