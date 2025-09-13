@@ -47,31 +47,6 @@
     margin-bottom: 30px;
 }
 
-/* Style pour le bouton de retour */
-.back-button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.back-button svg {
-    width: 24px;
-    height: 24px;
-    fill: #4A90E2; /* Couleur principale de l'application */
-}
-
-.back-button:hover svg {
-    fill: #3A7AC2; /* Couleur au survol, assortie aux autres boutons */
-}
-
 /* Titre de l'app "SkinCheck" */
 .app-title {
     font-family: 'Montserrat', sans-serif;
