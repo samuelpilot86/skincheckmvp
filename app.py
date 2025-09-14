@@ -44,15 +44,13 @@ def display_back_button():
         else:
             previous_screen = "Accueil" # Par défaut, revenir à Accueil si aucun écran précédent
            
-        # Bouton de retour avec redirection
+        # Bouton de retour
         if st.button("←", key=f"back_to_previous_{st.session_state.screen}"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
                 if st.session_state.screen != "Accueil": # Ne pas pop si on revient à Accueil
                     st.session_state.screen_history.pop() # Supprimer l'écran actuel de l'historique
-                # Rediriger avec un hash pour forcer un rechargement en haut
-                st.experimental_set_query_params(screen=previous_screen)
-                st.experimental_rerun()
+                st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
@@ -98,13 +96,6 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-# Déterminer l'écran à partir des query params
-query_params = st.experimental_get_query_params()
-if 'screen' in query_params:
-    st.session_state.screen = query_params['screen'][0]
-else:
-    st.session_state.screen = "Accueil"
 
 # Création du logo et titre dans une variable HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
@@ -167,14 +158,14 @@ warning_html = f'''
 '''
 
 # Navigation et mode
-if 'screen_history' not in st.session_state:
-    st.session_state.screen_history = []
-if st.session_state.screen not in st.session_state.screen_history:
-    st.session_state.screen_history.append(st.session_state.screen)
-if 'last_image' not in st.session_state:
-    st.session_state.last_image = None
-if 'last_crop_box' not in st.session_state:
-    st.session_state.last_crop_box = None
+if 'screen' not in st.session_state:
+    st.session_state.screen = "Accueil"
+    if 'screen_history' not in st.session_state:
+        st.session_state.screen_history = []
+    if 'last_image' not in st.session_state:
+        st.session_state.last_image = None
+    if 'last_crop_box' not in st.session_state:
+        st.session_state.last_crop_box = None
 
 if st.session_state.screen == "Accueil":
     # Réinitialiser l'historique à "Accueil" pour nettoyer les résidus
@@ -291,16 +282,14 @@ if st.session_state.screen == "Accueil":
                     st.session_state.screen = "Reframe"
                     st.session_state.screen_history.append("Reframe")
                     st.session_state.last_crop_box = None # Réinitialiser le cadrage
-                    st.experimental_set_query_params(screen="Reframe")
-                    st.experimental_rerun()
+                    st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
    
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
-            st.experimental_set_query_params(screen="Examples")
-            st.experimental_rerun()
+            st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
@@ -361,8 +350,7 @@ elif st.session_state.screen == "Examples":
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image # Pas de recadrage pour les démos
-                            st.experimental_set_query_params(screen="Result")
-                            st.experimental_rerun()
+                            st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
             with col2:
@@ -392,8 +380,7 @@ elif st.session_state.screen == "Examples":
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image # Pas de recadrage pour les démos
-                            st.experimental_set_query_params(screen="Result")
-                            st.experimental_rerun()
+                            st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
 elif st.session_state.screen == "Reframe":
@@ -453,8 +440,7 @@ elif st.session_state.screen == "Reframe":
                         st.session_state.last_crop_box = crop_box # Sauvegarder le dernier cadrage
                         # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
-                        st.experimental_set_query_params(screen="Result")
-                        st.experimental_rerun()
+                        st.rerun()
                     else:
                         st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
@@ -599,16 +585,14 @@ elif st.session_state.screen == "Result":
                     st.session_state.screen = "Reframe"
                     st.session_state.screen_history.append("Reframe")
                     st.session_state.last_crop_box = None # Réinitialiser le cadrage
-                    st.experimental_set_query_params(screen="Reframe")
-                    st.experimental_rerun()
+                    st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
      
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
-            st.experimental_set_query_params(screen="Examples")
-            st.experimental_rerun()
+            st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
  
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
