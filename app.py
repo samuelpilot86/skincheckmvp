@@ -50,13 +50,17 @@ def display_back_button():
         
         if len(st.session_state.screen_history) > 1:
             previous_screen = st.session_state.screen_history[-2]  # Deuxième élément depuis la fin
+            # Forcer le retour à "Accueil" depuis "Examples"
+            if st.session_state.screen == "Examples":
+                previous_screen = "Accueil"
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
             
         if st.button("←", key=f"back_to_previous", help="Retour"):
-            if previous_screen in st.session_state.screen_history:
+            if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
-                st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
+                    st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
                 st.rerun()
 
 # Helper functions for encryption/decryption
@@ -404,7 +408,6 @@ elif st.session_state.screen == "Reframe":
         original_width, original_height = size
     else:
         st.markdown('<div class="normal-text">Aucune image disponible pour recadrage.</div>', unsafe_allow_html=True)
-        # Ne pas retourner, laisser l'utilisateur revenir à l'accueil si besoin
 
     if 'original_image' in locals():  # Vérifier si une image a été chargée
         # Tourner l'image en paysage si elle est en portrait (already handled before encryption, but re-check)
@@ -428,7 +431,7 @@ elif st.session_state.screen == "Reframe":
         aspect_ratio = (4, 3)
 
         st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-        crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box", box=st.session_state.last_crop_box if 'last_crop_box' in st.session_state else None)
+        crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
         if st.button("Analyze", key="analyze"):
             if crop_box:
                 scale_x = original_width / new_width
@@ -451,6 +454,7 @@ elif st.session_state.screen == "Reframe":
                         st.session_state.screen_history.append("Result")
                         st.session_state.result = (result, prob, color)
                         st.session_state.last_crop_box = crop_box  # Sauvegarder le dernier cadrage
+                        st.session_state.last_image = st.session_state.encrypted_original  # Mettre à jour last_image
                         # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
                         st.rerun()
