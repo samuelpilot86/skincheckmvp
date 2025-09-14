@@ -19,6 +19,8 @@ back_arrow_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5v
 # Fonction pour afficher le bouton de retour
 def display_back_button():
     with st.container():
+        # Rendre le bouton dans une variable pour l'insérer dans le HTML
+        button_html = st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour")
         st.markdown(
             f"""
             <style>
@@ -45,7 +47,7 @@ def display_back_button():
             .back-button-background:hover {{
                 background-color: #222222; /* Gris plus foncé au survol */
             }}
-            .back-button {{
+            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"] {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
@@ -60,7 +62,7 @@ def display_back_button():
                 justify-content: center !important;
                 cursor: pointer;
             }}
-            .back-button:hover {{
+            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]:hover {{
                 background: transparent !important;
             }}
             </style>
@@ -68,7 +70,7 @@ def display_back_button():
                 <div class="back-button-background">
                     <img src="{back_arrow_svg}" alt="Back" style="width: 24px; height: 24px; filter: grayscale(100%) brightness(2);">
                 </div>
-                {st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", class_="back-button")}
+                {button_html}
             </div>
             """,
             unsafe_allow_html=True
@@ -88,7 +90,7 @@ def display_back_button():
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
             
         # Logique de navigation
-        if st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", class_="back-button"):
+        if button_html:
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
                 if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
