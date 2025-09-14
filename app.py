@@ -26,7 +26,6 @@ def display_back_button():
             }}
             </style>
             <div class="back-button-container">
-                {st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour")}
             </div>
             """,
             unsafe_allow_html=True
@@ -45,7 +44,8 @@ def display_back_button():
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
             
-        if st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
+        # Bouton de retour
+        if st.button("←", key=f"back_to_previous_{st.session_state.screen}"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
                 if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
