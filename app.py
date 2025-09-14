@@ -19,48 +19,15 @@ def display_back_button():
         st.markdown(
             f"""
             <style>
-            /* Style spécifique pour le bouton de retour basé sur la clé dynamique */
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"] {{
-                background-color: #333333 !important; /* Fond gris foncé */
-                border: none !important;
-                padding: 10px 20px !important; /* Padding cohérent avec les autres boutons */
-                cursor: pointer !important;
-                font-size: 18px !important; /* Taille cohérente avec les autres boutons */
-                color: #808080 !important; /* Gris pour le texte/flèche */
-                border-radius: 5px !important;
-                width: 100% !important; /* Remplir la colonne */
-                text-align: center !important;
-                box-sizing: border-box !important;
-            }}
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]:hover {{
-                background-color: #222222 !important; /* Gris plus foncé au survol */
-                color: #606060 !important; /* Texte plus foncé au survol */
-            }}
-            /* Assurer que les autres boutons restent bleus */
-            [data-testid="stBaseButton-secondary"]:not([data-key="back_to_previous_{st.session_state.screen}"]) {{
-                background-color: #4A90E2 !important;
-                color: #F5F5F5 !important;
-            }}
-            [data-testid="stBaseButton-secondary"]:not([data-key="back_to_previous_{st.session_state.screen}"]):hover {{
-                background-color: #3A7AC2 !important;
-            }}
-            /* Masquer le texte par défaut et utiliser une icône SVG */
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"] div[data-testid="stMarkdownContainer"] p {{
-                display: none !important;
-            }}
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]::before {{
-                content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQxIDE2LjU5TDEwLjgzIDEybDQuNTgtNC41OUwxNCA2bC02IDYgNiA2eiIgZmlsbD0iIzgwODA4MCIvPjwvc3ZnPg==');
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 24px;
-                height: 24px;
-            }}
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]:hover::before {{
-                content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQxIDE2LjU5TDEwLjgzIDEybDQuNTgtNC41OUwxNCA2lC02IDYgNiA2eiIgZmlsbD0iIzYwNjA2MCIvPjwvc3ZnPg==');
+            .back-button-container {{
+                position: relative;
+                margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
+                z-index: 1000;
             }}
             </style>
+            <div class="back-button-container">
+                {st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour")}
+            </div>
             """,
             unsafe_allow_html=True
         )
@@ -77,16 +44,13 @@ def display_back_button():
                 previous_screen = "Accueil"
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
-        
-        # Placer le bouton dans une colonne pour suivre le layout naturel
-        col1, col2 = st.columns([1, 10])
-        with col1:
-            if st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
-                if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
-                    st.session_state.screen = previous_screen
-                    if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
-                        st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
-                    st.rerun()
+            
+        if st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
+            if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
+                st.session_state.screen = previous_screen
+                if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
+                    st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
