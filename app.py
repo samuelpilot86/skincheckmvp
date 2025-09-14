@@ -136,7 +136,7 @@ reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
         <td>
-            <div class="normal-text">Move the frame to crop the picture so that the mole takes about half the space.</div>
+            <div class="normal-text"><b>Move the frame</b> to crop the picture so that the <b>mole takes about half the space</b>.</div>
         </td>
         <td style="padding-left: 10px">
             {reframed_mole_html}
@@ -485,12 +485,10 @@ elif st.session_state.screen == "Result":
         # Présenter les résultats dans une boîte stylisée
         if result == "probably benign mole":
             st.markdown(f'<div class="result-box benin">Result: {result}</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">This is probably a benign mole.</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">Yet, if it is Asymmetrical, has an irregular Border, several Colors, a Diameter >6mm and/or has Evolved recently (ABCDE criteria), show it to a dermatologist.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="normal-text">Yet, if it is <b>Asymmetrical</b>, has an <b>irregular Border</b>, <b>several Colors</b>, a <b>Diameter >6mm</b> and/or has <b>Evolved</b> recently (ABCDE criteria), <b>show it to a dermatologist</b>.</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="result-box warning">Result: {result}</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">This could be a melanoma, meaning a cluster of cancerous cells.</div>', unsafe_allow_html=True)
-            st.markdown('<div class="normal-text">Melanomas are highly treatable if detected early. Show it to a dermatologist in 2-4 weeks.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="normal-text">Melanomas (cancerous cells) are highly treatable if detected early. <b>Show it to a dermatologist</b> in 2-4 weeks.</div>', unsafe_allow_html=True)
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
