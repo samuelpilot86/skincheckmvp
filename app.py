@@ -113,9 +113,7 @@ title_html = f'''
 <div class="header-container">
     <table class="header-table">
         <tr>
-            <td class="logo-cell">{logo_html}</td>
-            <td class="title-cell"><div class="app-title"><span class="skin">Skin</span><span class="check">Check</span></div></td>
-            <td class="empty-cell"></td>
+            <td class="title-cell"><div class="app-title">{logo_html}<span class="skin">Skin</span><span class="check">Check</span></div></td>
         </tr>
     </table>
     <div class="subtitle">Should I show this mole to my dermatologist?</div>
