@@ -28,15 +28,16 @@ def display_back_button():
                 position: absolute;
                 top: 10px;
                 left: 10px;
-                background-color: transparent;
+                background-color: #333333 !important;
                 border: none;
                 padding: 8px;
                 cursor: pointer;
                 font-size: 24px; /* Taille de la flèche Unicode */
                 color: #808080; /* Gris pour distinguer des autres boutons bleus */
             }}
-            .back-button-container button[data-testid="stButton"]:hover {{
-                color: #606060; /* Gris plus foncé au survol */
+            .back-button-container button[data-testid="stButton"]:hover {{ /* Gris plus foncé au survol */
+                color: #606060;
+                background-color: #222222 !important;
             }}
             </style>
             """,
