@@ -169,6 +169,10 @@ if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
     if 'screen_history' not in st.session_state:
         st.session_state.screen_history = []
+    if 'last_image' not in st.session_state:
+        st.session_state.last_image = None
+    if 'last_crop_box' not in st.session_state:
+        st.session_state.last_crop_box = None
 
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
@@ -264,7 +268,7 @@ if st.session_state.screen == "Accueil":
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_accueil")
+        uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="hidden")
         if uploaded_file is not None:
             try:
                 image = Image.open(uploaded_file)
@@ -279,8 +283,10 @@ if st.session_state.screen == "Accueil":
                     # Encrypt the image before storing
                     encrypted_data, key, mode, size = encrypt_image(image)
                     st.session_state.encrypted_original = (encrypted_data, key, mode, size)
+                    st.session_state.last_image = (encrypted_data, key, mode, size)  # Sauvegarder la dernière image
                     st.session_state.screen = "Reframe"
                     st.session_state.screen_history.append("Reframe")
+                    st.session_state.last_crop_box = None  # Réinitialiser le cadrage
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
@@ -388,62 +394,69 @@ elif st.session_state.screen == "Examples":
 elif st.session_state.screen == "Reframe":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
-    if 'encrypted_original' in st.session_state:
+    if 'last_image' in st.session_state and st.session_state.last_image:
+        encrypted_data, key, mode, size = st.session_state.last_image
+        original_image = decrypt_image(encrypted_data, key, mode, size)
+        original_width, original_height = size
+    elif 'encrypted_original' in st.session_state:
         encrypted_data, key, mode, size = st.session_state.encrypted_original
         original_image = decrypt_image(encrypted_data, key, mode, size)
         original_width, original_height = size
-      
-        # Tourner l'image en paysage si elle est en portrait (already handled before encryption, but re-check)
-        if original_height > original_width:
-            original_image = original_image.rotate(90, expand=True)
-            original_width, original_height = original_image.size
-      
-        # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
-        if original_width > 390 or original_height > 320:
-            # Calculer le facteur de redimensionnement basé sur la contrainte la plus restrictive
-            width_ratio = 390 / original_width
-            height_ratio = 320 / original_height
-            resize_ratio = min(width_ratio, height_ratio)  # Prendre le plus petit ratio pour respecter les deux contraintes
-            new_width = int(original_width * resize_ratio)
-            new_height = int(original_height * resize_ratio)
-            image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        else:
-            image_resized = original_image
-            new_width, new_height = original_width, original_height
-      
-        # Forcer l'aspect ratio en paysage (4:3)
-        aspect_ratio = (4, 3)
-      
-        st.markdown(reframe_instructions_html, unsafe_allow_html=True)
-        crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box")
-        if st.button("Analyze", key="analyze"):
-            if crop_box:
-                scale_x = original_width / new_width
-                scale_y = original_height / new_height
-                left = round(crop_box['left'] * scale_x)
-                top = round(crop_box['top'] * scale_y)
-                width = round(crop_box['width'] * scale_x)
-                height = round(crop_box['height'] * scale_y)
-                if width < 224 or height < 224:
-                    st.markdown('<div class="normal-text">Erreur : Le cadre de recadrage doit faire au moins 224 pixels en largeur et en hauteur. Veuillez recadrer une zone plus grande.</div>', unsafe_allow_html=True)
-                else:
-                    cropped_image = original_image.crop((left, top, left + width, top + height))
-                    if isinstance(cropped_image, Image.Image):
-                        with st.spinner("Analysis in progress..."):
-                            result, prob, color = predict_user_image(cropped_image, model)
-                        # Encrypt cropped image for storage
-                        encrypted_cropped, cropped_key, cropped_mode, cropped_size = encrypt_image(cropped_image)
-                        st.session_state.encrypted_cropped = (encrypted_cropped, cropped_key, cropped_mode, cropped_size)
-                        st.session_state.screen = "Result"
-                        st.session_state.screen_history.append("Result")
-                        st.session_state.result = (result, prob, color)
-                        # Delete original after cropping
-                        st.session_state.pop('encrypted_original', None)
-                        st.rerun()
-                    else:
-                        st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="normal-text">Aucune image disponible pour recadrage.</div>', unsafe_allow_html=True)
+        return
+
+    # Tourner l'image en paysage si elle est en portrait (already handled before encryption, but re-check)
+    if original_height > original_width:
+        original_image = original_image.rotate(90, expand=True)
+        original_width, original_height = original_image.size
+
+    # Déterminer les nouvelles dimensions avec une hauteur maximale de 320px et une largeur maximale de 390px
+    if original_width > 390 or original_height > 320:
+        width_ratio = 390 / original_width
+        height_ratio = 320 / original_height
+        resize_ratio = min(width_ratio, height_ratio)
+        new_width = int(original_width * resize_ratio)
+        new_height = int(original_height * resize_ratio)
+        image_resized = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    else:
+        image_resized = original_image
+        new_width, new_height = original_width, original_height
+
+    # Forcer l'aspect ratio en paysage (4:3)
+    aspect_ratio = (4, 3)
+
+    st.markdown(reframe_instructions_html, unsafe_allow_html=True)
+    crop_box = st_cropper(image_resized, realtime_update=True, box_color='#4A90E2', aspect_ratio=aspect_ratio, return_type="box", box=st.session_state.last_crop_box if 'last_crop_box' in st.session_state else None)
+    if st.button("Analyze", key="analyze"):
+        if crop_box:
+            scale_x = original_width / new_width
+            scale_y = original_height / new_height
+            left = round(crop_box['left'] * scale_x)
+            top = round(crop_box['top'] * scale_y)
+            width = round(crop_box['width'] * scale_x)
+            height = round(crop_box['height'] * scale_y)
+            if width < 224 or height < 224:
+                st.markdown('<div class="normal-text">Erreur : Le cadre de recadrage doit faire au moins 224 pixels en largeur et en hauteur. Veuillez recadrer une zone plus grande.</div>', unsafe_allow_html=True)
             else:
-                st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
+                cropped_image = original_image.crop((left, top, left + width, top + height))
+                if isinstance(cropped_image, Image.Image):
+                    with st.spinner("Analysis in progress..."):
+                        result, prob, color = predict_user_image(cropped_image, model)
+                    # Encrypt cropped image for storage
+                    encrypted_cropped, cropped_key, cropped_mode, cropped_size = encrypt_image(cropped_image)
+                    st.session_state.encrypted_cropped = (encrypted_cropped, cropped_key, cropped_mode, cropped_size)
+                    st.session_state.screen = "Result"
+                    st.session_state.screen_history.append("Result")
+                    st.session_state.result = (result, prob, color)
+                    st.session_state.last_crop_box = crop_box  # Sauvegarder le dernier cadrage
+                    # Delete original after cropping
+                    st.session_state.pop('encrypted_original', None)
+                    st.rerun()
+                else:
+                    st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Result":
     display_back_button()
@@ -566,7 +579,7 @@ elif st.session_state.screen == "Result":
         # Conteneur pour les boutons
         with st.container():
             st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], key="file_uploader_result")
+            uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_result", label_visibility="hidden")
             if uploaded_file is not None:
                 try:
                     image = Image.open(uploaded_file)
@@ -581,8 +594,10 @@ elif st.session_state.screen == "Result":
                         # Encrypt before storing
                         encrypted_data, key, mode, size = encrypt_image(image)
                         st.session_state.encrypted_original = (encrypted_data, key, mode, size)
+                        st.session_state.last_image = (encrypted_data, key, mode, size)  # Sauvegarder la dernière image
                         st.session_state.screen = "Reframe"
                         st.session_state.screen_history.append("Reframe")
+                        st.session_state.last_crop_box = None  # Réinitialiser le cadrage
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
