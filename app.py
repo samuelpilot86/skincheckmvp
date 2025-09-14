@@ -160,7 +160,7 @@ else:
 warning_html = f'''
 <table class="instructions-table">
     <tr>
-        <td><span class="warning">{warning_img_html}<div class="warning-header">Non-medical prototype</div></span></td>
+        <td><div class="warning-header">{warning_img_html} Non-medical prototype</div></span></td>
     </tr>
     <tr>
         <td><div class="warning-text">This prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
