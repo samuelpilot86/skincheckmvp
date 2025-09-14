@@ -149,7 +149,7 @@ reframe_instructions_html = f'''
 warning_html = f'''
 <table class="instructions-table">
     <tr>
-        <td><span class="warning"><img src="images/warning.svg"></img><div class="warning-title">Non-medical prototype</div></span></td>
+        <td><span class="warning-header"><img src="images/warning.svg"></img><div class="warning-title">Non-medical prototype</div></span></td>
     </tr>
     <tr>
         <td><div class="warning-text">This prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
