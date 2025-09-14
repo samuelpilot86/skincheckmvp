@@ -315,7 +315,7 @@ if st.session_state.screen == "Accueil":
 elif st.session_state.screen == "Examples":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text"><b>Click</b> one of these 6 photos <b>to analyze</b> it.</div>', unsafe_allow_html=True)
     base_dir = os.path.join(os.getcwd(), "examples")
     # Définir les listes d'images
     benign_images = [os.path.join(base_dir, "benignmole1.jpg"), os.path.join(base_dir, "benignmole2.jpg"), os.path.join(base_dir, "benignmole3.jpg")]
