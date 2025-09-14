@@ -146,10 +146,21 @@ reframe_instructions_html = f'''
 '''
 
 # Création de l'avertissement "prototype non validée médicalement"
+warning_path = os.path.join("images", "warning.svg")
+if os.path.exists(warning_path):
+    try:
+        warning_data = base64.b64encode(open(warning_path, "rb").read()).decode()
+        warning_img_html = f'<img src="data:image/svg+xml;base64,{warning_data}" style="width: 40px; height: auto; vertical-align: middle;">'
+    except Exception as e:
+        st.markdown(f'<div class="normal-text">Erreur lors du chargement de l\'image d\'avertissement : {e}</div>', unsafe_allow_html=True)
+        warning_img_html = ""
+else:
+    warning_img_html = ""
+
 warning_html = f'''
 <table class="instructions-table">
     <tr>
-        <td><span class="warning-header"><img src="images/warning.svg"></img><div class="warning-title">Non-medical prototype</div></span></td>
+        <td><span class="warning">{warning_img_html}<div class="warning-title">Non-medical prototype</div></span></td>
     </tr>
     <tr>
         <td><div class="warning-text">This prototype has not been validated by any medical authority. If you have any doubts, consult your dermatologist.</div></td>
