@@ -33,10 +33,10 @@ def display_back_button():
                 padding: 8px;
                 cursor: pointer;
                 font-size: 24px; /* Taille de la flèche Unicode */
-                color: #4A90E2; /* Couleur principale */
+                color: #808080; /* Gris pour distinguer des autres boutons bleus */
             }}
             .back-button-container button[data-testid="stButton"]:hover {{
-                color: #3A7AC2; /* Couleur au survol */
+                color: #606060; /* Gris plus foncé au survol */
             }}
             </style>
             """,
@@ -50,9 +50,6 @@ def display_back_button():
         
         if len(st.session_state.screen_history) > 1:
             previous_screen = st.session_state.screen_history[-2]  # Deuxième élément depuis la fin
-            # Forcer le retour à "Accueil" depuis "Examples" si l'historique le permet
-            if st.session_state.screen == "Examples":
-                previous_screen = "Accueil"
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
             
