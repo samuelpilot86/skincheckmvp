@@ -45,11 +45,30 @@ def display_back_button():
             .back-button-background:hover {{
                 background-color: #222222; /* Gris plus foncé au survol */
             }}
+            .back-button {{
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 1002;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                width: 40px !important;
+                height: 40px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer;
+            }}
+            .back-button:hover {{
+                background: transparent !important;
+            }}
             </style>
             <div class="back-button-container">
                 <div class="back-button-background">
-                    <img src="{back_arrow_svg}" alt="Back" style="width: 24px; height: 24px;">
+                    <img src="{back_arrow_svg}" alt="Back" style="width: 24px; height: 24px; filter: grayscale(100%) brightness(2);">
                 </div>
+                {st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", class_="back-button")}
             </div>
             """,
             unsafe_allow_html=True
@@ -67,16 +86,14 @@ def display_back_button():
                 previous_screen = "Accueil"
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
-        
-        # Bouton invisible pour gérer la navigation
-        col1, col2 = st.columns([1, 10])
-        with col1:
-            if st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", visible=False):
-                if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
-                    st.session_state.screen = previous_screen
-                    if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
-                        st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
-                    st.rerun()
+            
+        # Logique de navigation
+        if st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", class_="back-button"):
+            if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
+                st.session_state.screen = previous_screen
+                if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
+                    st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
