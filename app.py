@@ -490,7 +490,6 @@ elif st.session_state.screen == "Result":
             st.markdown(f'<div class="result-box warning">Result: {result}</div>', unsafe_allow_html=True)
             st.markdown('<div class="normal-text">Melanomas (cancerous cells) are highly treatable if detected early. <b>Show it to a dermatologist</b> in 2-4 weeks.</div>', unsafe_allow_html=True)
         st.markdown(warning_html, unsafe_allow_html=True)
-        st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
