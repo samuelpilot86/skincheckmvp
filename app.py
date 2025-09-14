@@ -35,7 +35,7 @@ def display_back_button():
             st.session_state.screen_history = []
         if st.session_state.screen not in st.session_state.screen_history:
             st.session_state.screen_history.append(st.session_state.screen)
-       
+      
         if len(st.session_state.screen_history) > 1:
             previous_screen = st.session_state.screen_history[-2] # Deuxième élément depuis la fin
             # Forcer le retour à "Accueil" depuis "Examples"
@@ -43,7 +43,7 @@ def display_back_button():
                 previous_screen = "Accueil"
         else:
             previous_screen = "Accueil" # Par défaut, revenir à Accueil si aucun écran précédent
-           
+          
         # Bouton de retour
         if st.button("←", key=f"back_to_previous_{st.session_state.screen}"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
@@ -258,6 +258,13 @@ if st.session_state.screen == "Accueil":
     .header-container {
         margin-top: 10px !important; /* Réduit de 20px à 10px */
     }
+    /* Ajuster le tableau d'en-tête pour rapprocher le logo du titre */
+    .header-table {
+        margin-top: 20px !important; /* Réduit de 40px pour un positionnement plus compact */
+    }
+    .logo-cell {
+        padding-right: 2px !important; /* Réduit l'espace entre le logo et le titre */
+    }
     </style>
     """, unsafe_allow_html=True)
     # Conteneur pour les boutons
@@ -285,7 +292,7 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-   
+  
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
@@ -295,6 +302,7 @@ if st.session_state.screen == "Accueil":
     st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Examples":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -383,6 +391,7 @@ elif st.session_state.screen == "Examples":
                             st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Reframe":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -445,6 +454,7 @@ elif st.session_state.screen == "Reframe":
                         st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
+
 elif st.session_state.screen == "Result":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -475,7 +485,6 @@ elif st.session_state.screen == "Result":
         st.markdown(warning_html, unsafe_allow_html=True)
         st.markdown('<div class="normal-text">New analysis:</div>', unsafe_allow_html=True)
         st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
- 
         # Solution CSS pour styliser les boutons et aligner verticalement
         st.markdown("""
         <style>
@@ -560,9 +569,15 @@ elif st.session_state.screen == "Result":
         .header-container {
             margin-top: 10px !important; /* Réduit de 20px à 10px */
         }
+        /* Ajuster le tableau d'en-tête pour rapprocher le logo du titre */
+        .header-table {
+            margin-top: 20px !important; /* Réduit de 40px pour un positionnement plus compact */
+        }
+        .logo-cell {
+            padding-right: 2px !important; /* Réduit l'espace entre le logo et le titre */
+        }
         </style>
     """, unsafe_allow_html=True)
- 
     # Conteneur pour les boutons
     with st.container():
         st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
@@ -588,15 +603,14 @@ elif st.session_state.screen == "Result":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-     
+    
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
- 
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-  
+ 
     # Delete encrypted data after display and results (for compliance)
     st.session_state.pop('encrypted_cropped', None)
     st.session_state.pop('encrypted_original', None)
