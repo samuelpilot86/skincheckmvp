@@ -264,9 +264,18 @@ if st.session_state.screen == "Accueil":
     }}
     </style>
     <script>
-    window.addEventListener('load', function() {{
+    // Détecter les changements d'état et scroller en haut
+    window.addEventListener('load', function() {
         window.scrollTo(0, 0);
-    }});
+    });
+    // Ajouter un événement pour détecter les reruns
+    let lastScreen = '';
+    setInterval(() => {
+        if (lastScreen !== window.location.hash) {
+            window.scrollTo(0, 0);
+            lastScreen = window.location.hash;
+        }
+    }, 100);
     </script>
     """, unsafe_allow_html=True)
     # Conteneur pour les boutons
@@ -394,10 +403,22 @@ elif st.session_state.screen == "Examples":
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
     st.markdown(
         """
+        <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+        </style>
         <script>
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
         });
+        let lastScreen = '';
+        setInterval(() => {
+            if (lastScreen !== window.location.hash) {
+                window.scrollTo(0, 0);
+                lastScreen = window.location.hash;
+            }
+        }, 100);
         </script>
         """,
         unsafe_allow_html=True
@@ -466,10 +487,22 @@ elif st.session_state.screen == "Reframe":
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
     st.markdown(
         """
+        <style>
+        html, body {
+            scroll-behavior: smooth;
+        }
+        </style>
         <script>
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
         });
+        let lastScreen = '';
+        setInterval(() => {
+            if (lastScreen !== window.location.hash) {
+                window.scrollTo(0, 0);
+                lastScreen = window.location.hash;
+            }
+        }, 100);
         </script>
         """,
         unsafe_allow_html=True
@@ -590,14 +623,27 @@ elif st.session_state.screen == "Result":
             margin-top: 10px !important; /* Réduit de 20px à 10px */
         }
         /* Script pour scroller en haut à chaque changement d'écran */
-        html, body {{
+        html, body {
             scroll-behavior: smooth;
-        }}
+        }
         </style>
         <script>
-        window.addEventListener('load', function() {{
+        // Détecter les changements d'état et scroller en haut
+        window.addEventListener('load', function() {
             window.scrollTo(0, 0);
-        }});
+        });
+        // Ajouter un événement pour détecter les reruns spécifiques
+        let lastScreen = '';
+        const checkScreenChange = () => {
+            const currentScreen = window.location.hash || st.session_state.screen;
+            if (lastScreen !== currentScreen) {
+                window.scrollTo(0, 0);
+                lastScreen = currentScreen;
+            }
+        };
+        setInterval(checkScreenChange, 100);
+        // Forcer le scroll après un délai pour s'assurer que le DOM est prêt
+        setTimeout(checkScreenChange, 500);
         </script>
         """, unsafe_allow_html=True)
  
