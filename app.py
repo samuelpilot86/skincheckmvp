@@ -170,7 +170,7 @@ if st.session_state.screen == "Accueil":
     st.session_state.screen_history = ["Accueil"]
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range*.</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:5px;"></div>', unsafe_allow_html=True) # Espacement réduit pour positionner plus haut
     # Solution CSS pour styliser les boutons et aligner verticalement
     st.markdown("""
@@ -298,8 +298,7 @@ if st.session_state.screen == "Accueil":
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-    st.markdown('<div class="bottom-note">*For French users: a mole is a “grain de beauté”.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="bottom-note">*This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Examples":
     display_back_button()
