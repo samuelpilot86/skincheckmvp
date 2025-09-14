@@ -5,7 +5,7 @@ import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
-os.environ["TF_FORCE_CPU_ONLY"] = "1" 
+os.environ["TF_FORCE_CPU_ONLY"] = "1"  
 import tensorflow as tf
 import streamlit as st
 from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, preprocess_image, predict_user_image
