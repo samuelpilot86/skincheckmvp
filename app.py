@@ -50,7 +50,7 @@ def display_back_button():
         
         if len(st.session_state.screen_history) > 1:
             previous_screen = st.session_state.screen_history[-2]  # Deuxième élément depuis la fin
-            # Forcer le retour à "Accueil" depuis "Examples"
+            # Forcer le retour à "Accueil" depuis "Examples" si l'historique le permet
             if st.session_state.screen == "Examples":
                 previous_screen = "Accueil"
         else:
@@ -179,6 +179,8 @@ if 'screen' not in st.session_state:
         st.session_state.last_crop_box = None
 
 if st.session_state.screen == "Accueil":
+    # Réinitialiser l'historique à "Accueil" pour nettoyer les résidus
+    st.session_state.screen_history = ["Accueil"]
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Submit a photograph of a concerning mole* for AI to assess the need for a dermatologist consultation.</div>', unsafe_allow_html=True)
     st.markdown('<div class="normal-text">The image must be sharply focused and captured at close range**.</div>', unsafe_allow_html=True)
@@ -454,7 +456,6 @@ elif st.session_state.screen == "Reframe":
                         st.session_state.screen_history.append("Result")
                         st.session_state.result = (result, prob, color)
                         st.session_state.last_crop_box = crop_box  # Sauvegarder le dernier cadrage
-                        st.session_state.last_image = st.session_state.encrypted_original  # Mettre à jour last_image
                         # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
                         st.rerun()
