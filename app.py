@@ -19,12 +19,8 @@ def display_back_button():
         st.markdown(
             f"""
             <style>
-            /* Style global pour tous les boutons Streamlit */
-            [data-testid="stButton"] {{
-                transition: all 0.3s ease; /* Ajout d'une transition fluide */
-            }}
-            /* Style spécifique pour le bouton de retour avec un help="Retour" */
-            [data-testid="stButton"][title="Retour"] {{
+            /* Style spécifique pour le bouton de retour basé sur la clé dynamique */
+            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"] {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
@@ -44,16 +40,16 @@ def display_back_button():
                 box-sizing: border-box;
             }}
             /* Style au survol pour le bouton de retour */
-            [data-testid="stButton"][title="Retour"]:hover {{
+            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]:hover {{
                 background-color: #222222 !important; /* Gris plus foncé au survol */
                 color: #606060; /* Texte plus foncé au survol */
             }}
             /* Assurer que les autres boutons restent bleus */
-            [data-testid="stButton"]:not([title="Retour"]) {{
+            [data-testid="stBaseButton-secondary"]:not([data-key="back_to_previous_{st.session_state.screen}"]) {{
                 background-color: #4A90E2 !important;
                 color: #F5F5F5 !important;
             }}
-            [data-testid="stButton"]:not([title="Retour"]):hover {{
+            [data-testid="stBaseButton-secondary"]:not([data-key="back_to_previous_{st.session_state.screen}"]):hover {{
                 background-color: #3A7AC2 !important;
             }}
             </style>
