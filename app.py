@@ -19,61 +19,26 @@ def display_back_button():
         st.markdown(
             f"""
             <style>
-            /* Style spécifique pour le bouton de retour basé sur la clé dynamique */
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"] {{
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                background-color: #333333 !important; /* Fond gris foncé */
-                border: none;
-                padding: 8px;
-                cursor: pointer;
-                font-size: 24px; /* Taille de la flèche Unicode */
-                color: #808080; /* Gris pour le texte */
-                border-radius: 5px; /* Coins arrondis */
-                width: 40px; /* Largeur fixe */
-                height: 40px; /* Hauteur fixe */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                box-sizing: border-box;
-            }}
-            /* Style au survol pour le bouton de retour */
-            [data-testid="stBaseButton-secondary"][data-key="back_to_previous_{st.session_state.screen}"]:hover {{
-                background-color: #222222 !important; /* Gris plus foncé au survol */
-                color: #606060; /* Texte plus foncé au survol */
-# Fonction pour afficher le bouton de retour
-def display_back_button():
-    with st.container():
-        st.markdown(
-            f"""
-            <style>
             .back-button-container {{
                 position: relative;
                 margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
                 z-index: 1000;
-                width: 40px; /* Largeur fixe pour le conteneur */
-                height: 40px; /* Hauteur fixe pour le conteneur */
             }}
-            .back-button-background {{
+            .back-button-container button[data-testid="stButton"] {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
-                width: 40px;
-                height: 40px;
-                background-color: #333333; /* Fond gris foncé */
-                border-radius: 5px;
-                z-index: 1001;
+                background-color: transparent;
+                border: none;
+                padding: 8px;
+                cursor: pointer;
+                font-size: 24px; /* Taille de la flèche Unicode */
+                color: #808080; /* Gris pour distinguer des autres boutons bleus */
             }}
-            .back-button-background:hover {{
-                background-color: #222222; /* Gris plus foncé au survol */
+            .back-button-container button[data-testid="stButton"]:hover {{
+                color: #606060; /* Gris plus foncé au survol */
             }}
             </style>
-            <div class="back-button-container">
-                <div class="back-button-background"></div>
-                {st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour")}
-            </div>
             """,
             unsafe_allow_html=True
         )
@@ -91,19 +56,12 @@ def display_back_button():
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
             
-        # Ajouter la logique de navigation après le rendu du bouton
-        if 'back_to_previous_clicked' in st.session_state and st.session_state.back_to_previous_clicked:
+        if st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
                 if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
                     st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
-                st.session_state.back_to_previous_clicked = False
                 st.rerun()
-
-        # Déclencher la navigation via un état session
-        if st.button("←", key=f"back_to_previous_trigger_{st.session_state.screen}", help="Retour", visible=False):
-            st.session_state.back_to_previous_clicked = True
-            st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
