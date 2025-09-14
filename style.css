@@ -161,10 +161,10 @@
 
 .warning-header {
     font-family: 'Roboto', sans-serif;
-    font-weight: 400;
+    font-weight: bold;
     font-size: 16px;
     background-color: #F8E1C1; /* Orange subtil transparent 75 pourcent */
-    color: #FFA500; /* Orange subtil */
+    color: #333333; /* Texte normal */
     margin-top: 5px;
     margin-bottom: 0px;
     vertical-align: middle !important;
