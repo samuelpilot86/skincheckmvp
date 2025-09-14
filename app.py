@@ -136,7 +136,7 @@ reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
         <td>
-            <div class="normal-text"><b>Move the frame</b> to crop the picture so that the <b>mole takes about half the space</b>.</div>
+            <div class="normal-text"><b>Move the frame</b> to crop the picture so that the <b>mole takes</b> about <b>half the space</b>.</div>
         </td>
         <td style="padding-left: 10px">
             {reframed_mole_html}
