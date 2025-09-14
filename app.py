@@ -13,6 +13,9 @@ from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
 
+# Icône SVG pour le bouton de retour (encodée en base64)
+back_arrow_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQxIDE2LjU5TDEwLjgzIDEybDQuNTgtNC41OUwxNCA2bC02IDYgNiA2eiIvPjwvc3ZnPg=='
+
 # Fonction pour afficher le bouton de retour
 def display_back_button():
     with st.container():
@@ -23,22 +26,31 @@ def display_back_button():
                 position: relative;
                 margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
                 z-index: 1000;
+                width: 40px; /* Largeur fixe pour le conteneur */
+                height: 40px; /* Hauteur fixe pour le conteneur */
             }}
-            .back-button-container button[data-testid="stButton"] {{
+            .back-button-background {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
-                background-color: transparent;
-                border: none;
-                padding: 8px;
-                cursor: pointer;
-                font-size: 24px; /* Taille de la flèche Unicode */
-                color: #808080; /* Gris pour distinguer des autres boutons bleus */
+                width: 40px;
+                height: 40px;
+                background-color: #333333; /* Fond gris foncé */
+                border-radius: 5px;
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }}
-            .back-button-container button[data-testid="stButton"]:hover {{
-                color: #606060; /* Gris plus foncé au survol */
+            .back-button-background:hover {{
+                background-color: #222222; /* Gris plus foncé au survol */
             }}
             </style>
+            <div class="back-button-container">
+                <div class="back-button-background">
+                    <img src="{back_arrow_svg}" alt="Back" style="width: 24px; height: 24px;">
+                </div>
+            </div>
             """,
             unsafe_allow_html=True
         )
@@ -55,13 +67,16 @@ def display_back_button():
                 previous_screen = "Accueil"
         else:
             previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
-            
-        if st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
-            if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
-                st.session_state.screen = previous_screen
-                if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
-                    st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
-                st.rerun()
+        
+        # Bouton invisible pour gérer la navigation
+        col1, col2 = st.columns([1, 10])
+        with col1:
+            if st.button("", key=f"back_to_previous_{st.session_state.screen}", help="Retour", visible=False):
+                if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
+                    st.session_state.screen = previous_screen
+                    if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
+                        st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                    st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
