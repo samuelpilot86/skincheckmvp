@@ -166,7 +166,7 @@
     background-color: #F8E1C1; /* Orange subtil transparent 75 pourcent */
     color: #FFA500; /* Orange subtil */
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     vertical-align: middle !important;
     text-align: left !important;
     text-justify: inter-word !important;
@@ -178,7 +178,7 @@
     font-size: 14px;
     background-color: #F8E1C1;
     color: #FFA500;
-    margin-top: 5px;
+    margin-top: 0px;
     margin-bottom: 5px;
     text-align: justify !important;
     text-justify: inter-word !important;
