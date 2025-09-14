@@ -44,13 +44,15 @@ def display_back_button():
         else:
             previous_screen = "Accueil" # Par défaut, revenir à Accueil si aucun écran précédent
            
-        # Bouton de retour
+        # Bouton de retour avec redirection
         if st.button("←", key=f"back_to_previous_{st.session_state.screen}"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
                 st.session_state.screen = previous_screen
                 if st.session_state.screen != "Accueil": # Ne pas pop si on revient à Accueil
                     st.session_state.screen_history.pop() # Supprimer l'écran actuel de l'historique
-                st.rerun()
+                # Rediriger avec un hash pour forcer un rechargement en haut
+                st.experimental_set_query_params(screen=previous_screen)
+                st.experimental_rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
@@ -96,6 +98,13 @@ st.set_page_config(page_title="SkinCheck", layout="centered")
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Déterminer l'écran à partir des query params
+query_params = st.experimental_get_query_params()
+if 'screen' in query_params:
+    st.session_state.screen = query_params['screen'][0]
+else:
+    st.session_state.screen = "Accueil"
 
 # Création du logo et titre dans une variable HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
@@ -158,14 +167,14 @@ warning_html = f'''
 '''
 
 # Navigation et mode
-if 'screen' not in st.session_state:
-    st.session_state.screen = "Accueil"
-    if 'screen_history' not in st.session_state:
-        st.session_state.screen_history = []
-    if 'last_image' not in st.session_state:
-        st.session_state.last_image = None
-    if 'last_crop_box' not in st.session_state:
-        st.session_state.last_crop_box = None
+if 'screen_history' not in st.session_state:
+    st.session_state.screen_history = []
+if st.session_state.screen not in st.session_state.screen_history:
+    st.session_state.screen_history.append(st.session_state.screen)
+if 'last_image' not in st.session_state:
+    st.session_state.last_image = None
+if 'last_crop_box' not in st.session_state:
+    st.session_state.last_crop_box = None
 
 if st.session_state.screen == "Accueil":
     # Réinitialiser l'historique à "Accueil" pour nettoyer les résidus
@@ -258,25 +267,7 @@ if st.session_state.screen == "Accueil":
     .header-container {
         margin-top: 10px !important; /* Réduit de 20px à 10px */
     }
-    /* Script pour scroller en haut à chaque changement d'écran */
-    html, body {{
-        scroll-behavior: smooth;
-    }}
     </style>
-    <script>
-    // Détecter les changements d'état et scroller en haut
-    window.addEventListener('load', function() {
-        window.scrollTo(0, 0);
-    });
-    // Ajouter un événement pour détecter les reruns
-    let lastScreen = '';
-    setInterval(() => {
-        if (lastScreen !== window.location.hash) {
-            window.scrollTo(0, 0);
-            lastScreen = window.location.hash;
-        }
-    }, 100);
-    </script>
     """, unsafe_allow_html=True)
     # Conteneur pour les boutons
     with st.container():
@@ -300,14 +291,16 @@ if st.session_state.screen == "Accueil":
                     st.session_state.screen = "Reframe"
                     st.session_state.screen_history.append("Reframe")
                     st.session_state.last_crop_box = None # Réinitialiser le cadrage
-                    st.rerun()
+                    st.experimental_set_query_params(screen="Reframe")
+                    st.experimental_rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
    
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
-            st.rerun()
+            st.experimental_set_query_params(screen="Examples")
+            st.experimental_rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
@@ -368,7 +361,8 @@ elif st.session_state.screen == "Examples":
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image # Pas de recadrage pour les démos
-                            st.rerun()
+                            st.experimental_set_query_params(screen="Result")
+                            st.experimental_rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
             with col2:
@@ -398,31 +392,10 @@ elif st.session_state.screen == "Examples":
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image # Pas de recadrage pour les démos
-                            st.rerun()
+                            st.experimental_set_query_params(screen="Result")
+                            st.experimental_rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <style>
-        html, body {
-            scroll-behavior: smooth;
-        }
-        </style>
-        <script>
-        window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
-        });
-        let lastScreen = '';
-        setInterval(() => {
-            if (lastScreen !== window.location.hash) {
-                window.scrollTo(0, 0);
-                lastScreen = window.location.hash;
-            }
-        }, 100);
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
 elif st.session_state.screen == "Reframe":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -480,33 +453,12 @@ elif st.session_state.screen == "Reframe":
                         st.session_state.last_crop_box = crop_box # Sauvegarder le dernier cadrage
                         # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
-                        st.rerun()
+                        st.experimental_set_query_params(screen="Result")
+                        st.experimental_rerun()
                     else:
                         st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <style>
-        html, body {
-            scroll-behavior: smooth;
-        }
-        </style>
-        <script>
-        window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
-        });
-        let lastScreen = '';
-        setInterval(() => {
-            if (lastScreen !== window.location.hash) {
-                window.scrollTo(0, 0);
-                lastScreen = window.location.hash;
-            }
-        }, 100);
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
 elif st.session_state.screen == "Result":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -622,68 +574,48 @@ elif st.session_state.screen == "Result":
         .header-container {
             margin-top: 10px !important; /* Réduit de 20px à 10px */
         }
-        /* Script pour scroller en haut à chaque changement d'écran */
-        html, body {
-            scroll-behavior: smooth;
-        }
         </style>
-        <script>
-        // Détecter les changements d'état et scroller en haut
-        window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
-        });
-        // Ajouter un événement pour détecter les reruns spécifiques
-        let lastScreen = '';
-        const checkScreenChange = () => {
-            const currentScreen = window.location.hash || st.session_state.screen;
-            if (lastScreen !== currentScreen) {
-                window.scrollTo(0, 0);
-                lastScreen = currentScreen;
-            }
-        };
-        setInterval(checkScreenChange, 100);
-        // Forcer le scroll après un délai pour s'assurer que le DOM est prêt
-        setTimeout(checkScreenChange, 500);
-        </script>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
  
-        # Conteneur pour les boutons
-        with st.container():
-            st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
-            uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_result", label_visibility="hidden")
-            if uploaded_file is not None:
-                try:
-                    image = Image.open(uploaded_file)
-                    if not isinstance(image, Image.Image):
-                        st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
-                    else:
-                        # Tourner l'image en paysage si elle est en portrait
-                        width, height = image.size
-                        if height > width:
-                            image = image.rotate(90, expand=True)
-                        image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
-                        # Encrypt before storing
-                        encrypted_data, key, mode, size = encrypt_image(image)
-                        st.session_state.encrypted_original = (encrypted_data, key, mode, size)
-                        st.session_state.last_image = (encrypted_data, key, mode, size) # Sauvegarder la dernière image
-                        st.session_state.screen = "Reframe"
-                        st.session_state.screen_history.append("Reframe")
-                        st.session_state.last_crop_box = None # Réinitialiser le cadrage
-                        st.rerun()
-                except Exception as e:
-                    st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
+    # Conteneur pour les boutons
+    with st.container():
+        st.markdown('<div class="button-container-result">', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_result", label_visibility="hidden")
+        if uploaded_file is not None:
+            try:
+                image = Image.open(uploaded_file)
+                if not isinstance(image, Image.Image):
+                    st.markdown('<div class="normal-text">Erreur : L\'image téléchargée est invalide.</div>', unsafe_allow_html=True)
+                else:
+                    # Tourner l'image en paysage si elle est en portrait
+                    width, height = image.size
+                    if height > width:
+                        image = image.rotate(90, expand=True)
+                    image = ImageOps.exif_transpose(image) # Ajuster l'orientation EXIF
+                    # Encrypt before storing
+                    encrypted_data, key, mode, size = encrypt_image(image)
+                    st.session_state.encrypted_original = (encrypted_data, key, mode, size)
+                    st.session_state.last_image = (encrypted_data, key, mode, size) # Sauvegarder la dernière image
+                    st.session_state.screen = "Reframe"
+                    st.session_state.screen_history.append("Reframe")
+                    st.session_state.last_crop_box = None # Réinitialiser le cadrage
+                    st.experimental_set_query_params(screen="Reframe")
+                    st.experimental_rerun()
+            except Exception as e:
+                st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
      
-            if st.button("Select demo example", key="demo"):
-                st.session_state.screen = "Examples"
-                st.session_state.screen_history.append("Examples")
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("Select demo example", key="demo"):
+            st.session_state.screen = "Examples"
+            st.session_state.screen_history.append("Examples")
+            st.experimental_set_query_params(screen="Examples")
+            st.experimental_rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
  
-        st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-      
-        # Delete encrypted data after display and results (for compliance)
-        st.session_state.pop('encrypted_cropped', None)
-        st.session_state.pop('encrypted_original', None)
-        st.session_state.pop('cropped_image', None) # For demos
-    else:
-        st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+  
+    # Delete encrypted data after display and results (for compliance)
+    st.session_state.pop('encrypted_cropped', None)
+    st.session_state.pop('encrypted_original', None)
+    st.session_state.pop('cropped_image', None) # For demos
+else:
+    st.markdown('<div class="normal-text">Erreur : Aucune image ou résultat disponible pour l\'affichage.</div>', unsafe_allow_html=True)
