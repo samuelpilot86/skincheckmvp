@@ -19,59 +19,67 @@ def display_back_button():
         st.markdown(
             f"""
             <style>
-            .back-button-container {{
-                position: relative;
-                margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
-                z-index: 1000;
+            /* Style global pour tous les boutons Streamlit */
+            [data-testid="stButton"] {{
+                transition: all 0.3s ease; /* Ajout d'une transition fluide */
             }}
-            .custom-back-button {{
+            /* Style spécifique pour le bouton de retour avec un help="Retour" */
+            [data-testid="stButton"][title="Retour"] {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
                 background-color: #333333 !important; /* Fond gris foncé */
                 border: none;
-                padding: 8px 12px; /* Ajuster padding pour un look bouton */
+                padding: 8px;
                 cursor: pointer;
                 font-size: 24px; /* Taille de la flèche Unicode */
                 color: #808080; /* Gris pour le texte */
                 border-radius: 5px; /* Coins arrondis */
-                display: inline-flex;
+                width: 40px; /* Largeur fixe */
+                height: 40px; /* Hauteur fixe */
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 40px; /* Largeur fixe pour un look cohérent */
-                height: 40px; /* Hauteur fixe */
+                z-index: 1000;
                 box-sizing: border-box;
             }}
-            .custom-back-button:hover {{
+            /* Style au survol pour le bouton de retour */
+            [data-testid="stButton"][title="Retour"]:hover {{
                 background-color: #222222 !important; /* Gris plus foncé au survol */
                 color: #606060; /* Texte plus foncé au survol */
             }}
+            /* Assurer que les autres boutons restent bleus */
+            [data-testid="stButton"]:not([title="Retour"]) {{
+                background-color: #4A90E2 !important;
+                color: #F5F5F5 !important;
+            }}
+            [data-testid="stButton"]:not([title="Retour"]):hover {{
+                background-color: #3A7AC2 !important;
+            }}
             </style>
-            <div class="back-button-container">
-                <button class="custom-back-button" onclick="window.location.href='#'" id="back-button-{st.session_state.screen}">
-                    ←
-                </button>
-            </div>
-            <script>
-            document.getElementById('back-button-{st.session_state.screen}').addEventListener('click', function() {{
-                // Déterminer l'écran précédent
-                const screenHistory = {str(st.session_state.screen_history)};
-                let previous_screen = "Accueil";
-                if (screenHistory.length > 1) {{
-                    previous_screen = screenHistory[screenHistory.length - 2];
-                    if ("{st.session_state.screen}" === "Examples") {{
-                        previous_screen = "Accueil";
-                    }}
-                }}
-                if (previous_screen === "Accueil" || screenHistory.includes(previous_screen)) {{
-                    window.parent.Streamlit.setComponentValue({{ screen: previous_screen }});
-                    window.parent.Streamlit.rerun();
-                }}
-            }});
-            </script>
             """,
             unsafe_allow_html=True
         )
+        # Déterminer l'écran précédent
+        if 'screen_history' not in st.session_state:
+            st.session_state.screen_history = []
+        if st.session_state.screen not in st.session_state.screen_history:
+            st.session_state.screen_history.append(st.session_state.screen)
+        
+        if len(st.session_state.screen_history) > 1:
+            previous_screen = st.session_state.screen_history[-2]  # Deuxième élément depuis la fin
+            # Forcer le retour à "Accueil" depuis "Examples"
+            if st.session_state.screen == "Examples":
+                previous_screen = "Accueil"
+        else:
+            previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
+            
+        if st.button("←", key=f"back_to_previous_{st.session_state.screen}", help="Retour"):
+            if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
+                st.session_state.screen = previous_screen
+                if st.session_state.screen != "Accueil":  # Ne pas pop si on revient à Accueil
+                    st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
