@@ -17,14 +17,14 @@ from cryptography.fernet import Fernet
 def display_back_button(target_screen):
     with st.container():
         st.markdown(
-            """
+            f"""
             <style>
-            .back-button-container {
+            .back-button-container {{
                 position: relative;
                 margin-bottom: -40px; /* Ajuster pour superposer le bouton au-dessus du contenu */
                 z-index: 1000;
-            }
-            .back-button {
+            }}
+            .back-button-container button[data-testid="stButton"] {{
                 position: absolute;
                 top: 10px;
                 left: 10px;
@@ -34,15 +34,15 @@ def display_back_button(target_screen):
                 cursor: pointer;
                 font-size: 24px; /* Taille de la flèche Unicode */
                 color: #4A90E2; /* Couleur principale */
-            }
-            .back-button:hover {
+            }}
+            .back-button-container button[data-testid="stButton"]:hover {{
                 color: #3A7AC2; /* Couleur au survol */
-            }
+            }}
             </style>
             """,
             unsafe_allow_html=True
         )
-        if st.button("←", key=f"back_to_{target_screen}", help="Retour", class_="back-button"):
+        if st.button("←", key=f"back_to_{target_screen}", help="Retour"):
             st.session_state.screen = target_screen
             st.rerun()
 
