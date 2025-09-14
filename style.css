@@ -74,7 +74,7 @@
 .subtitle {
     font-family: 'Roboto', sans-serif;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 18px; /* Increased from 14px to 18px */
     color: #333333;
     text-align: center;
     margin-top: 5px;
@@ -86,7 +86,7 @@
     height: auto;
     border: none !important;
     border-collapse: collapse;
-    margin-top: 40px !important;
+    margin-top: 20px !important; /* Réduit de 40px pour un positionnement plus compact */
     margin-bottom: 0px;
     border-color: #F5F5F5 !important;
 }
@@ -103,7 +103,7 @@
 
 .logo-cell {
     width: 46px;
-    padding-right: 10px;
+    padding-right: 2px; /* Réduit de 10px pour rapprocher le logo du titre */
 }
 
 .title-cell {
@@ -343,6 +343,7 @@
     height: auto !important; /* Adapter la hauteur automatiquement si l'image est plus petite */
     overflow: hidden !important;
 }
+
 .stCropper canvas {
     max-width: 390px !important;
     width: 390px !important;
