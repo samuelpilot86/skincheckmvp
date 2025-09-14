@@ -14,7 +14,7 @@ from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
 
 # Fonction pour afficher le bouton de retour
-def display_back_button(target_screen):
+def display_back_button():
     with st.container():
         st.markdown(
             f"""
@@ -42,9 +42,22 @@ def display_back_button(target_screen):
             """,
             unsafe_allow_html=True
         )
-        if st.button("←", key=f"back_to_{target_screen}", help="Retour"):
-            st.session_state.screen = target_screen
-            st.rerun()
+        # Déterminer l'écran précédent
+        if 'screen_history' not in st.session_state:
+            st.session_state.screen_history = []
+        if st.session_state.screen not in st.session_state.screen_history:
+            st.session_state.screen_history.append(st.session_state.screen)
+        
+        if len(st.session_state.screen_history) > 1:
+            previous_screen = st.session_state.screen_history[-2]  # Deuxième élément depuis la fin
+        else:
+            previous_screen = "Accueil"  # Par défaut, revenir à Accueil si aucun écran précédent
+            
+        if st.button("←", key=f"back_to_previous", help="Retour"):
+            if previous_screen in st.session_state.screen_history:
+                st.session_state.screen = previous_screen
+                st.session_state.screen_history.pop()  # Supprimer l'écran actuel de l'historique
+                st.rerun()
 
 # Helper functions for encryption/decryption
 def encrypt_image(image):
@@ -154,6 +167,8 @@ warning_html = f'''
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
+    if 'screen_history' not in st.session_state:
+        st.session_state.screen_history = []
 
 if st.session_state.screen == "Accueil":
     st.markdown(title_html, unsafe_allow_html=True)
@@ -265,12 +280,14 @@ if st.session_state.screen == "Accueil":
                     encrypted_data, key, mode, size = encrypt_image(image)
                     st.session_state.encrypted_original = (encrypted_data, key, mode, size)
                     st.session_state.screen = "Reframe"
+                    st.session_state.screen_history.append("Reframe")
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
     
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
+            st.session_state.screen_history.append("Examples")
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
@@ -279,7 +296,7 @@ if st.session_state.screen == "Accueil":
     st.markdown('<div class="bottom-note">**This requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Examples":
-    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
+    display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
     st.markdown('<div class="normal-text">Click one of these 6 photos to analyze it.</div>', unsafe_allow_html=True)
     base_dir = os.path.join(os.getcwd(), "examples")
@@ -330,6 +347,7 @@ elif st.session_state.screen == "Examples":
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
+                            st.session_state.screen_history.append("Result")
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image  # Pas de recadrage pour les démos
@@ -359,6 +377,7 @@ elif st.session_state.screen == "Examples":
                             with st.spinner("Analysis in progress..."):
                                 result, prob, color = predict_user_image(image, model)
                             st.session_state.screen = "Result"
+                            st.session_state.screen_history.append("Result")
                             st.session_state.result = (result, prob, color)
                             # For demos, no encryption needed
                             st.session_state.cropped_image = image  # Pas de recadrage pour les démos
@@ -367,7 +386,7 @@ elif st.session_state.screen == "Examples":
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Reframe":
-    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
+    display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
     if 'encrypted_original' in st.session_state:
         encrypted_data, key, mode, size = st.session_state.encrypted_original
@@ -416,6 +435,7 @@ elif st.session_state.screen == "Reframe":
                         encrypted_cropped, cropped_key, cropped_mode, cropped_size = encrypt_image(cropped_image)
                         st.session_state.encrypted_cropped = (encrypted_cropped, cropped_key, cropped_mode, cropped_size)
                         st.session_state.screen = "Result"
+                        st.session_state.screen_history.append("Result")
                         st.session_state.result = (result, prob, color)
                         # Delete original after cropping
                         st.session_state.pop('encrypted_original', None)
@@ -426,7 +446,7 @@ elif st.session_state.screen == "Reframe":
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
 
 elif st.session_state.screen == "Result":
-    display_back_button("Accueil")  # Bouton de retour vers l'écran d'accueil
+    display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
     if 'result' in st.session_state:
         result, prob, color = st.session_state.result
@@ -562,12 +582,14 @@ elif st.session_state.screen == "Result":
                         encrypted_data, key, mode, size = encrypt_image(image)
                         st.session_state.encrypted_original = (encrypted_data, key, mode, size)
                         st.session_state.screen = "Reframe"
+                        st.session_state.screen_history.append("Reframe")
                         st.rerun()
                 except Exception as e:
                     st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
       
             if st.button("Select demo example", key="demo"):
                 st.session_state.screen = "Examples"
+                st.session_state.screen_history.append("Examples")
                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
   
