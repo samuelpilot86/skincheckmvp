@@ -13,7 +13,7 @@ from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
 
-# Fonction pour afficher le bouton de retour
+# Fonction pour afficher le bouton de retour 
 def display_back_button():
     with st.container():
         st.markdown(
