@@ -5,15 +5,14 @@ import base64
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["OMP_NUM_THREADS"] = "8"
-os.environ["TF_FORCE_CPU_ONLY"] = "1"  
-import tensorflow as tf  
+os.environ["TF_FORCE_CPU_ONLY"] = "1"
+import tensorflow as tf
 import streamlit as st
-from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, preprocess_image, predict_user_image 
+from model_utils import focal_loss_fixed, MelanomaRecall, NevusSpecificity, CombinedMetric, ThresholdOptimizer, preprocess_image, predict_user_image
 from st_clickable_images import clickable_images
 from streamlit_cropper import st_cropper
 from cryptography.fernet import Fernet
-
-# Fonction pour afficher le bouton de retour 
+# Fonction pour afficher le bouton de retour
 def display_back_button():
     with st.container():
         st.markdown(
@@ -35,7 +34,7 @@ def display_back_button():
             st.session_state.screen_history = []
         if st.session_state.screen not in st.session_state.screen_history:
             st.session_state.screen_history.append(st.session_state.screen)
-      
+     
         if len(st.session_state.screen_history) > 1:
             previous_screen = st.session_state.screen_history[-2] # Deuxième élément depuis la fin
             # Forcer le retour à "Accueil" depuis "Examples"
@@ -43,7 +42,7 @@ def display_back_button():
                 previous_screen = "Accueil"
         else:
             previous_screen = "Accueil" # Par défaut, revenir à Accueil si aucun écran précédent
-          
+         
         # Bouton de retour
         if st.button("←", key=f"back_to_previous_{st.session_state.screen}"):
             if previous_screen in st.session_state.screen_history or previous_screen == "Accueil":
@@ -51,7 +50,6 @@ def display_back_button():
                 if st.session_state.screen != "Accueil": # Ne pas pop si on revient à Accueil
                     st.session_state.screen_history.pop() # Supprimer l'écran actuel de l'historique
                 st.rerun()
-
 # Helper functions for encryption/decryption
 def encrypt_image(image):
     key = Fernet.generate_key()
@@ -59,12 +57,10 @@ def encrypt_image(image):
     img_bytes = image.tobytes()
     encrypted = f.encrypt(img_bytes)
     return encrypted, key, image.mode, image.size
-
 def decrypt_image(encrypted_data, key, mode, size):
     f = Fernet(key)
     decrypted_bytes = f.decrypt(encrypted_data)
     return Image.frombytes(mode, size, decrypted_bytes)
-
 # Charger le modèle
 @st.cache_resource
 def load_model():
@@ -87,16 +83,12 @@ def load_model():
         st.markdown(f'<div class="normal-text">Erreur lors du chargement du modèle : {e}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="normal-text">Répertoire de travail actuel : {os.getcwd()}</div>', unsafe_allow_html=True)
         return None
-
 model = load_model()
-
 # Interface Streamlit
 st.set_page_config(page_title="SkinCheck", layout="centered")
-
 # Charger le CSS
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
 # Création du logo et titre dans une variable HTML
 logo_path = os.path.join("images", "logo_skincheck_transparent_reduit.png")
 if os.path.exists(logo_path):
@@ -108,7 +100,6 @@ if os.path.exists(logo_path):
         logo_html = ""
 else:
     logo_html = ""
-
 title_html = f'''
 <div class="header-container">
     <table class="header-table">
@@ -119,7 +110,6 @@ title_html = f'''
     <div class="subtitle">Should I show this mole to my dermatologist?</div>
 </div>
 '''
-
 # Création des instructions de recadrage
 reframed_mole_path = os.path.join("images", "FramedMole.jpg")
 if os.path.exists(reframed_mole_path):
@@ -131,7 +121,6 @@ if os.path.exists(reframed_mole_path):
         reframed_mole_html = ""
 else:
     reframed_mole_html = ""
-
 reframe_instructions_html = f'''
 <table class="instructions-table">
     <tr>
@@ -144,7 +133,6 @@ reframe_instructions_html = f'''
     </tr>
 </table>
 '''
-
 # Création de l'avertissement "prototype non validée médicalement"
 warning_path = os.path.join("images", "warning.svg")
 if os.path.exists(warning_path):
@@ -156,7 +144,6 @@ if os.path.exists(warning_path):
         warning_img_html = ""
 else:
     warning_img_html = ""
-
 warning_html = f'''
 <table class="instructions-table">
     <tr>
@@ -167,7 +154,6 @@ warning_html = f'''
     </tr>
 </table>
 '''
-
 # Navigation et mode
 if 'screen' not in st.session_state:
     st.session_state.screen = "Accueil"
@@ -177,7 +163,6 @@ if 'screen' not in st.session_state:
         st.session_state.last_image = None
     if 'last_crop_box' not in st.session_state:
         st.session_state.last_crop_box = None
-
 if st.session_state.screen == "Accueil":
     # Réinitialiser l'historique à "Accueil" pour nettoyer les résidus
     st.session_state.screen_history = ["Accueil"]
@@ -277,7 +262,7 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
-    # Conteneur pour les boutons
+    # Conteneur pour le bouton d'upload
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="hidden")
@@ -302,16 +287,18 @@ if st.session_state.screen == "Accueil":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-  
+        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
+    st.markdown(warning_html, unsafe_allow_html=True)
+    # Conteneur pour le bouton de démo en-dessous de l'avertissement
+    with st.container():
+        st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-    st.markdown(warning_html, unsafe_allow_html=True)
     st.markdown('<div class="bottom-note">*Requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Examples":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -400,7 +387,6 @@ elif st.session_state.screen == "Examples":
                             st.rerun()
                     except Exception as e:
                         st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de {img_path} : {e}</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Reframe":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -463,7 +449,6 @@ elif st.session_state.screen == "Reframe":
                         st.markdown('<div class="normal-text">Erreur : L\'image recadrée n\'est pas valide. Veuillez valider le recadrage.</div>', unsafe_allow_html=True)
             else:
                 st.markdown('<div class="normal-text">Erreur : Veuillez sélectionner une zone de recadrage.</div>', unsafe_allow_html=True)
-
 elif st.session_state.screen == "Result":
     display_back_button()
     st.markdown(title_html, unsafe_allow_html=True)
@@ -609,14 +594,13 @@ elif st.session_state.screen == "Result":
                     st.rerun()
             except Exception as e:
                 st.markdown(f'<div class="normal-text">Erreur lors de l\'ouverture de l\'image : {e}</div>', unsafe_allow_html=True)
-    
+   
         if st.button("Select demo example", key="demo"):
             st.session_state.screen = "Examples"
             st.session_state.screen_history.append("Examples")
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
- 
     # Delete encrypted data after display and results (for compliance)
     st.session_state.pop('encrypted_cropped', None)
     st.session_state.pop('encrypted_original', None)
