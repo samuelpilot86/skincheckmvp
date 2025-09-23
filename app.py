@@ -262,7 +262,7 @@ if st.session_state.screen == "Accueil":
     }
     </style>
     """, unsafe_allow_html=True)
-    # Conteneur pour le bouton d'upload
+    # Conteneur pour le file uploader seulement
     with st.container():
         st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Upload your photo", type=["jpg", "png", "jpeg"], key="file_uploader_accueil", label_visibility="hidden")
@@ -290,14 +290,11 @@ if st.session_state.screen == "Accueil":
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-    # Conteneur pour le bouton de démo en-dessous de l'avertissement
-    with st.container():
-        st.markdown('<div class="button-container-accueil">', unsafe_allow_html=True)
-        if st.button("Select demo example", key="demo"):
-            st.session_state.screen = "Examples"
-            st.session_state.screen_history.append("Examples")
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Bouton Select demo example en-dessous de l'avertissement
+    if st.button("Select demo example", key="demo"):
+        st.session_state.screen = "Examples"
+        st.session_state.screen_history.append("Examples")
+        st.rerun()
     st.markdown('<div class="bottom-note">*Requires zooming lenses (iPhone Pro 11+, Samsung Galaxy S Ultra, Google Pixel Pro…)</div>', unsafe_allow_html=True)
 elif st.session_state.screen == "Examples":
     display_back_button()
