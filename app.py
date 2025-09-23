@@ -290,8 +290,8 @@ if st.session_state.screen == "Accueil":
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
     st.markdown(warning_html, unsafe_allow_html=True)
-    # Bouton Select demo example en-dessous de l'avertissement
-    if st.button("Select demo example", key="demo"):
+    # Bouton Scan demo example en-dessous de l'avertissement
+    if st.button("Scan demo example", key="demo"):
         st.session_state.screen = "Examples"
         st.session_state.screen_history.append("Examples")
         st.rerun()
