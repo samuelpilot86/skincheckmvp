@@ -163,6 +163,10 @@ if 'screen' not in st.session_state:
         st.session_state.last_image = None
     if 'last_crop_box' not in st.session_state:
         st.session_state.last_crop_box = None
+# Ajout de l'endpoint Ping pour éviter le chargement lourd
+if st.query_params.get("screen") == "Ping":  # Utilise st.query_params pour détecter ?screen=Ping
+    st.write("OK - SkinCheck Active")
+    st.stop()  # Arrête l'exécution pour éviter le chargement du modèle        
 if st.session_state.screen == "Accueil":
     # Réinitialiser l'historique à "Accueil" pour nettoyer les résidus
     st.session_state.screen_history = ["Accueil"]
