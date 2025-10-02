@@ -1,8 +1,8 @@
-streamlit==1.48.1
-tensorflow-cpu==2.20.0
-numpy==2.3.2
-pillow==11.3.0
-st-clickable-images
+streamlit==1.38.0  # Downgrade stable, fixe MIME/JS sans regressions 2025
+tensorflow-cpu==2.15.0  # Version LTS 2024, compatible NumPy 1.26+ et Render
+numpy==1.26.4  # Évite breaking changes 2.x avec TF
+pillow==10.4.0  # Stable pour images
+st-clickable-images==0.3.0  # Pin pour éviter JS custom récent
 streamlit-cropper==0.3.1
 streamlit-javascript==0.1.5
-cryptography
+cryptography==42.0.8  # Latest stable
