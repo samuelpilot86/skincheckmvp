@@ -12,12 +12,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true  # Pour fichiers lourds comme skin_lesion_model_binary.keras
+          lfs: true  # Pour fichiers LFS comme skin_lesion_model_binary.keras
+
+      - name: Install Git LFS
+        run: |
+          git lfs install
+
+      - name: Track large files with LFS
+        run: |
+          git lfs track "*.keras"
+          git add .gitattributes
+
+      - name: Commit LFS tracking
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .gitattributes
+          git commit -m "Track .keras files with Git LFS" || echo "Already tracked"
 
       - name: Push to HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote remove hf || true  # Supprime si déjà existant, ignore erreur
+          git remote remove hf || true  # Supprime si déjà existant
           git remote add hf https://samuelpilot:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/samuelpilot/skincheckmvp
           git push --force hf main
