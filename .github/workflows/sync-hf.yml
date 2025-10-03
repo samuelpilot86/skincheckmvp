@@ -1,0 +1,23 @@
+name: Sync to Hugging Face Space
+
+on:
+  push:
+    branches: [main]  # Change à 'master' si ta branche principale est différente
+  workflow_dispatch:  # Permet déclenchement manuel
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true  # Pour fichiers lourds comme skin_lesion_model_binary.keras
+
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote remove hf || true  # Supprime si déjà existant, ignore erreur
+          git remote add hf https://samuelpilot:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/samuelpilot/skincheckmvp
+          git push --force hf main
